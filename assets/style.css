@@ -120,3 +120,38 @@ body{
 code, pre, kbd, samp{
   font-family: "Latin Modern Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
+/* Palette liens sur fond sombre */
+:root{
+  --link-color:  #7dd3fc;   /* lien normal (cyan clair lisible) */
+  --link-hover:  #bae6fd;   /* au survol */
+  --link-visited:#93c5fd;   /* visité */
+  --focus-ring:  #bae6fd;   /* focus clavier/accessibilité */
+}
+
+/* Règles globales */
+a{
+  color: var(--link-color);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+a:hover,
+a:active{ color: var(--link-hover); }
+a:visited{ color: var(--link-visited); }
+a:focus-visible{
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Titres cliquables : garder l’apparence du titre */
+.section-title a,
+.card h3 a{
+  color: inherit;
+  text-decoration: none;
+}
+.card h3 a:hover{ text-decoration: underline; }
+
+/* (Option) n’appliquer la palette qu’aux liens dans les cartes */
+.grid .card a{ color: var(--link-color); }
+.grid .card a:hover{ color: var(--link-hover); }
+.grid .card a:visited{ color: var(--link-visited); }
