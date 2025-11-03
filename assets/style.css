@@ -188,3 +188,49 @@ a:focus-visible{
 }
 .card h3 a:hover{ text-decoration: underline; }
 
+/* === Liens harmonisés sur fond sombre (override global) === */
+:root{
+  --link-color:  #7dd3fc;  /* normal */
+  --link-hover:  #bfe6ff;  /* hover/active */
+  --link-visited:#a5b4fc;  /* visited */
+}
+
+/* Tout lien du site (priorité haute) */
+a,
+.site-header nav a,
+.list a,
+.grid .card a{
+  color: var(--link-color) !important;
+  text-decoration: none !important;
+  text-underline-offset: 0.15em;
+}
+
+a:hover,
+a:active,
+.site-header nav a:hover,
+.list a:hover,
+.grid .card a:hover{
+  color: var(--link-hover) !important;
+  text-decoration: none !important;
+}
+
+a:visited{
+  color: var(--link-visited) !important;
+}
+
+/* Accessibilité clavier */
+a:focus-visible{
+  outline: 2px solid var(--link-hover);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Titres cliquables (choisis) :
+   - Si tu veux qu’ils gardent la couleur du titre (blanc) : laisse 'inherit'
+   - Si tu veux la même couleur que les autres liens : remplace par var(--link-color)
+*/
+.card h3 a,
+.section-title a{
+  color: inherit !important;          /* ou: var(--link-color) */
+  text-decoration: none !important;
+}
