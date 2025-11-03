@@ -155,3 +155,36 @@ a:focus-visible{
 .grid .card a{ color: var(--link-color); }
 .grid .card a:hover{ color: var(--link-hover); }
 .grid .card a:visited{ color: var(--link-visited); }
+
+/* Liens dans les cards (hors titres) */
+.grid .card li > a,
+.grid .card p > a,
+.grid .card .list a,
+.grid .card a[href$=".pdf"],
+.grid .card a[href^="/assets/pdf/"]{
+  color: var(--link-color) !important;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.grid .card li > a:hover,
+.grid .card p > a:hover,
+.grid .card .list a:hover,
+.grid .card a[href$=".pdf"]:hover,
+.grid .card a[href^="/assets/pdf/"]:hover{
+  color: var(--link-hover) !important;
+}
+.grid .card li > a:visited,
+.grid .card p > a:visited,
+.grid .card .list a:visited,
+.grid .card a[href$=".pdf"]:visited,
+.grid .card a[href^="/assets/pdf/"]:visited{
+  color: var(--link-visited) !important;
+}
+
+/* Les titres cliquables gardent la couleur du titre */
+.card h3 a{
+  color: inherit;
+  text-decoration: none;
+}
+.card h3 a:hover{ text-decoration: underline; }
+
