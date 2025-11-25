@@ -1,0 +1,38 @@
+name: Build LaTeX PDF
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.tex'
+      - '**.sty'
+      - '**.bib'
+      - '.github/workflows/latex.yml'
+
+permissions:
+  contents: write  # pour pouvoir committer le PDF généré
+
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex    # ton fichier principal
+          latexmk_use_xelatex: false  # ou true si tu compiles à xelatex
+
+      - name: Move PDF to assets
+        run: |
+          mkdir -p assets/pdf
+          mv main.pdf assets/pdf/cours.pdf
+
+      - name: Commit PDF
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update cours.pdf"
+          file_pattern: assets/pdf/cours.pdf
