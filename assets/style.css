@@ -234,3 +234,38 @@ a:focus-visible{
   color: inherit !important;          /* ou: var(--link-color) */
   text-decoration: none !important;
 }
+
+/* Grille 2 colonnes dans la section Colles */
+.colles-grid{
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(260px,1fr);
+  gap:2rem;
+  align-items:start;
+}
+@media (max-width: 900px){
+  .colles-grid{ grid-template-columns:1fr; }
+}
+
+/* Tableau calendrier compact sur fond sombre */
+.table-calendar{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.95rem;
+  line-height:1.2;
+}
+.table-calendar th,
+.table-calendar td{
+  border:1px solid rgba(255,255,255,.12);
+  padding:.45rem .6rem;
+}
+.table-calendar thead th{
+  position:sticky; top:0;
+  background:rgba(255,255,255,.06);
+  backdrop-filter:saturate(120%) blur(2px);
+}
+.table-calendar td.date{ white-space:nowrap; }
+.table-calendar td.week{
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+
