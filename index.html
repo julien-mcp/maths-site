@@ -179,11 +179,16 @@
 
     
     <section id="colles" class="section">
-      <div class="container">
-        <h2 class="section-title">Colles</h2>
+  <div class="container">
+    <h2 class="section-title">Colles</h2>
+
+    <div class="colles-grid">
+      <!-- Colonne de gauche : ton contenu existant -->
+      <div>
         <ul class="list">
           <li><a target="_blank" rel="noopener" href="assets/pdf/Colloscope_v1.pdf">Colloscope v.1</a></li>
         </ul>
+
         <h3>Programmes de colle</h3>
         <h4>Trimestre 1</h4>
         <ul class="list">
@@ -222,7 +227,21 @@
           <li>Semaine 28 — <a target="_blank" rel="noopener" href="assets/pdf/S28.pdf">programme</a> / <a target="_blank" rel="noopener" href="assets/pdf/Colle_S28.pdf">sujets</a></li>
         </ul>
       </div>
-    </section>
+
+      <!-- Colonne de droite : calendrier auto-généré -->
+      <aside>
+        <h3>Calendrier des semaines</h3>
+        <table id="colloscope-calendar" class="table-calendar">
+          <thead>
+            <tr><th>Date</th><th>Semaine</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p class="note">D’après le <a href="assets/pdf/Colloscope_v1.pdf" target="_blank" rel="noopener">colloscope</a>.</p>
+      </aside>
+    </div>
+  </div>
+</section>
 
 
     <section id="contact" class="section alt">
@@ -244,5 +263,70 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
+
+  <script>
+(function(){
+  const rows = [
+    // Trimestre 1
+    {date:'2025-09-10', week:'01'},
+    {date:'2025-09-17', week:'02'},
+    {date:'2025-09-24', week:'03'},
+    {date:'2025-10-01', week:'04'},
+    {date:'2025-10-08', week:'05'},
+    {date:'2025-10-15', week:'06'},
+    {date:'2025-10-22', week:''}, // Vacances (Toussaint)
+    {date:'2025-10-29', week:''}, // Toussaint
+    {date:'2025-11-05', week:'07'},
+    {date:'2025-11-12', week:'08'},
+    {date:'2025-11-19', week:'09'}, // Compo. 1 cette semaine
+    {date:'2025-11-26', week:''},
+
+    // Trimestre 2
+    {date:'2025-12-03', week:'10'},
+    {date:'2025-12-10', week:'11'},
+    {date:'2025-12-17', week:'12'},
+    {date:'2025-12-24', week:''},   // Noël
+    {date:'2025-12-31', week:''},   // Noël
+    {date:'2026-01-07', week:'13'},
+    {date:'2026-01-14', week:'14'},
+    {date:'2026-01-21', week:'15'},
+    {date:'2026-01-28', week:'16'},
+    {date:'2026-02-04', week:'17'},
+    {date:'2026-02-11', week:''},   // Vacances d'hiver
+    {date:'2026-02-18', week:''},   // Vacances d'hiver
+    {date:'2026-02-25', week:''},   // Compo. 2
+    {date:'2026-03-04', week:'18'},
+    {date:'2026-03-11', week:'19'},
+
+    // Trimestre 3
+    {date:'2026-03-18', week:'20'},
+    {date:'2026-03-25', week:'21'},
+    {date:'2026-04-01', week:'22'},
+    {date:'2026-04-08', week:'23'},
+    {date:'2026-04-15', week:''},   // Vacances de Pâques
+    {date:'2026-04-22', week:''},   // Vacances de Pâques
+    {date:'2026-04-29', week:'24'},
+    {date:'2026-05-06', week:'25'},
+    {date:'2026-05-13', week:'26'}, // Bac blanc
+    {date:'2026-05-20', week:'27'},
+    {date:'2026-05-27', week:'28'},
+  ];
+
+  const tbody = document.querySelector('#colloscope-calendar tbody');
+  if(!tbody) return;
+
+  const fmt = new Intl.DateTimeFormat('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'});
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    const tdDate = document.createElement('td'); tdDate.className='date';
+    tdDate.textContent = fmt.format(new Date(r.date));
+    const tdWeek = document.createElement('td'); tdWeek.className='week';
+    tdWeek.textContent = r.week ? ('S'+r.week.padStart(2,'0')) : '';
+    tr.append(tdDate, tdWeek);
+    tbody.appendChild(tr);
+  });
+})();
+</script>
+
 </body>
 </html>
