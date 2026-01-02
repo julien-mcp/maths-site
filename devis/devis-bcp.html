@@ -1,0 +1,1825 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MCP — Générateur de devis (offline, 1 fichier)</title>
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --card:#111522;
+      --card2:#0f1320;
+      --muted:#8c93a7;
+      --text:#e8ecf6;
+      --accent:#7c5cff;
+      --accent2:#20c997;
+      --danger:#ff4d4d;
+      --warn:#ffcc00;
+      --line:#222a3d;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --pad:16px;
+      --pad2:12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 700px at 12% 15%, rgba(124,92,255,.25), transparent 55%),
+                  radial-gradient(900px 600px at 88% 25%, rgba(32,201,151,.18), transparent 55%),
+                  linear-gradient(180deg, #070910 0%, var(--bg) 100%);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:24px 16px 80px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns: 1fr;}
+    }
+    header{
+      grid-column: 1 / -1;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: conic-gradient(from 180deg, var(--accent), var(--accent2), var(--accent));
+      box-shadow: 0 10px 30px rgba(124,92,255,.25);
+    }
+    .brand h1{margin:0;font-size:15px;letter-spacing:.4px}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .top-actions{
+      display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center;
+    }
+    button, .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:650;
+      letter-spacing:.2px;
+      transition: transform .08s ease, border-color .15s ease, background .15s ease;
+      user-select:none;
+      font-size:13px;
+    }
+    button:hover, .btn:hover{border-color: rgba(124,92,255,.55); background: rgba(124,92,255,.10)}
+    button:active{transform: translateY(1px)}
+    .btn.primary{background: rgba(124,92,255,.18); border-color: rgba(124,92,255,.55)}
+    .btn.good{background: rgba(32,201,151,.14); border-color: rgba(32,201,151,.5)}
+    .btn.danger{background: rgba(255,77,77,.12); border-color: rgba(255,77,77,.45)}
+    .btn.small{padding:8px 10px; border-radius:12px; font-size:12px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--accent2)}
+    .grid{
+      display:grid;
+      gap:14px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+    }
+    .card .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.3px;
+    }
+    .card .hd .sub{
+      color:var(--muted);
+      font-size:12px;
+      margin-left:10px;
+      font-weight:600;
+    }
+    .card .bd{
+      padding: 14px 16px 16px;
+    }
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 680px){ .row{grid-template-columns: 1fr;} }
+
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin: 0 0 6px;
+      font-weight:650;
+      letter-spacing:.2px;
+    }
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      padding:10px 10px;
+      border-radius: 14px;
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height: 70px; resize: vertical}
+    input::placeholder, textarea::placeholder{color: rgba(140,147,167,.65)}
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(124,92,255,.7);
+      box-shadow: 0 0 0 3px rgba(124,92,255,.15);
+    }
+    .hint{
+      margin-top:6px;
+      font-size:12px;
+      color:rgba(140,147,167,.92);
+      line-height:1.25;
+    }
+    .hr{height:1px;background:var(--line); margin:14px 0}
+    .sectionTitle{
+      display:flex; align-items:center; gap:10px;
+      margin: 0 0 10px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .badge{
+      font-family: var(--mono);
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+    }
+
+    /* tables */
+    table{
+      width:100%;
+      border-collapse: collapse;
+      overflow:hidden;
+      border:1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(0,0,0,.12);
+    }
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(34,42,61,.8);
+      vertical-align:top;
+      font-size:13px;
+    }
+    th{
+      text-align:left;
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.2px;
+      background: rgba(255,255,255,.03);
+    }
+    tr:last-child td{border-bottom:none}
+    .td-actions{white-space:nowrap; text-align:right}
+    .mono{font-family:var(--mono)}
+    .right{text-align:right}
+    .muted{color:var(--muted)}
+    .ok{color: var(--accent2); font-weight:800}
+    .bad{color: var(--danger); font-weight:800}
+    .warn{color: var(--warn); font-weight:800}
+
+    /* preview */
+    .preview{
+      position: sticky;
+      top: 16px;
+      align-self: start;
+    }
+    @media (max-width: 980px){
+      .preview{position: static;}
+    }
+    .doc{
+      background: #fff;
+      color:#111;
+      border-radius: var(--radius);
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+    }
+    .doc .page{
+      padding: 22px 24px 24px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    .doc h3, .doc h4, .doc p{margin:0}
+    .doc small{color:#666}
+    .doc .top{
+      display:flex; justify-content:space-between; gap:14px; align-items:flex-start;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .doc .top .mcp{
+      max-width: 60%;
+    }
+    .doc .top .mcp .name{
+      font-weight:900; letter-spacing:.2px; font-size:16px;
+    }
+    .doc .top .mcp .meta{
+      font-size:12px; color:#444; margin-top:6px; line-height:1.3;
+    }
+    .doc .top .quote{
+      text-align:right;
+      min-width: 240px;
+    }
+    .doc .top .quote .title{
+      font-weight:900; font-size:18px;
+    }
+    .doc .top .quote .ref{
+      font-family: var(--mono);
+      font-size:12px;
+      color:#333;
+      margin-top: 6px;
+      line-height:1.3;
+    }
+    .doc .blocks{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-bottom: 12px;
+    }
+    .doc .box{
+      border:1px solid #eee;
+      border-radius: 14px;
+      padding: 10px 12px;
+      background:#fafafa;
+    }
+    .doc .box .t{
+      font-weight:900; font-size:12px; color:#333; margin-bottom:6px;
+    }
+    .doc .box .c{
+      font-size:12px; color:#333; line-height:1.35;
+      white-space: pre-wrap;
+    }
+    .doc .items{
+      width:100%;
+      border-collapse:collapse;
+      margin: 10px 0 12px;
+      font-size:12px;
+    }
+    .doc .items th, .doc .items td{
+      border-bottom:1px solid #eee;
+      padding:8px 8px;
+      font-size:12px;
+    }
+    .doc .items th{color:#555; background:#fafafa}
+    .doc .items td.right{text-align:right}
+    .doc .totals{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: 1fr 260px;
+      gap:12px;
+      align-items:start;
+    }
+    .doc .notes{
+      font-size:11.5px; color:#333; line-height:1.35;
+    }
+    .doc .sum{
+      border:1px solid #eee;
+      border-radius: 14px;
+      padding: 10px 12px;
+      background:#fafafa;
+    }
+    .doc .sum .line{
+      display:flex; justify-content:space-between; gap:10px;
+      padding:4px 0;
+      font-size:12px;
+    }
+    .doc .sum .line.total{
+      font-weight:900; font-size:13px; border-top:1px solid #e9e9e9; margin-top:6px; padding-top:8px;
+    }
+    .doc .footer{
+      border-top:1px solid #eee;
+      margin-top:12px;
+      padding-top:10px;
+      font-size:11px;
+      color:#444;
+      display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    }
+
+    /* print */
+    @media print{
+      body{background:#fff}
+      header, .card:not(.printable), .preview .card.hdtools{display:none !important}
+      .wrap{max-width:none; padding:0; grid-template-columns: 1fr; gap:0}
+      .preview{position:static}
+      .doc{box-shadow:none; border:none; border-radius:0}
+      .doc .page{padding:16mm}
+      .doc .top{margin-bottom: 10px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>MCP — Momentum Creative Productions</h1>
+          <p>Outil de devis (HTML/CSS + JS local) · TVA FR · objectif résultat ≥ 50% · impression PDF</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="pill"><span class="dot"></span> Offline · sauvegarde locale</span>
+        <button class="btn small" id="btnNew">Nouveau</button>
+        <button class="btn small" id="btnSave">Sauver</button>
+        <button class="btn small" id="btnExport">Exporter JSON</button>
+        <label class="btn small" for="importFile" style="cursor:pointer">Importer JSON</label>
+        <input id="importFile" type="file" accept="application/json" hidden />
+        <button class="btn small good" id="btnPrint">Imprimer / PDF</button>
+      </div>
+    </header>
+
+    <!-- LEFT: builder -->
+    <div class="grid">
+      <div class="card printable">
+        <div class="hd">
+          <div>
+            <h2>Paramètres globaux <span class="sub">TVA · marge · dégressivité · mentions</span></h2>
+          </div>
+          <div class="pill"><span class="dot" style="background:var(--accent)"></span><span id="kpiMargin" class="mono">—</span></div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Mode de chiffrage</label>
+              <select id="pricingMode">
+                <option value="sell">Mode vente (prix unitaires saisis)</option>
+                <option value="target">Mode marge-cible (prix auto = coût / (1 - marge))</option>
+                <option value="hybrid">Hybride (prix saisis + contrôle marge)</option>
+              </select>
+              <div class="hint">
+                - <b>Vente</b> : tu fixes les prix (packs, jours, loc matériel).<br/>
+                - <b>Marge-cible</b> : tu saisis les <i>coûts</i> et l’outil sort le prix pour viser ta marge (ex: 50%).<br/>
+                - <b>Hybride</b> : tu fixes les prix, mais l’outil t’alerte si tu descends sous l’objectif.
+              </div>
+            </div>
+            <div>
+              <label>Objectif résultat (marge sur CA)</label>
+              <input id="targetMargin" type="number" min="0" max="0.95" step="0.01" value="0.50" />
+              <div class="hint">Ex : 0,50 = <b>50%</b> de résultat sur le CA HT (profit / CA). (Différent du “markup” sur coût.)</div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>Taux de TVA</label>
+              <select id="vatRate">
+                <option value="0.20" selected>20% (standard)</option>
+                <option value="0.10">10%</option>
+                <option value="0.055">5,5%</option>
+                <option value="0">0% (hors TVA / exonéré)</option>
+              </select>
+              <div class="hint">Tu m’as dit : assujetti TVA, régime simplifié → le taux dépend de la nature de la prestation (par défaut 20%).</div>
+            </div>
+            <div>
+              <label>Dégressivité matériel (barème)</label>
+              <select id="degressivityPreset">
+                <option value="mcp" selected>MCP (1:100%, 2:70%, 3:60%, 4:55%, 5:50%, 6+:45%)</option>
+                <option value="soft">Douce (1:100%, 2:80%, 3:70%, 4+:65%)</option>
+                <option value="aggr">Agressive (1:100%, 2:65%, 3:55%, 4:50%, 5+:45%)</option>
+                <option value="custom">Personnalisée (texte)</option>
+              </select>
+              <div class="hint">Le barème s’applique au <b>tarif jour</b> de chaque item, selon le nombre de jours de location.</div>
+            </div>
+          </div>
+
+          <div id="customDegWrap" style="display:none; margin-top:10px">
+            <label>Barème personnalisé</label>
+            <input id="customDeg" placeholder='Ex: 1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45' />
+            <div class="hint">Format : <span class="mono">jour:facteur</span>. Le dernier peut être <span class="mono">6+</span> pour “6 jours et plus”.</div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="row">
+            <div>
+              <label>Référence devis (auto)</label>
+              <input id="quoteRef" placeholder="DEV-2026-0001" />
+              <div class="hint">Laisse vide → génération auto à l’enregistrement.</div>
+            </div>
+            <div>
+              <label>Validité (jours)</label>
+              <input id="validityDays" type="number" min="0" step="1" value="30" />
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>Conditions de paiement</label>
+              <input id="paymentTerms" placeholder="Ex: 40% à la commande, solde à 30 jours fin de mois" value="40% à la commande, solde à la livraison (J+30)" />
+            </div>
+            <div>
+              <label>Mentions / notes (client)</label>
+              <input id="publicNotes" placeholder="Ex: inclus 1 aller-retour de modifications, droits musicaux non inclus..." value="Inclut 1 aller-retour de modifications. Toute demande supplémentaire fera l’objet d’un avenant." />
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card printable">
+        <div class="hd">
+          <h2>Informations entreprise & client <span class="sub">pour le document</span></h2>
+          <span class="badge">Identité</span>
+        </div>
+        <div class="bd">
+          <div class="sectionTitle">MCP <span class="badge">éditeur</span></div>
+          <div class="row">
+            <div>
+              <label>Nom commercial</label>
+              <input id="mcpName" value="Momentum Creative Productions (MCP)" />
+            </div>
+            <div>
+              <label>Ville / adresse (optionnel)</label>
+              <input id="mcpAddr" placeholder="Ex: 69000 Lyon — France" value="Lyon — France" />
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>SIRET (optionnel)</label>
+              <input id="mcpSiret" placeholder="..." />
+            </div>
+            <div>
+              <label>N° TVA (optionnel)</label>
+              <input id="mcpVat" placeholder="FRxx..." />
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="sectionTitle">Client <span class="badge">destinataire</span></div>
+          <div class="row">
+            <div>
+              <label>Entreprise</label>
+              <input id="clientCompany" placeholder="Nom de l'entreprise" />
+            </div>
+            <div>
+              <label>Contact</label>
+              <input id="clientContact" placeholder="Nom + fonction" />
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>Email</label>
+              <input id="clientEmail" type="email" placeholder="contact@..." />
+            </div>
+            <div>
+              <label>Téléphone</label>
+              <input id="clientPhone" placeholder="+33 ..." />
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>Adresse</label>
+              <textarea id="clientAddr" placeholder="Adresse complète (facturation)"></textarea>
+            </div>
+            <div>
+              <label>SIRET / TVA (optionnel)</label>
+              <textarea id="clientIds" placeholder="SIRET... / TVA..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card printable">
+        <div class="hd">
+          <h2>Projet <span class="sub">cadre, dates, type de prestation</span></h2>
+          <span class="badge">Brief</span>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Titre du projet</label>
+              <input id="projectTitle" placeholder="Ex: Film institutionnel — Usine X" />
+            </div>
+            <div>
+              <label>Lieu</label>
+              <input id="projectPlace" placeholder="Ex: Lyon / site client" />
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>Date(s) prévues</label>
+              <input id="projectDates" placeholder="Ex: 15–16 janvier 2026" />
+            </div>
+            <div>
+              <label>Type</label>
+              <select id="projectType">
+                <option value="Film institutionnel">Film institutionnel</option>
+                <option value="Film corporate">Film corporate</option>
+                <option value="Aftermovie">Aftermovie événement</option>
+                <option value="Live interne (Teams/table ronde)">Live interne (Teams/table ronde)</option>
+                <option value="Live plateau (talk-show)">Live plateau (talk-show)</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <label>Description / périmètre</label>
+            <textarea id="projectDesc" placeholder="Objectifs, livrables, contraintes (accès, sécurité, délais), diffusion, formats..."></textarea>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="row">
+            <div>
+              <label>Pack rapide (pré-remplissage)</label>
+              <select id="quickPack">
+                <option value="">— Aucun —</option>
+                <option value="film_s">Film (simple) : 1 jour tournage + 1 jour montage</option>
+                <option value="film_m">Film (standard) : 2 jours tournage + 3 jours post-prod</option>
+                <option value="after_s">Aftermovie : 1 jour tournage + 1 jour montage</option>
+                <option value="live_teams">Live interne Teams : 2 cams + audio + habillage léger</option>
+                <option value="live_talk">Talk-show : 3 cams + régie + habillage + replay</option>
+              </select>
+              <div class="hint">Ces packs sont des bases rapides. Ajuste ensuite lignes, coûts, et matériel.</div>
+            </div>
+            <div>
+              <label>Taux journalier “MCP” (simple)</label>
+              <input id="dayRateMCP" type="number" step="1" value="600" />
+              <div class="hint">Tu m’as donné 600€/jour pour tournage, montage et préparation (mode vente).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card printable">
+        <div class="hd">
+          <h2>Lignes — prestations <span class="sub">packs / jours / options</span></h2>
+          <div class="pill"><span class="dot"></span><span class="mono" id="countService">0</span>&nbsp;lignes</div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Ajouter une ligne prestation</label>
+              <select id="serviceTemplate">
+                <option value="custom">Ligne libre</option>
+                <option value="prep">Préparation / repérage (jour)</option>
+                <option value="shoot">Tournage (jour)</option>
+                <option value="edit">Montage (jour)</option>
+                <option value="color">Étalonnage (jour)</option>
+                <option value="sound">Mixage / sound design (jour)</option>
+                <option value="motion">Motion design / habillage (jour)</option>
+                <option value="delivery">Exports / livraisons (forfait)</option>
+                <option value="live_prod">Production live (jour)</option>
+                <option value="live_replay">Replays / chapitrage / dérush (jour)</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:end; gap:10px">
+              <button class="btn primary" id="addService">+ Ajouter</button>
+              <button class="btn danger" id="clearServices" title="Supprime toutes les lignes prestations">Tout vider</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; overflow:auto">
+            <table id="tblServices">
+              <thead>
+                <tr>
+                  <th style="min-width:220px">Désignation</th>
+                  <th style="min-width:240px">Description</th>
+                  <th class="right" style="width:90px">Qté</th>
+                  <th style="width:80px">Unité</th>
+                  <th class="right" style="width:140px">PU HT (€)</th>
+                  <th class="right" style="width:140px">Coût HT (€)</th>
+                  <th class="right" style="width:140px">Total HT (€)</th>
+                  <th class="td-actions" style="width:140px">Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="hint" style="margin-top:10px">
+            <b>Astuce marge-cible :</b> renseigne le coût (temps, charges, sous-traitance), puis laisse le PU vide en mode “marge-cible” → calcul automatique pour viser ton objectif (≥ 50%).
+          </div>
+        </div>
+      </div>
+
+      <div class="card printable">
+        <div class="hd">
+          <h2>Lignes — matériel <span class="sub">tarif/jour + dégressivité</span></h2>
+          <div class="pill"><span class="dot"></span><span class="mono" id="countGear">0</span>&nbsp;items</div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Ajouter un item matériel</label>
+              <select id="gearItem"></select>
+              <div class="hint">
+                Liste embarquée (démo). Tu peux coller/importer ton inventaire Excel via CSV (bouton ci-dessous).
+              </div>
+            </div>
+            <div style="display:flex; align-items:end; gap:10px; flex-wrap:wrap">
+              <button class="btn primary" id="addGear">+ Ajouter</button>
+              <button class="btn" id="btnImportCSV">Importer inventaire CSV</button>
+              <input id="csvArea" placeholder="Colle ici un CSV (nom;tarif_jour)" style="display:none" />
+            </div>
+          </div>
+
+          <div style="margin-top:12px; overflow:auto">
+            <table id="tblGear">
+              <thead>
+                <tr>
+                  <th style="min-width:260px">Matériel</th>
+                  <th class="right" style="width:90px">Jours</th>
+                  <th class="right" style="width:140px">Tarif J1 (€)</th>
+                  <th class="right" style="width:120px">Facteur</th>
+                  <th class="right" style="width:140px">Total HT (€)</th>
+                  <th class="td-actions" style="width:140px">Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="hint" style="margin-top:10px">
+            Le total matériel = somme des jours pondérés par le barème (ex : J2=70%).  
+            Le barème est modifiable dans “Paramètres globaux”.
+          </div>
+        </div>
+      </div>
+
+      <div class="card printable">
+        <div class="hd">
+          <h2>Frais & divers <span class="sub">déplacements, repas, droits, sous-traitance</span></h2>
+          <div class="pill"><span class="dot"></span><span class="mono" id="countFees">0</span>&nbsp;lignes</div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Ajouter une ligne</label>
+              <select id="feeTemplate">
+                <option value="custom">Ligne libre</option>
+                <option value="travel">Déplacements (km, péage, train)</option>
+                <option value="meals">Repas / catering</option>
+                <option value="hotel">Hébergement</option>
+                <option value="music">Droits musicaux / licences</option>
+                <option value="st">Sous-traitance (ex: opérateur, sound, graphiste)</option>
+                <option value="misc">Divers</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:end; gap:10px">
+              <button class="btn primary" id="addFee">+ Ajouter</button>
+              <button class="btn danger" id="clearFees">Tout vider</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px; overflow:auto">
+            <table id="tblFees">
+              <thead>
+                <tr>
+                  <th style="min-width:240px">Désignation</th>
+                  <th style="min-width:240px">Description</th>
+                  <th class="right" style="width:90px">Qté</th>
+                  <th style="width:80px">Unité</th>
+                  <th class="right" style="width:140px">PU HT (€)</th>
+                  <th class="right" style="width:140px">Coût HT (€)</th>
+                  <th class="right" style="width:140px">Total HT (€)</th>
+                  <th class="td-actions" style="width:140px">Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="row">
+            <div>
+              <label>Remises (HT)</label>
+              <input id="discount" type="number" step="1" value="0" />
+              <div class="hint">Valeur positive = remise en € HT (sera soustraite).</div>
+            </div>
+            <div>
+              <label>Avance / acompte (info)</label>
+              <input id="depositInfo" placeholder="Ex: acompte 40% à la commande" value="Acompte 40% à la commande" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card printable">
+        <div class="hd">
+          <h2>Contrôle marge & recommandations <span class="sub">objectif ≥ 50%</span></h2>
+          <span class="badge">Analyse</span>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div class="card" style="box-shadow:none">
+              <div class="hd" style="background:rgba(0,0,0,.08)"><h2 style="font-size:13px">Indicateurs</h2><span class="sub">HT</span></div>
+              <div class="bd" style="padding:12px 14px">
+                <div style="display:grid; gap:8px">
+                  <div class="row" style="grid-template-columns:1fr 1fr; gap:10px">
+                    <div class="pill" style="justify-content:space-between"><span>CA HT</span><span class="mono" id="kpiSales">—</span></div>
+                    <div class="pill" style="justify-content:space-between"><span>Coûts HT</span><span class="mono" id="kpiCosts">—</span></div>
+                  </div>
+                  <div class="row" style="grid-template-columns:1fr 1fr; gap:10px">
+                    <div class="pill" style="justify-content:space-between"><span>Résultat</span><span class="mono" id="kpiProfit">—</span></div>
+                    <div class="pill" style="justify-content:space-between"><span>Marge sur CA</span><span class="mono" id="kpiProfitRate">—</span></div>
+                  </div>
+                  <div class="pill" style="justify-content:space-between">
+                    <span>Markup sur coût</span><span class="mono" id="kpiMarkup">—</span>
+                  </div>
+                </div>
+                <div class="hint" style="margin-top:10px">
+                  <b>Marge sur CA</b> = (CA − coûts) / CA.<br/>
+                  <b>Markup</b> = (CA − coûts) / coûts. (souvent plus grand)
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="hd" style="background:rgba(0,0,0,.08)"><h2 style="font-size:13px">Conseil prix</h2><span class="sub">marge cible</span></div>
+              <div class="bd" style="padding:12px 14px">
+                <div class="pill" style="justify-content:space-between">
+                  <span>CA conseillé (pour atteindre l’objectif)</span><span class="mono" id="kpiSuggestSales">—</span>
+                </div>
+                <div class="hint" style="margin-top:10px">
+                  Si tu utilises <b>Mode marge-cible</b>, l’outil calcule automatiquement les PU.  
+                  En <b>Hybride</b>, il te donne un CA recommandé si tu es sous la cible.
+                </div>
+                <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+                  <button class="btn good" id="btnAutoReprice">Auto-ajuster les PU (marge-cible)</button>
+                  <button class="btn" id="btnInsertDayRate">Insérer lignes “600€/jour”</button>
+                </div>
+                <div class="hint" style="margin-top:10px">
+                  “Insérer 600€/jour” = mode vente rapide (prépa/tournage/montage), à adapter pour institutionnel/live.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: preview -->
+    <div class="preview">
+      <div class="card hdtools">
+        <div class="hd">
+          <h2>Aperçu du devis <span class="sub">document imprimable</span></h2>
+          <span class="badge">Preview</span>
+        </div>
+        <div class="bd">
+          <div class="pill" style="justify-content:space-between">
+            <span>Total TTC</span><span class="mono" id="kpiTTC">—</span>
+          </div>
+          <div class="hint" style="margin-top:10px">
+            Clique <b>Imprimer / PDF</b> pour générer un PDF propre (via l’impression navigateur).
+          </div>
+        </div>
+      </div>
+
+      <div class="doc" id="doc">
+        <div class="page">
+          <div class="top">
+            <div class="mcp">
+              <div class="name" id="docMcpName">Momentum Creative Productions (MCP)</div>
+              <div class="meta" id="docMcpMeta">Lyon — France</div>
+            </div>
+            <div class="quote">
+              <div class="title">DEVIS</div>
+              <div class="ref" id="docRef">Réf. —</div>
+              <div class="ref" id="docDate">Date —</div>
+              <div class="ref" id="docValidity">Validité —</div>
+            </div>
+          </div>
+
+          <div class="blocks">
+            <div class="box">
+              <div class="t">Client</div>
+              <div class="c" id="docClient">—</div>
+            </div>
+            <div class="box">
+              <div class="t">Projet</div>
+              <div class="c" id="docProject">—</div>
+            </div>
+          </div>
+
+          <table class="items" id="docItems">
+            <thead>
+              <tr>
+                <th>Désignation</th>
+                <th>Description</th>
+                <th class="right">Qté</th>
+                <th>Unité</th>
+                <th class="right">PU HT</th>
+                <th class="right">Total HT</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <div class="totals">
+            <div class="notes">
+              <div><b>Conditions</b></div>
+              <div id="docTerms">—</div>
+              <div style="margin-top:8px"><b>Notes</b></div>
+              <div id="docNotes">—</div>
+              <div style="margin-top:8px"><small>TVA : <span id="docVatNote">—</span></small></div>
+            </div>
+            <div class="sum">
+              <div class="line"><span>Total HT</span><span id="docHT">—</span></div>
+              <div class="line"><span>Remise</span><span id="docDisc">—</span></div>
+              <div class="line"><span>TVA</span><span id="docVAT">—</span></div>
+              <div class="line total"><span>Total TTC</span><span id="docTTC">—</span></div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <div id="docFooterLeft">Momentum Creative Productions — Devis</div>
+            <div id="docFooterRight">Paiement : <span id="docPay">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+/* =========================================================
+   MCP — Générateur de devis (vanilla JS)
+   - Mode vente / marge-cible / hybride
+   - TVA (par défaut 20%)
+   - Dégressivité matériel
+   - Export/Import JSON + localStorage
+   - Impression PDF via window.print()
+   ========================================================= */
+
+const fmtEUR = (v) => new Intl.NumberFormat('fr-FR', {style:'currency', currency:'EUR'}).format(isFinite(v)? v : 0);
+const fmtPct = (v) => (isFinite(v)? (v*100).toFixed(1) : '0.0') + ' %';
+const todayStr = () => new Intl.DateTimeFormat('fr-FR', {year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date());
+
+/** Inventaire démo (à remplacer/importer depuis ton Inventaire matériel.xlsx)
+ *  Format: {name, dayRate}
+ */
+let INVENTORY = [
+  {name:"Pack captation (cam + trépied) — démo", dayRate: 250},
+  {name:"Pack audio (HF + enregistreur) — démo", dayRate: 120},
+  {name:"Éclairage (2 panneaux) — démo", dayRate: 90},
+  {name:"Régie live (switcher / monitoring) — démo", dayRate: 300},
+  {name:"PTZ / télécommande — démo", dayRate: 180},
+  {name:"Divers (câblage / stands) — démo", dayRate: 50},
+];
+
+/** Barèmes dégressifs */
+const DEG_PRESETS = {
+  mcp: [
+    {day:1, factor:1.00},
+    {day:2, factor:0.70},
+    {day:3, factor:0.60},
+    {day:4, factor:0.55},
+    {day:5, factor:0.50},
+    {day:6, factor:0.45, plus:true}, // 6+
+  ],
+  soft: [
+    {day:1, factor:1.00},
+    {day:2, factor:0.80},
+    {day:3, factor:0.70},
+    {day:4, factor:0.65, plus:true}, // 4+
+  ],
+  aggr: [
+    {day:1, factor:1.00},
+    {day:2, factor:0.65},
+    {day:3, factor:0.55},
+    {day:4, factor:0.50},
+    {day:5, factor:0.45, plus:true}, // 5+
+  ]
+};
+
+function parseCustomDeg(str){
+  // "1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45"
+  const parts = (str||"").split(",").map(s=>s.trim()).filter(Boolean);
+  const out = [];
+  for(const p of parts){
+    const [dRaw,fRaw] = p.split(":").map(x=>x.trim());
+    if(!dRaw || !fRaw) continue;
+    const plus = dRaw.endsWith("+");
+    const day = parseInt(dRaw.replace("+",""), 10);
+    const factor = parseFloat((fRaw||"").replace(",","."));
+    if(Number.isFinite(day) && Number.isFinite(factor)){
+      out.push({day, factor, plus});
+    }
+  }
+  // sort by day
+  out.sort((a,b)=>a.day-b.day);
+  return out.length ? out : DEG_PRESETS.mcp;
+}
+
+function getDegCurve(){
+  const preset = el.degressivityPreset.value;
+  if(preset === "custom") return parseCustomDeg(el.customDeg.value);
+  return DEG_PRESETS[preset] || DEG_PRESETS.mcp;
+}
+
+function degFactorForDay(dayIndex, curve){
+  // dayIndex: 1..N
+  // find exact match first; else last "plus" if dayIndex >= plus.day; else nearest previous
+  let exact = curve.find(x=>x.day===dayIndex && !x.plus);
+  if(exact) return exact.factor;
+
+  // find last "plus" that applies
+  let plus = curve.filter(x=>x.plus && dayIndex>=x.day).sort((a,b)=>b.day-a.day)[0];
+  if(plus) return plus.factor;
+
+  // fallback: find nearest previous defined factor
+  let prev = curve.filter(x=>x.day<=dayIndex && !x.plus).sort((a,b)=>b.day-a.day)[0];
+  return prev ? prev.factor : 1.0;
+}
+
+function degressiveTotal(dayRate, days, curve){
+  let total = 0;
+  for(let d=1; d<=days; d++){
+    total += dayRate * degFactorForDay(d, curve);
+  }
+  const avgFactor = days>0 ? (total / (dayRate * days)) : 1;
+  return {total, avgFactor};
+}
+
+/** State model */
+const state = {
+  meta: {
+    pricingMode: "sell",
+    targetMargin: 0.50,
+    vatRate: 0.20,
+    degressivityPreset: "mcp",
+    customDeg: "1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45",
+    quoteRef: "",
+    validityDays: 30,
+    paymentTerms: "40% à la commande, solde à la livraison (J+30)",
+    publicNotes: "Inclut 1 aller-retour de modifications. Toute demande supplémentaire fera l’objet d’un avenant.",
+    depositInfo: "Acompte 40% à la commande",
+    discount: 0,
+    dayRateMCP: 600
+  },
+  mcp: { name: "Momentum Creative Productions (MCP)", addr:"Lyon — France", siret:"", vat:"" },
+  client: { company:"", contact:"", email:"", phone:"", addr:"", ids:"" },
+  project: { title:"", place:"", dates:"", type:"Film corporate", desc:"" },
+  services: [],
+  gear: [],
+  fees: []
+};
+
+function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+
+/** Helpers: compute line pricing */
+function computeLine(line){
+  // line: {qty, unit, unitPrice, cost, desc}
+  const qty = +line.qty || 0;
+  const cost = +line.cost || 0;
+  const mode = el.pricingMode.value;
+  const target = clamp(+el.targetMargin.value || 0, 0, 0.95);
+
+  let unitPrice = (line.unitPrice === "" || line.unitPrice === null || typeof line.unitPrice === "undefined") ? NaN : (+line.unitPrice || 0);
+
+  if(mode === "target"){
+    // compute unit price from cost so that margin on CA = target:
+    // CA = cost / (1 - target)
+    // if cost is total line cost, then line CA should satisfy. We'll price per unit: (cost/qty)/(1-target)
+    const cPerUnit = qty>0 ? (cost/qty) : cost;
+    unitPrice = cPerUnit / Math.max(1 - target, 0.05);
+  }
+  // in sell/hybrid: keep as-is; if unitPrice not provided, default to 0
+  if(!Number.isFinite(unitPrice)) unitPrice = 0;
+
+  const total = unitPrice * qty;
+  return {qty, unitPrice, cost, total};
+}
+
+function clamp(v, a, b){ return Math.min(Math.max(v, a), b); }
+
+/** DOM refs */
+const el = {
+  pricingMode: document.getElementById("pricingMode"),
+  targetMargin: document.getElementById("targetMargin"),
+  vatRate: document.getElementById("vatRate"),
+  degressivityPreset: document.getElementById("degressivityPreset"),
+  customDegWrap: document.getElementById("customDegWrap"),
+  customDeg: document.getElementById("customDeg"),
+
+  quoteRef: document.getElementById("quoteRef"),
+  validityDays: document.getElementById("validityDays"),
+  paymentTerms: document.getElementById("paymentTerms"),
+  publicNotes: document.getElementById("publicNotes"),
+  discount: document.getElementById("discount"),
+  depositInfo: document.getElementById("depositInfo"),
+  dayRateMCP: document.getElementById("dayRateMCP"),
+
+  mcpName: document.getElementById("mcpName"),
+  mcpAddr: document.getElementById("mcpAddr"),
+  mcpSiret: document.getElementById("mcpSiret"),
+  mcpVat: document.getElementById("mcpVat"),
+
+  clientCompany: document.getElementById("clientCompany"),
+  clientContact: document.getElementById("clientContact"),
+  clientEmail: document.getElementById("clientEmail"),
+  clientPhone: document.getElementById("clientPhone"),
+  clientAddr: document.getElementById("clientAddr"),
+  clientIds: document.getElementById("clientIds"),
+
+  projectTitle: document.getElementById("projectTitle"),
+  projectPlace: document.getElementById("projectPlace"),
+  projectDates: document.getElementById("projectDates"),
+  projectType: document.getElementById("projectType"),
+  projectDesc: document.getElementById("projectDesc"),
+
+  quickPack: document.getElementById("quickPack"),
+  serviceTemplate: document.getElementById("serviceTemplate"),
+  addService: document.getElementById("addService"),
+  clearServices: document.getElementById("clearServices"),
+  tblServices: document.getElementById("tblServices").querySelector("tbody"),
+  countService: document.getElementById("countService"),
+
+  gearItem: document.getElementById("gearItem"),
+  addGear: document.getElementById("addGear"),
+  tblGear: document.getElementById("tblGear").querySelector("tbody"),
+  countGear: document.getElementById("countGear"),
+  btnImportCSV: document.getElementById("btnImportCSV"),
+  csvArea: document.getElementById("csvArea"),
+
+  feeTemplate: document.getElementById("feeTemplate"),
+  addFee: document.getElementById("addFee"),
+  clearFees: document.getElementById("clearFees"),
+  tblFees: document.getElementById("tblFees").querySelector("tbody"),
+  countFees: document.getElementById("countFees"),
+
+  // KPIs
+  kpiSales: document.getElementById("kpiSales"),
+  kpiCosts: document.getElementById("kpiCosts"),
+  kpiProfit: document.getElementById("kpiProfit"),
+  kpiProfitRate: document.getElementById("kpiProfitRate"),
+  kpiMarkup: document.getElementById("kpiMarkup"),
+  kpiSuggestSales: document.getElementById("kpiSuggestSales"),
+  kpiTTC: document.getElementById("kpiTTC"),
+  kpiMargin: document.getElementById("kpiMargin"),
+
+  btnAutoReprice: document.getElementById("btnAutoReprice"),
+  btnInsertDayRate: document.getElementById("btnInsertDayRate"),
+
+  // top actions
+  btnNew: document.getElementById("btnNew"),
+  btnSave: document.getElementById("btnSave"),
+  btnExport: document.getElementById("btnExport"),
+  importFile: document.getElementById("importFile"),
+  btnPrint: document.getElementById("btnPrint"),
+
+  // doc fields
+  docMcpName: document.getElementById("docMcpName"),
+  docMcpMeta: document.getElementById("docMcpMeta"),
+  docRef: document.getElementById("docRef"),
+  docDate: document.getElementById("docDate"),
+  docValidity: document.getElementById("docValidity"),
+  docClient: document.getElementById("docClient"),
+  docProject: document.getElementById("docProject"),
+  docItems: document.getElementById("docItems").querySelector("tbody"),
+  docHT: document.getElementById("docHT"),
+  docDisc: document.getElementById("docDisc"),
+  docVAT: document.getElementById("docVAT"),
+  docTTC: document.getElementById("docTTC"),
+  docTerms: document.getElementById("docTerms"),
+  docNotes: document.getElementById("docNotes"),
+  docVatNote: document.getElementById("docVatNote"),
+  docFooterLeft: document.getElementById("docFooterLeft"),
+  docPay: document.getElementById("docPay"),
+};
+
+function syncStateFromInputs(){
+  // meta
+  state.meta.pricingMode = el.pricingMode.value;
+  state.meta.targetMargin = +el.targetMargin.value || 0;
+  state.meta.vatRate = +el.vatRate.value || 0;
+  state.meta.degressivityPreset = el.degressivityPreset.value;
+  state.meta.customDeg = el.customDeg.value;
+  state.meta.quoteRef = el.quoteRef.value.trim();
+  state.meta.validityDays = +el.validityDays.value || 0;
+  state.meta.paymentTerms = el.paymentTerms.value;
+  state.meta.publicNotes = el.publicNotes.value;
+  state.meta.discount = +el.discount.value || 0;
+  state.meta.depositInfo = el.depositInfo.value;
+  state.meta.dayRateMCP = +el.dayRateMCP.value || 0;
+
+  // mcp
+  state.mcp.name = el.mcpName.value;
+  state.mcp.addr = el.mcpAddr.value;
+  state.mcp.siret = el.mcpSiret.value;
+  state.mcp.vat = el.mcpVat.value;
+
+  // client
+  state.client.company = el.clientCompany.value;
+  state.client.contact = el.clientContact.value;
+  state.client.email = el.clientEmail.value;
+  state.client.phone = el.clientPhone.value;
+  state.client.addr = el.clientAddr.value;
+  state.client.ids = el.clientIds.value;
+
+  // project
+  state.project.title = el.projectTitle.value;
+  state.project.place = el.projectPlace.value;
+  state.project.dates = el.projectDates.value;
+  state.project.type = el.projectType.value;
+  state.project.desc = el.projectDesc.value;
+}
+
+function syncInputsFromState(){
+  el.pricingMode.value = state.meta.pricingMode;
+  el.targetMargin.value = state.meta.targetMargin;
+  el.vatRate.value = state.meta.vatRate;
+  el.degressivityPreset.value = state.meta.degressivityPreset;
+  el.customDeg.value = state.meta.customDeg;
+  el.quoteRef.value = state.meta.quoteRef;
+  el.validityDays.value = state.meta.validityDays;
+  el.paymentTerms.value = state.meta.paymentTerms;
+  el.publicNotes.value = state.meta.publicNotes;
+  el.discount.value = state.meta.discount;
+  el.depositInfo.value = state.meta.depositInfo;
+  el.dayRateMCP.value = state.meta.dayRateMCP;
+
+  el.mcpName.value = state.mcp.name;
+  el.mcpAddr.value = state.mcp.addr;
+  el.mcpSiret.value = state.mcp.siret;
+  el.mcpVat.value = state.mcp.vat;
+
+  el.clientCompany.value = state.client.company;
+  el.clientContact.value = state.client.contact;
+  el.clientEmail.value = state.client.email;
+  el.clientPhone.value = state.client.phone;
+  el.clientAddr.value = state.client.addr;
+  el.clientIds.value = state.client.ids;
+
+  el.projectTitle.value = state.project.title;
+  el.projectPlace.value = state.project.place;
+  el.projectDates.value = state.project.dates;
+  el.projectType.value = state.project.type;
+  el.projectDesc.value = state.project.desc;
+}
+
+function renderInventorySelect(){
+  el.gearItem.innerHTML = "";
+  INVENTORY.forEach((it, idx)=>{
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = `${it.name} — ${fmtEUR(it.dayRate)}/j (J1)`;
+    el.gearItem.appendChild(opt);
+  });
+}
+
+function addServiceLine(templateKey){
+  const rate = +el.dayRateMCP.value || 600;
+  const templates = {
+    custom: {name:"Prestation", desc:"", unit:"forfait", qty:1, unitPrice:"", cost:0},
+    prep: {name:"Préparation / repérage", desc:"Pré-production, repérage, planification", unit:"jour", qty:1, unitPrice: rate, cost:0},
+    shoot:{name:"Tournage", desc:"Captation sur site (équipe + réalisation)", unit:"jour", qty:1, unitPrice: rate, cost:0},
+    edit: {name:"Montage", desc:"Montage, titrage léger, exports", unit:"jour", qty:1, unitPrice: rate, cost:0},
+    color:{name:"Étalonnage", desc:"Correction colorimétrique", unit:"jour", qty:1, unitPrice: rate, cost:0},
+    sound:{name:"Mixage", desc:"Nettoyage voix, équilibrage, mastering", unit:"jour", qty:1, unitPrice: rate, cost:0},
+    motion:{name:"Motion design", desc:"Habillage, titres, animations", unit:"jour", qty:1, unitPrice: rate, cost:0},
+    delivery:{name:"Livraisons", desc:"Exports, versions, livraison finale", unit:"forfait", qty:1, unitPrice: 120, cost:0},
+    live_prod:{name:"Production live", desc:"Réalisation live, régie, coordination", unit:"jour", qty:1, unitPrice: rate, cost:0},
+    live_replay:{name:"Replays / dérush", desc:"Relecture, découpe, chapitrage, exports", unit:"jour", qty:1, unitPrice: rate, cost:0},
+  };
+  const t = templates[templateKey] || templates.custom;
+  state.services.push({id:uid(), ...t});
+}
+
+function addFeeLine(templateKey){
+  const templates = {
+    custom:{name:"Frais", desc:"", unit:"forfait", qty:1, unitPrice:"", cost:0},
+    travel:{name:"Déplacements", desc:"km, péages, train, parking", unit:"forfait", qty:1, unitPrice:"", cost:0},
+    meals:{name:"Repas / catering", desc:"Repas équipe / plateau", unit:"forfait", qty:1, unitPrice:"", cost:0},
+    hotel:{name:"Hébergement", desc:"Hôtel / logement", unit:"nuit", qty:1, unitPrice:"", cost:0},
+    music:{name:"Droits musicaux", desc:"Licences, banques sonores, diffusion", unit:"forfait", qty:1, unitPrice:"", cost:0},
+    st:{name:"Sous-traitance", desc:"Prestataire externe", unit:"forfait", qty:1, unitPrice:"", cost:0},
+    misc:{name:"Divers", desc:"", unit:"forfait", qty:1, unitPrice:"", cost:0},
+  };
+  const t = templates[templateKey] || templates.custom;
+  state.fees.push({id:uid(), ...t});
+}
+
+function addGearLine(invIndex){
+  const it = INVENTORY[invIndex];
+  if(!it) return;
+  state.gear.push({id:uid(), name:it.name, dayRate:it.dayRate, days:1});
+}
+
+function removeById(arr, id){
+  const i = arr.findIndex(x=>x.id===id);
+  if(i>=0) arr.splice(i,1);
+}
+
+function buildEditableCell(value, onChange, type="text", attrs={}){
+  const input = document.createElement("input");
+  input.type = type;
+  input.value = value ?? "";
+  for(const k in attrs) input.setAttribute(k, attrs[k]);
+  input.addEventListener("input", ()=>onChange(input.value));
+  return input;
+}
+
+function renderLinesTable(tbody, lines, kind){
+  tbody.innerHTML = "";
+
+  lines.forEach(line=>{
+    const tr = document.createElement("tr");
+
+    const c1 = document.createElement("td");
+    c1.appendChild(buildEditableCell(line.name, v=>{line.name=v; refresh();}));
+    tr.appendChild(c1);
+
+    const c2 = document.createElement("td");
+    const ta = document.createElement("textarea");
+    ta.value = line.desc ?? "";
+    ta.style.minHeight = "44px";
+    ta.addEventListener("input", ()=>{line.desc=ta.value; refresh();});
+    c2.appendChild(ta);
+    tr.appendChild(c2);
+
+    const c3 = document.createElement("td");
+    c3.className="right";
+    const qtyInput = buildEditableCell(line.qty, v=>{line.qty = +v || 0; refresh();}, "number", {step:"0.25", min:"0"});
+    qtyInput.style.textAlign="right";
+    c3.appendChild(qtyInput);
+    tr.appendChild(c3);
+
+    const c4 = document.createElement("td");
+    const unitSel = document.createElement("select");
+    ["forfait","jour","heure","nuit","km","unité"].forEach(u=>{
+      const o=document.createElement("option"); o.value=u; o.textContent=u; unitSel.appendChild(o);
+    });
+    unitSel.value = line.unit || "forfait";
+    unitSel.addEventListener("change", ()=>{line.unit=unitSel.value; refresh();});
+    c4.appendChild(unitSel);
+    tr.appendChild(c4);
+
+    const c5 = document.createElement("td");
+    c5.className="right";
+    const pu = buildEditableCell(line.unitPrice ?? "", v=>{ line.unitPrice = v==="" ? "" : (+v||0); refresh();}, "number", {step:"1", min:"0"});
+    pu.style.textAlign="right";
+    c5.appendChild(pu);
+    tr.appendChild(c5);
+
+    const c6 = document.createElement("td");
+    c6.className="right";
+    const cost = buildEditableCell(line.cost ?? 0, v=>{ line.cost = (+v||0); refresh(); }, "number", {step:"1"});
+    cost.style.textAlign="right";
+    c6.appendChild(cost);
+    tr.appendChild(c6);
+
+    const computed = computeLine(line);
+
+    const c7 = document.createElement("td");
+    c7.className="right mono";
+    c7.textContent = fmtEUR(computed.total);
+    tr.appendChild(c7);
+
+    const c8 = document.createElement("td");
+    c8.className="td-actions";
+    const b1 = document.createElement("button");
+    b1.className="btn small danger";
+    b1.textContent = "Supprimer";
+    b1.addEventListener("click", ()=>{
+      if(kind==="services") removeById(state.services, line.id);
+      if(kind==="fees") removeById(state.fees, line.id);
+      refresh();
+    });
+    c8.appendChild(b1);
+    tr.appendChild(c8);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function renderGearTable(){
+  el.tblGear.innerHTML = "";
+  const curve = getDegCurve();
+
+  state.gear.forEach(line=>{
+    const tr = document.createElement("tr");
+
+    const c1 = document.createElement("td");
+    c1.appendChild(buildEditableCell(line.name, v=>{line.name=v; refresh();}));
+    tr.appendChild(c1);
+
+    const c2 = document.createElement("td");
+    c2.className="right";
+    const days = buildEditableCell(line.days, v=>{line.days=+v||0; refresh();}, "number", {step:"1", min:"0"});
+    days.style.textAlign="right";
+    c2.appendChild(days);
+    tr.appendChild(c2);
+
+    const c3 = document.createElement("td");
+    c3.className="right";
+    const dr = buildEditableCell(line.dayRate, v=>{line.dayRate=+v||0; refresh();}, "number", {step:"1", min:"0"});
+    dr.style.textAlign="right";
+    c3.appendChild(dr);
+    tr.appendChild(c3);
+
+    const calc = degressiveTotal(+line.dayRate||0, +line.days||0, curve);
+
+    const c4 = document.createElement("td");
+    c4.className="right mono";
+    c4.textContent = (isFinite(calc.avgFactor)? calc.avgFactor.toFixed(2) : "—");
+    tr.appendChild(c4);
+
+    const c5 = document.createElement("td");
+    c5.className="right mono";
+    c5.textContent = fmtEUR(calc.total);
+    tr.appendChild(c5);
+
+    const c6 = document.createElement("td");
+    c6.className="td-actions";
+    const b1 = document.createElement("button");
+    b1.className="btn small danger";
+    b1.textContent = "Supprimer";
+    b1.addEventListener("click", ()=>{ removeById(state.gear, line.id); refresh(); });
+    c6.appendChild(b1);
+    tr.appendChild(c6);
+
+    el.tblGear.appendChild(tr);
+  });
+}
+
+function totals(){
+  // sales totals HT
+  let sales = 0;
+  let costs = 0;
+
+  // services
+  state.services.forEach(l=>{
+    const c = computeLine(l);
+    sales += c.total;
+    costs += c.cost || 0;
+  });
+
+  // gear (sales only; cost optional non géré ici)
+  const curve = getDegCurve();
+  state.gear.forEach(g=>{
+    const calc = degressiveTotal(+g.dayRate||0, +g.days||0, curve);
+    sales += calc.total;
+  });
+
+  // fees
+  state.fees.forEach(l=>{
+    const c = computeLine(l);
+    sales += c.total;
+    costs += c.cost || 0;
+  });
+
+  const discount = +el.discount.value || 0;
+  sales -= Math.max(discount, 0);
+
+  const profit = sales - costs;
+  const profitRate = sales>0 ? profit/sales : 0;
+  const markup = costs>0 ? profit/costs : 0;
+
+  const target = clamp(+el.targetMargin.value||0, 0, 0.95);
+  const suggestedSales = costs / Math.max(1 - target, 0.05);
+
+  const vat = Math.max(sales, 0) * (+el.vatRate.value || 0);
+  const ttc = Math.max(sales, 0) + vat;
+
+  return {sales, costs, profit, profitRate, markup, suggestedSales, vat, ttc, discount};
+}
+
+function ensureQuoteRef(){
+  // If no ref, create a simple one
+  if(state.meta.quoteRef && state.meta.quoteRef.trim()) return state.meta.quoteRef.trim();
+  const now = new Date();
+  const y = now.getFullYear();
+  const key = "mcp_quote_seq_" + y;
+  const seq = +(localStorage.getItem(key) || "0") + 1;
+  localStorage.setItem(key, String(seq));
+  const ref = `DEV-${y}-${String(seq).padStart(4,"0")}`;
+  state.meta.quoteRef = ref;
+  el.quoteRef.value = ref;
+  return ref;
+}
+
+function refresh(){
+  syncStateFromInputs();
+
+  // custom deg show
+  el.customDegWrap.style.display = (el.degressivityPreset.value === "custom") ? "block" : "none";
+
+  renderLinesTable(el.tblServices, state.services, "services");
+  renderGearTable();
+  renderLinesTable(el.tblFees, state.fees, "fees");
+
+  el.countService.textContent = state.services.length;
+  el.countGear.textContent = state.gear.length;
+  el.countFees.textContent = state.fees.length;
+
+  // KPIs
+  const t = totals();
+  el.kpiSales.textContent = fmtEUR(t.sales);
+  el.kpiCosts.textContent = fmtEUR(t.costs);
+  el.kpiProfit.textContent = fmtEUR(t.profit);
+  el.kpiProfitRate.textContent = fmtPct(t.profitRate);
+  el.kpiMarkup.textContent = fmtPct(t.markup);
+  el.kpiSuggestSales.textContent = fmtEUR(t.suggestedSales);
+  el.kpiTTC.textContent = fmtEUR(t.ttc);
+
+  // margin pill
+  const target = clamp(+el.targetMargin.value||0, 0, 0.95);
+  const ok = (t.sales<=0) ? false : (t.profitRate >= target - 1e-6);
+  el.kpiMargin.textContent = `${fmtPct(t.profitRate)} (cible ${fmtPct(target)})`;
+  el.kpiMargin.parentElement.querySelector(".dot").style.background = ok ? "var(--accent2)" : "var(--danger)";
+
+  // doc render
+  renderDoc();
+
+  // persist draft (auto)
+  localStorage.setItem("mcp_quote_autosave", JSON.stringify(state));
+}
+
+function renderDoc(){
+  const t = totals();
+  const ref = state.meta.quoteRef?.trim() ? state.meta.quoteRef.trim() : "—";
+  const date = todayStr();
+  const validity = (state.meta.validityDays>0) ? `${state.meta.validityDays} jours` : "—";
+
+  // MCP header meta
+  let mcpMeta = (state.mcp.addr||"").trim();
+  const extras = [];
+  if(state.mcp.siret?.trim()) extras.push(`SIRET: ${state.mcp.siret.trim()}`);
+  if(state.mcp.vat?.trim()) extras.push(`TVA: ${state.mcp.vat.trim()}`);
+  if(extras.length) mcpMeta += (mcpMeta? "\n":"") + extras.join(" · ");
+
+  el.docMcpName.textContent = state.mcp.name || "Momentum Creative Productions (MCP)";
+  el.docMcpMeta.textContent = mcpMeta || "—";
+  el.docRef.textContent = `Réf. ${ref}`;
+  el.docDate.textContent = `Date ${date}`;
+  el.docValidity.textContent = `Validité ${validity}`;
+
+  // Client block
+  const clientLines = [];
+  clientLines.push((state.client.company||"—").trim());
+  if(state.client.contact?.trim()) clientLines.push(state.client.contact.trim());
+  const comm = [];
+  if(state.client.email?.trim()) comm.push(state.client.email.trim());
+  if(state.client.phone?.trim()) comm.push(state.client.phone.trim());
+  if(comm.length) clientLines.push(comm.join(" · "));
+  if(state.client.addr?.trim()) clientLines.push(state.client.addr.trim());
+  if(state.client.ids?.trim()) clientLines.push(state.client.ids.trim());
+  el.docClient.textContent = clientLines.filter(Boolean).join("\n") || "—";
+
+  // Project block
+  const projLines = [];
+  projLines.push((state.project.title||"—").trim());
+  const meta = [];
+  if(state.project.type?.trim()) meta.push(state.project.type.trim());
+  if(state.project.place?.trim()) meta.push(state.project.place.trim());
+  if(state.project.dates?.trim()) meta.push(state.project.dates.trim());
+  if(meta.length) projLines.push(meta.join(" · "));
+  if(state.project.desc?.trim()) projLines.push(state.project.desc.trim());
+  el.docProject.textContent = projLines.filter(Boolean).join("\n") || "—";
+
+  // items rows (services + gear + fees)
+  el.docItems.innerHTML = "";
+  const rows = [];
+
+  state.services.forEach(l=>{
+    const c = computeLine(l);
+    rows.push({name:l.name, desc:l.desc, qty:c.qty, unit:l.unit, pu:c.unitPrice, total:c.total});
+  });
+
+  // gear with degressivity (keep description short)
+  const curve = getDegCurve();
+  state.gear.forEach(g=>{
+    const calc = degressiveTotal(+g.dayRate||0, +g.days||0, curve);
+    rows.push({
+      name:`Location matériel — ${g.name}`,
+      desc:`Tarif J1: ${fmtEUR(+g.dayRate||0)} · Dégressivité appliquée`,
+      qty:+g.days||0,
+      unit:"jour",
+      pu:+g.dayRate||0,
+      total:calc.total
+    });
+  });
+
+  state.fees.forEach(l=>{
+    const c = computeLine(l);
+    rows.push({name:l.name, desc:l.desc, qty:c.qty, unit:l.unit, pu:c.unitPrice, total:c.total});
+  });
+
+  // discount line displayed in totals only
+  rows.forEach(r=>{
+    const tr = document.createElement("tr");
+    const td1 = document.createElement("td"); td1.textContent = r.name || "";
+    const td2 = document.createElement("td"); td2.textContent = r.desc || "";
+    const td3 = document.createElement("td"); td3.className="right"; td3.textContent = (r.qty ?? 0);
+    const td4 = document.createElement("td"); td4.textContent = r.unit || "";
+    const td5 = document.createElement("td"); td5.className="right"; td5.textContent = fmtEUR(r.pu ?? 0);
+    const td6 = document.createElement("td"); td6.className="right"; td6.textContent = fmtEUR(r.total ?? 0);
+    tr.append(td1,td2,td3,td4,td5,td6);
+    el.docItems.appendChild(tr);
+  });
+
+  // totals
+  el.docHT.textContent = fmtEUR(t.sales);
+  el.docDisc.textContent = (t.discount>0) ? "− " + fmtEUR(t.discount) : fmtEUR(0);
+  el.docVAT.textContent = fmtEUR(t.vat);
+  el.docTTC.textContent = fmtEUR(t.ttc);
+
+  el.docTerms.textContent = (state.meta.paymentTerms || "—") + (state.meta.depositInfo ? `\n${state.meta.depositInfo}` : "");
+  el.docPay.textContent = state.meta.paymentTerms || "—";
+  el.docNotes.textContent = state.meta.publicNotes || "—";
+
+  const vatRate = +el.vatRate.value || 0;
+  el.docVatNote.textContent = vatRate>0 ? `TVA au taux de ${(vatRate*100).toFixed(1).replace(".0","")}%.` : "TVA non applicable.";
+  el.docFooterLeft.textContent = `${state.mcp.name || "Momentum Creative Productions"} — Devis ${ref}`;
+}
+
+/** Quick packs */
+function applyQuickPack(key){
+  state.services = [];
+  state.fees = [];
+  state.gear = [];
+
+  const rate = +el.dayRateMCP.value || 600;
+
+  if(key==="film_s"){
+    addServiceLine("prep"); state.services[state.services.length-1].qty=0.5;
+    addServiceLine("shoot"); state.services[state.services.length-1].qty=1;
+    addServiceLine("edit");  state.services[state.services.length-1].qty=1;
+  } else if(key==="film_m"){
+    addServiceLine("prep"); state.services[state.services.length-1].qty=1;
+    addServiceLine("shoot"); state.services[state.services.length-1].qty=2;
+    addServiceLine("edit");  state.services[state.services.length-1].qty=2;
+    addServiceLine("color"); state.services[state.services.length-1].qty=0.5;
+    addServiceLine("sound"); state.services[state.services.length-1].qty=0.5;
+  } else if(key==="after_s"){
+    addServiceLine("prep"); state.services[state.services.length-1].qty=0.25;
+    addServiceLine("shoot"); state.services[state.services.length-1].qty=1;
+    addServiceLine("edit");  state.services[state.services.length-1].qty=1;
+  } else if(key==="live_teams"){
+    addServiceLine("prep"); state.services[state.services.length-1].qty=0.5;
+    addServiceLine("live_prod"); state.services[state.services.length-1].qty=1;
+    addServiceLine("delivery"); state.services[state.services.length-1].unitPrice = 120;
+    // gear demo
+    addGearLine(0); state.gear[state.gear.length-1].days = 1;
+    addGearLine(1); state.gear[state.gear.length-1].days = 1;
+    addGearLine(3); state.gear[state.gear.length-1].days = 1;
+  } else if(key==="live_talk"){
+    addServiceLine("prep"); state.services[state.services.length-1].qty=1;
+    addServiceLine("live_prod"); state.services[state.services.length-1].qty=1;
+    addServiceLine("live_replay"); state.services[state.services.length-1].qty=1;
+    addServiceLine("motion"); state.services[state.services.length-1].qty=0.5;
+    addGearLine(3); state.gear[state.gear.length-1].days = 1;
+    addGearLine(4); state.gear[state.gear.length-1].days = 1;
+    addGearLine(1); state.gear[state.gear.length-1].days = 1;
+  }
+  // ensure unitPrice defaults in sell/hybrid
+  state.services.forEach(s=>{
+    if(s.unitPrice==="" || s.unitPrice===null || typeof s.unitPrice==="undefined") s.unitPrice = rate;
+  });
+
+  refresh();
+}
+
+function autoRepriceToTarget(){
+  // Apply target pricing to every service/fee line: unitPrice = (cost/qty)/(1-target)
+  const target = clamp(+el.targetMargin.value||0, 0, 0.95);
+  const safeDen = Math.max(1 - target, 0.05);
+
+  [...state.services, ...state.fees].forEach(l=>{
+    const qty = +l.qty||0;
+    const cost = +l.cost||0;
+    const cPer = qty>0 ? cost/qty : cost;
+    l.unitPrice = cPer / safeDen;
+  });
+  refresh();
+}
+
+function insertDayRateLines(){
+  // Insert common “600€/jour” as sell lines
+  const rate = +el.dayRateMCP.value || 600;
+  state.services.push({id:uid(), name:"Préparation", desc:"Pré-production, échanges, repérage, planning", unit:"jour", qty:1, unitPrice:rate, cost:0});
+  state.services.push({id:uid(), name:"Tournage", desc:"Captation sur site", unit:"jour", qty:1, unitPrice:rate, cost:0});
+  state.services.push({id:uid(), name:"Montage", desc:"Montage + exports", unit:"jour", qty:1, unitPrice:rate, cost:0});
+  refresh();
+}
+
+/** CSV inventory import (simple) */
+function importInventoryFromCSV(text){
+  // Accept lines like:
+  // name;tarif
+  // or name,tarif
+  const lines = (text||"").split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  const out = [];
+  for(const l of lines){
+    const sep = l.includes(";") ? ";" : (l.includes(",") ? "," : null);
+    if(!sep) continue;
+    const [name, rate] = l.split(sep);
+    const r = parseFloat((rate||"").trim().replace(",","."));
+    if(name && Number.isFinite(r)){
+      out.push({name:name.trim(), dayRate:r});
+    }
+  }
+  if(out.length){
+    INVENTORY = out;
+    renderInventorySelect();
+    alert(`Inventaire importé (${out.length} items).`);
+  } else {
+    alert("CSV non reconnu. Attendu : lignes 'nom;tarif_jour'.");
+  }
+  refresh();
+}
+
+/** Save/load/export */
+function saveToLocal(){
+  syncStateFromInputs();
+  ensureQuoteRef();
+  const key = "mcp_quote_saved_" + state.meta.quoteRef;
+  localStorage.setItem(key, JSON.stringify(state));
+  alert(`Devis sauvegardé : ${state.meta.quoteRef}`);
+  refresh();
+}
+
+function newQuote(){
+  if(!confirm("Créer un nouveau devis ? (cela remplace le brouillon en cours)")) return;
+  // reset but keep MCP identity
+  const keepMcp = {...state.mcp};
+  const keepMeta = {...state.meta};
+  Object.assign(state, JSON.parse(JSON.stringify({
+    meta: {...keepMeta, quoteRef:""},
+    mcp: keepMcp,
+    client:{company:"",contact:"",email:"",phone:"",addr:"",ids:""},
+    project:{title:"",place:"",dates:"",type:"Film corporate",desc:""},
+    services:[],
+    gear:[],
+    fees:[]
+  })));
+  syncInputsFromState();
+  refresh();
+}
+
+function exportJSON(){
+  syncStateFromInputs();
+  const ref = state.meta.quoteRef?.trim() ? state.meta.quoteRef.trim() : "DEVIS";
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${ref}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importJSON(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const obj = JSON.parse(reader.result);
+      // minimal validation
+      if(!obj || typeof obj !== "object") throw new Error("invalid");
+      Object.assign(state, obj);
+      // ensure arrays exist
+      state.services = state.services || [];
+      state.gear = state.gear || [];
+      state.fees = state.fees || [];
+      syncInputsFromState();
+      refresh();
+      alert("Import JSON OK.");
+    } catch(e){
+      alert("Import JSON impossible : fichier invalide.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/** Events */
+function bindAll(){
+  // show/hide custom deg
+  el.degressivityPreset.addEventListener("change", refresh);
+  el.customDeg.addEventListener("input", refresh);
+
+  // any input refresh
+  document.querySelectorAll("input,select,textarea").forEach(x=>{
+    if(["importFile"].includes(x.id)) return;
+    x.addEventListener("input", refresh);
+    x.addEventListener("change", refresh);
+  });
+
+  el.addService.addEventListener("click", ()=>{
+    addServiceLine(el.serviceTemplate.value);
+    refresh();
+  });
+  el.clearServices.addEventListener("click", ()=>{
+    if(confirm("Supprimer toutes les lignes prestations ?")){
+      state.services = [];
+      refresh();
+    }
+  });
+
+  el.addGear.addEventListener("click", ()=>{
+    addGearLine(+el.gearItem.value);
+    refresh();
+  });
+
+  el.addFee.addEventListener("click", ()=>{
+    addFeeLine(el.feeTemplate.value);
+    refresh();
+  });
+  el.clearFees.addEventListener("click", ()=>{
+    if(confirm("Supprimer toutes les lignes frais ?")){
+      state.fees = [];
+      refresh();
+    }
+  });
+
+  el.quickPack.addEventListener("change", ()=>{
+    if(el.quickPack.value) applyQuickPack(el.quickPack.value);
+  });
+
+  el.btnAutoReprice.addEventListener("click", ()=>{
+    el.pricingMode.value = "target";
+    refresh();
+    autoRepriceToTarget();
+  });
+
+  el.btnInsertDayRate.addEventListener("click", insertDayRateLines);
+
+  el.btnImportCSV.addEventListener("click", ()=>{
+    // toggle text area
+    const shown = el.csvArea.style.display !== "none";
+    el.csvArea.style.display = shown ? "none" : "block";
+    if(!shown) el.csvArea.focus();
+    else{
+      importInventoryFromCSV(el.csvArea.value);
+      el.csvArea.value = "";
+    }
+  });
+
+  el.btnNew.addEventListener("click", newQuote);
+  el.btnSave.addEventListener("click", saveToLocal);
+  el.btnExport.addEventListener("click", exportJSON);
+  el.importFile.addEventListener("change", (e)=>{
+    const f = e.target.files?.[0];
+    if(f) importJSON(f);
+    e.target.value = "";
+  });
+  el.btnPrint.addEventListener("click", ()=>{
+    syncStateFromInputs();
+    ensureQuoteRef();
+    refresh();
+    window.print();
+  });
+}
+
+function boot(){
+  // restore autosave if exists
+  const auto = localStorage.getItem("mcp_quote_autosave");
+  if(auto){
+    try{
+      const obj = JSON.parse(auto);
+      Object.assign(state, obj);
+    } catch(_) {}
+  }
+  syncInputsFromState();
+  renderInventorySelect();
+  bindAll();
+  refresh();
+}
+
+boot();
+</script>
+</body>
+</html>
