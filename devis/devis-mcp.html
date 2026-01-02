@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MCP — Générateur de devis (v3)</title>
+  <title>MCP — Générateur de devis (v3.1 FIX)</title>
   <style>
     :root{
       --bg:#0b1020;
@@ -17,35 +17,26 @@
       --warn:#ffcf5c;
       --bad:#ff6b6b;
 
-      /* +++ tailles champs +++ */
       --fs:15px;
-      --fs-sm:13px;
       --input-h:46px;
       --pad:12px;
       --radius:14px;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
       background: radial-gradient(900px 500px at 10% 10%, #1a2550 0%, transparent 60%),
                   radial-gradient(900px 600px at 80% 20%, #2b1b4c 0%, transparent 55%),
                   var(--bg);
       color:var(--text);
       font-size:var(--fs);
     }
-
     .wrap{max-width:1300px;margin:24px auto;padding:0 16px 48px}
-    h1{margin:0 0 12px;font-size:22px}
+    h1{margin:0 0 8px;font-size:22px}
     .sub{color:var(--muted);margin-bottom:18px;line-height:1.35}
-
-    .grid{
-      display:grid;
-      grid-template-columns: 420px 1fr;
-      gap:14px;
-      align-items:start;
-    }
+    .grid{display:grid;grid-template-columns: 420px 1fr;gap:14px;align-items:start}
+    @media (max-width: 1100px){.grid{grid-template-columns:1fr}}
 
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
@@ -55,12 +46,9 @@
       overflow:hidden;
     }
     .card .hd{
-      padding:14px 14px;
+      padding:14px;
       border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
+      display:flex;gap:10px;align-items:center;justify-content:space-between;
       background: rgba(0,0,0,.12);
     }
     .card .hd strong{font-size:14px;letter-spacing:.2px}
@@ -114,8 +102,7 @@
     .pill b{color:var(--text);font-weight:700}
 
     .tablewrap{
-      overflow:auto;
-      border-radius: var(--radius);
+      overflow:auto;border-radius: var(--radius);
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.12);
     }
@@ -124,22 +111,14 @@
       position:sticky;top:0;z-index:2;
       background: rgba(15,23,48,.95);
       border-bottom:1px solid rgba(255,255,255,.10);
-      text-align:left;
-      font-size:12px;
-      color:var(--muted);
-      padding:12px;
-      white-space:nowrap;
+      text-align:left;font-size:12px;color:var(--muted);
+      padding:12px;white-space:nowrap;
     }
-    tbody td{
-      border-bottom:1px solid rgba(255,255,255,.06);
-      padding:10px 12px;
-      vertical-align:middle;
-    }
+    tbody td{border-bottom:1px solid rgba(255,255,255,.06);padding:10px 12px;vertical-align:middle}
     tbody tr:hover td{background: rgba(255,255,255,.03)}
     .right{text-align:right}
     .center{text-align:center}
 
-    /* +++ colonnes numériques plus larges +++ */
     .col-unit{min-width:120px}
     .col-qty{min-width:130px}
     .col-price{min-width:160px}
@@ -147,25 +126,12 @@
     .col-total{min-width:170px}
     .col-actions{min-width:120px}
 
-    .cell-input{
-      min-height: var(--input-h);
-      padding: 12px;
-      font-size: var(--fs);
-      border-radius:12px;
-      width:100%;
-    }
+    .cell-input{min-height: var(--input-h);padding: 12px;font-size: var(--fs);border-radius:12px;width:100%}
     .tiny{font-size:12px;color:var(--muted)}
-    .split{
-      display:grid;grid-template-columns:1fr 1fr;gap:14px;
-    }
-    .totals{
-      display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px
-    }
-    .kpi{
-      padding:12px;border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.12);
-    }
+    .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width: 1100px){.split{grid-template-columns:1fr}}
+    .totals{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+    .kpi{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background: rgba(0,0,0,.12)}
     .kpi .lab{font-size:12px;color:var(--muted)}
     .kpi .val{font-size:18px;font-weight:800;margin-top:4px}
     .kpi .hint{font-size:12px;color:var(--muted);margin-top:4px}
@@ -173,22 +139,23 @@
     .no{color:var(--bad)}
     .mid{color:var(--warn)}
 
-    @media (max-width: 1100px){
-      .grid{grid-template-columns:1fr}
-      table{min-width:1050px}
+    @media print{
+      body{background:white;color:black}
+      .card{box-shadow:none;border:1px solid #ddd}
+      .sub{color:#444}
+      input,select,textarea{border:1px solid #ddd;background:white;color:black}
+      .btns{display:none !important}
+      .pill{border:1px solid #ddd;color:#444;background:white}
+      thead th{position:static;background:#f5f5f5;color:#333}
     }
   </style>
 </head>
-
 <body>
 <div class="wrap">
-  <h1>MCP — Générateur de devis (v3)</h1>
-  <div class="sub">
-    Champs agrandis + packs réellement préremplis (quantités + PU). Données intégrées depuis ton inventaire et ton calculateur.
-  </div>
+  <h1>MCP — Générateur de devis (v3.1 FIX)</h1>
+  <div class="sub">Version corrigée : script autonome (plus de placeholders), packs préremplis, et recalculs fiables.</div>
 
   <div class="grid">
-    <!-- COLONNE GAUCHE -->
     <div class="card">
       <div class="hd">
         <strong>Informations devis</strong>
@@ -263,11 +230,11 @@
             <input id="amortDays" class="cell-input" type="number" min="10" step="1" value="120" />
           </div>
           <div>
-            <label>Fallback coût/j si achat inconnu (part du PU)</label>
+            <label>Fallback coût/j si achat inconnu (% du PU)</label>
             <input id="fallbackGearCostShare" class="cell-input" type="number" min="0" max="1" step="0.05" value="0.40" />
           </div>
           <div>
-            <label>Préremplir les PU lors du chargement de pack</label>
+            <label>Préremplir PU lors du chargement de pack</label>
             <select id="prefillPU" class="cell-input">
               <option value="yes" selected>Oui</option>
               <option value="no">Non</option>
@@ -275,7 +242,7 @@
           </div>
         </div>
 
-        <div style="margin-top:12px" class="card">
+        <div class="card" style="margin-top:12px">
           <div class="hd">
             <strong>Charger un pack</strong>
             <span class="pill">Remplit services + matériel</span>
@@ -307,12 +274,12 @@
               <button id="btnReset" class="danger">Réinitialiser</button>
             </div>
             <div class="tiny" style="margin-top:8px">
-              Les PU sont calculés en “marge-cible” à partir d’un coût interne estimé (rôles & heures) + tes tarifs loc/jour.
+              En mode “marge-cible”, le PU est verrouillé si un coût interne est renseigné.
             </div>
           </div>
         </div>
 
-        <div style="margin-top:12px" class="btns">
+        <div class="btns" style="margin-top:12px">
           <button id="btnPrint" class="ghost">Imprimer / PDF</button>
           <button id="btnExportJson" class="ghost">Exporter JSON</button>
           <button id="btnImportJson" class="ghost">Importer JSON</button>
@@ -326,14 +293,12 @@
       </div>
     </div>
 
-    <!-- COLONNE DROITE -->
     <div class="card">
       <div class="hd">
         <strong>Prestations & matériel</strong>
         <span class="pill">HT + marge + TVA calculés</span>
       </div>
       <div class="bd">
-
         <div class="split">
           <div>
             <div class="pill" style="margin-bottom:10px">1) Services</div>
@@ -387,56 +352,30 @@
         </div>
 
         <div class="totals" id="totalsBlock"></div>
-
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* =======================
-   Données (depuis tes fichiers)
-   ======================= */
+/* ===== Données intégrées ===== */
+const INVENTORY = [{"name": "Flightcase long — Thon — Thon XL-Plus Accessories Case", "category": "Accessoires", "type": "Flightcase long", "brand": "Thon", "model": "Thon XL-Plus Accessories Case", "dayRate": 0.0, "purchasePrice": 333.0, "quantity": 6.0, "source": "Somegec"}, {"name": "Flightcase tool — Thon — Thon Drawercase L1205/A", "category": "Accessoires", "type": "Flightcase tool", "brand": "Thon", "model": "Thon Drawercase L1205/A", "dayRate": 0.0, "purchasePrice": 1329.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Flightcase panière — Tool — Thon Accessory Case 2x3 Boxes PB", "category": "Accessoires", "type": "Flightcase panière", "brand": "Tool", "model": "Thon Accessory Case 2x3 Boxes PB", "dayRate": 0.0, "purchasePrice": 989.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Câble HDMI 5m — Divers — HDMI Premium", "category": "Câbles", "type": "Câble HDMI 5m", "brand": "Divers", "model": "HDMI Premium", "dayRate": 5.0, "purchasePrice": 15.0, "quantity": 10.0, "source": "Somegec"}, {"name": "Câble SDI 5m — Divers — SDI 12G", "category": "Câbles", "type": "Câble SDI 5m", "brand": "Divers", "model": "SDI 12G", "dayRate": 6.0, "purchasePrice": 40.0, "quantity": 30.0, "source": "Somegec"}, {"name": "Câble XLR 10m — Divers — XLR", "category": "Câbles", "type": "Câble XLR 10m", "brand": "Divers", "model": "XLR", "dayRate": 2.5, "purchasePrice": 20.0, "quantity": 30.0, "source": "Somegec"}, {"name": "Câble XLR 20m — Divers — XLR", "category": "Câbles", "type": "Câble XLR 20m", "brand": "Divers", "model": "XLR", "dayRate": 3.0, "purchasePrice": 30.0, "quantity": 5.0, "source": "Somegec"}, {"name": "Câble XLR 5m — Divers — XLR", "category": "Câbles", "type": "Câble XLR 5m", "brand": "Divers", "model": "XLR", "dayRate": 2.0, "purchasePrice": 15.0, "quantity": 5.0, "source": "Somegec"}, {"name": "Touret combo — Divers — 3G-SDI + RJ45 type 7 – 50m", "category": "Câbles", "type": "Touret combo", "brand": "Divers", "model": "3G-SDI + RJ45 type 7 – 50m", "dayRate": 40.0, "purchasePrice": 400.0, "quantity": 10.0, "source": "Somegec"}, {"name": "Touret HDMI — Divers — HDMI fibre 50m", "category": "Câbles", "type": "Touret HDMI", "brand": "Divers", "model": "HDMI fibre 50m", "dayRate": 17.0, "purchasePrice": 300.0, "quantity": 3.0, "source": "Somegec"}, {"name": "Touret RJ45 — Divers — RJ45 prise ronde (50m)", "category": "Câbles", "type": "Touret RJ45", "brand": "Divers", "model": "RJ45 prise ronde (50m)", "dayRate": 23.0, "purchasePrice": 150.0, "quantity": 2.0, "source": "Somegec"}, {"name": "Touret SDI — Divers — HD-SDI 50m", "category": "Câbles", "type": "Touret SDI", "brand": "Divers", "model": "HD-SDI 50m", "dayRate": 18.0, "purchasePrice": 250.0, "quantity": 3.0, "source": "Somegec"}, {"name": "Caméra — Blackmagic — URSA Broadcast G2", "category": "Caméras", "type": "Caméra", "brand": "Blackmagic", "model": "URSA Broadcast G2", "dayRate": 170.0, "purchasePrice": 5100.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Caméra PTZ — Panasonic — AW-UE145", "category": "Caméras", "type": "Caméra PTZ", "brand": "Panasonic", "model": "AW-UE145", "dayRate": 240.0, "purchasePrice": 6600.0, "quantity": 3.0, "source": "Somegec"}, {"name": "Pied caméra avec embase — - — Pied + embase noire", "category": "Caméras", "type": "Pied caméra avec embase", "brand": "-", "model": "Pied + embase noire", "dayRate": 15.0, "purchasePrice": 150.0, "quantity": 6.0, "source": "Somegec"}, {"name": "Transmission vidéo — Hollyland — Cosmo C1", "category": "Caméras", "type": "Transmission vidéo", "brand": "Hollyland", "model": "Cosmo C1", "dayRate": 33.0, "purchasePrice": 900.0, "quantity": 2.0, "source": "Somegec"}, {"name": "Transmission vidéo — Hollyland — C600", "category": "Caméras", "type": "Transmission vidéo", "brand": "Hollyland", "model": "C600", "dayRate": 45.0, "purchasePrice": 600.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Écran — Panasonic — 75\" + pied", "category": "Écrans", "type": "Écran", "brand": "Panasonic", "model": "75\" + pied", "dayRate": 370.0, "purchasePrice": 2500.0, "quantity": 3.0, "source": "Somegec"}, {"name": "Pied lumière — - — Pied lumière standard", "category": "Lumière", "type": "Pied lumière", "brand": "-", "model": "Pied lumière standard", "dayRate": 8.0, "purchasePrice": 50.0, "quantity": 6.0, "source": "Somegec"}, {"name": "Projecteur LED — Nanlite — Forza 60B kit + softbox", "category": "Lumière", "type": "Projecteur LED", "brand": "Nanlite", "model": "Forza 60B kit + softbox", "dayRate": 20.0, "purchasePrice": 350.0, "quantity": 4.0, "source": "Somegec"}, {"name": "Projecteur LED — Nanlite — Forza FS 300", "category": "Lumière", "type": "Projecteur LED", "brand": "Nanlite", "model": "Forza FS 300", "dayRate": 40.0, "purchasePrice": 500.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Moniteur rack — Lilliput — BM280 4K", "category": "Régie", "type": "Moniteur rack", "brand": "Lilliput", "model": "BM280 4K", "dayRate": 45.0, "purchasePrice": 1700.0, "quantity": 3.0, "source": "Somegec"}, {"name": "Moniteur vision — Blackmagic — SmartView 4K (20\")", "category": "Régie", "type": "Moniteur vision", "brand": "Blackmagic", "model": "SmartView 4K (20\")", "dayRate": 31.0, "purchasePrice": 900.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Carte son — Focusrite — 16 IN / 8 OUT", "category": "Régie", "type": "Carte son", "brand": "Focusrite", "model": "16 IN / 8 OUT", "dayRate": 47.0, "purchasePrice": 1000.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Contrôleur MIDI — Divers — MIDI panel vMix", "category": "Régie", "type": "Contrôleur MIDI", "brand": "Divers", "model": "MIDI panel vMix", "dayRate": 22.0, "purchasePrice": 200.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Contrôleur PTZ — Panasonic — AW-RP150G", "category": "Régie", "type": "Contrôleur PTZ", "brand": "Panasonic", "model": "AW-RP150G", "dayRate": 140.0, "purchasePrice": 4500.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Convertisseur vidéo — Blackmagic — SDI-HDMI bidirectional", "category": "Régie", "type": "Convertisseur vidéo", "brand": "Blackmagic", "model": "SDI-HDMI bidirectional", "dayRate": 20.0, "purchasePrice": 65.0, "quantity": 10.0, "source": "Somegec"}, {"name": "Enregistreur — Blackmagic — HyperDeck Studio", "category": "Régie", "type": "Enregistreur", "brand": "Blackmagic", "model": "HyperDeck Studio", "dayRate": 75.0, "purchasePrice": 800.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Intercom — Vokkero — 6 postes", "category": "Régie", "type": "Intercom", "brand": "Vokkero", "model": "6 postes", "dayRate": 65.0, "purchasePrice": 600.0, "quantity": 6.0, "source": "Somegec"}, {"name": "Matrice vidéo — Blackmagic — Smart Videohub 8x8", "category": "Régie", "type": "Matrice vidéo", "brand": "Blackmagic", "model": "Smart Videohub 8x8", "dayRate": 45.0, "purchasePrice": 1000.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Mélangeur vidéo — Blackmagic — ATEM Television Studio HD8 ISO", "category": "Régie", "type": "Mélangeur vidéo", "brand": "Blackmagic", "model": "ATEM Television Studio HD8 ISO", "dayRate": 300.0, "purchasePrice": 4000.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Régie PC vMix — Custom/vMix — 8 entrées SDI + 2 sorties SDI + 1 HDMI", "category": "Régie", "type": "Régie PC vMix", "brand": "Custom/vMix", "model": "8 entrées SDI + 2 sorties SDI + 1 HDMI", "dayRate": 500.0, "purchasePrice": 6000.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Moniteurs — Blackmagic — SmartView Duo", "category": "Régie", "type": "Moniteurs", "brand": "Blackmagic", "model": "SmartView Duo", "dayRate": 21.0, "purchasePrice": 489.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Routeur réseau — Divers — 16 ports dont 8 PoE", "category": "Régie", "type": "Routeur réseau", "brand": "Divers", "model": "16 ports dont 8 PoE", "dayRate": 69.0, "purchasePrice": 300.0, "quantity": 2.0, "source": "Somegec"}, {"name": "Enregistreur — Blackmagic — HyperDeck Studio HD Mini", "category": "Régie", "type": "Enregistreur", "brand": "Blackmagic", "model": "HyperDeck Studio HD Mini", "dayRate": 60.0, "purchasePrice": 455.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Talkback — Sonifex — CM-CU1", "category": "Régie", "type": "Talkback", "brand": "Sonifex", "model": "CM-CU1", "dayRate": 68.0, "purchasePrice": 2260.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Console audio — Yamaha — DM3", "category": "Son", "type": "Console audio", "brand": "Yamaha", "model": "DM3", "dayRate": 125.0, "purchasePrice": 1500.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Enceinte + Sub — Bose — F1 + Sub", "category": "Son", "type": "Enceinte + Sub", "brand": "Bose", "model": "F1 + Sub", "dayRate": 140.0, "purchasePrice": 2000.0, "quantity": 2.0, "source": "Somegec"}, {"name": "Enceinte monitoring — Genelec — 8020", "category": "Son", "type": "Enceinte monitoring", "brand": "Genelec", "model": "8020", "dayRate": 20.0, "purchasePrice": 400.0, "quantity": 4.0, "source": "Somegec"}, {"name": "Enceinte portable — Bose — S1 Pro", "category": "Son", "type": "Enceinte portable", "brand": "Bose", "model": "S1 Pro", "dayRate": 30.0, "purchasePrice": 600.0, "quantity": 2.0, "source": "Somegec"}, {"name": "Micro HF — Sennheiser — 6000 + capsule Neumann", "category": "Son", "type": "Micro HF", "brand": "Sennheiser", "model": "6000 + capsule Neumann", "dayRate": 90.0, "purchasePrice": 3000.0, "quantity": 6.0, "source": "Somegec"}, {"name": "Pied micro — K&M — Standard", "category": "Son", "type": "Pied micro", "brand": "K&M", "model": "Standard", "dayRate": 7.0, "purchasePrice": 60.0, "quantity": 6.0, "source": "Somegec"}, {"name": "Pieds enceintes — - — Pieds + embases noirs", "category": "Son", "type": "Pieds enceintes", "brand": "-", "model": "Pieds + embases noirs", "dayRate": 8.0, "purchasePrice": 100.0, "quantity": 2.0, "source": "Somegec"}, {"name": "Récepteur HF — Sennheiser — EM 6000", "category": "Son", "type": "Récepteur HF", "brand": "Sennheiser", "model": "EM 6000", "dayRate": 80.0, "purchasePrice": 2500.0, "quantity": 6.0, "source": "Somegec"}, {"name": "Stagebox — Yamaha — Tio", "category": "Son", "type": "Stagebox", "brand": "Yamaha", "model": "Tio", "dayRate": 40.0, "purchasePrice": 1000.0, "quantity": 1.0, "source": "Somegec"}, {"name": "Caméra — Sony — FX6", "category": "Caméra", "type": "Caméra", "brand": "Sony", "model": "FX6", "dayRate": 160.0, "purchasePrice": 5950.8, "quantity": 1.0, "source": "Lyon"}, {"name": "Follow focus — Tilta — Nucleus M Wireless Lens Control Full Kit", "category": "Caméra", "type": "Follow focus", "brand": "Tilta", "model": "Nucleus M Wireless Lens Control Full Kit", "dayRate": 180.0, "purchasePrice": 1558.8, "quantity": 1.0, "source": "Lyon"}, {"name": "Gimbal — DJI — Ronin RS4 Pro Combo", "category": "Caméra", "type": "Gimbal", "brand": "DJI", "model": "Ronin RS4 Pro Combo", "dayRate": 54.0, "purchasePrice": 1099.0, "quantity": 1.0, "source": "Lyon"}, {"name": "Objectif — Sony — FE 28-70mm F2 GM", "category": "Caméra", "type": "Objectif", "brand": "Sony", "model": "FE 28-70mm F2 GM", "dayRate": 89.0, "purchasePrice": 3500.0, "quantity": 1.0, "source": "Lyon"}, {"name": "Trépied — Manfrotto — Nitrotech 608 + twin leg carbon", "category": "Caméra", "type": "Trépied", "brand": "Manfrotto", "model": "Nitrotech 608 + twin leg carbon", "dayRate": 35.0, "purchasePrice": 1003.2, "quantity": 1.0, "source": "Lyon"}, {"name": "Objectif — Irix — Irix Cine Directors Set Sony E Metric", "category": "Caméra", "type": "Objectif", "brand": "Irix", "model": "Irix Cine Directors Set Sony E Metric", "dayRate": 350.0, "purchasePrice": 8160.98, "quantity": 1.0, "source": "Lyon"}, {"name": "Carte son — Focusrite — Scarlett 2i2 4th Gen", "category": "Studio", "type": "Carte son", "brand": "Focusrite", "model": "Scarlett 2i2 4th Gen", "dayRate": 0.0, "purchasePrice": 179.0, "quantity": 1.0, "source": "Lyon"}, {"name": "Ordinateur — Apple — MacBook Pro M4 Max", "category": "Studio", "type": "Ordinateur", "brand": "Apple", "model": "MacBook Pro M4 Max", "dayRate": 0.0, "purchasePrice": 5549.0, "quantity": 1.0, "source": "Lyon"}];
+const ROLE_RATES = [{"role": "Recherche", "rate": 50.0}, {"role": "Script/Storyboard", "rate": 50.0}, {"role": "Organisation", "rate": 50.0}, {"role": "Ideation", "rate": 50.0}, {"role": "Réalisateur", "rate": 91.5}, {"role": "Chef opérateur", "rate": 82.8}, {"role": "Cadreur", "rate": 36.5}, {"role": "Chef électricien", "rate": 38.2}, {"role": "Technicien vidéo", "rate": 39.0}, {"role": "Ingénieur du son", "rate": 37.0}, {"role": "Assistant son", "rate": 35.1}, {"role": "Monteur vision (switcher)", "rate": 37.6}, {"role": "Maquillage", "rate": 40.0}, {"role": "Chef monteur", "rate": 39.0}, {"role": "Étalonneur", "rate": 37.2}, {"role": "Monteur son", "rate": 36.5}, {"role": "Assistant monteur", "rate": 35.3}, {"role": "Graphiste habillages", "rate": 37.2}, {"role": "Présentateur/Journaliste", "rate": 3000.0}];
+const KEYMAP = {"FX6": 45, "FE 28-70mm": 48, "Nitrotech": 49, "Ronin RS4 Pro": 47, "RS 4 Pro": 47, "Nucleus": 46, "Forza 60B": 19, "Forza FS 300": 20, "Irix": 50, "Irix Cine": 50, "Pied lumière standard": 18, "ATEM": 30, "HyperDeck Studio": 27, "HyperDeck Studio HD Mini": 34, "Smart Videohub": 29, "SmartView 4K": 22, "SmartView Duo": 32, "Routeur réseau": 33, "Talkback": 35, "Intercom": 28, "AW-UE145": 13, "AW-RP150G": 25, "DM3": 36, "Tio": 44, "Micro HF": 40, "Récepteur HF": 43, "Pied micro": 41, "Touret combo": 8, "Touret SDI": 11, "Touret RJ45": 10, "Touret HDMI": 9, "Régie PC vMix": 31, "vMix": 24, "75\" + pied": 17, "Pied + embase noire": 14, "URSA Broadcast G2": 12, "URSA": 12, "Transmission vidéo": 15, "Moniteur rack": 21, "Carte son": 23};
 
-const INVENTORY = ${inv_full_json};
-
-const ROLE_RATES = ${roles_json};
-
-/* =======================
-   État
-   ======================= */
-
+/* ===== État ===== */
 const state = {
-  meta: {
-    quoteNumber: "",
-    quoteDate: "",
-    issuerName: "Momentum Creative Productions (MCP)",
-    vatRegime: "Assujetti TVA — Régime simplifié",
-    clientName: "",
-    clientContact: "",
-    projectName: "",
-    projectPlace: "",
-    notes: ""
-  },
-  pricing: {
-    mode: "margin",           // "margin" | "manual"
-    targetMargin: 0.50,       // bénéfice / HT
-    vatRate: 0.20
-  },
-  gearCost: {
-    amortDays: 120,
-    fallbackShare: 0.40
-  },
-  prefs: {
-    prefillPU: true
-  },
+  meta: { quoteNumber:"", quoteDate:"", issuerName:"Momentum Creative Productions (MCP)",
+          vatRegime:"Assujetti TVA — Régime simplifié", clientName:"", clientContact:"",
+          projectName:"", projectPlace:"", notes:"" },
+  pricing: { mode:"margin", targetMargin:0.50, vatRate:0.20 },
+  gearCost: { amortDays:120, fallbackShare:0.40 },
+  prefs: { prefillPU:true },
   services: [],
   gear: []
 };
 
-/* =======================
-   Helpers
-   ======================= */
+/* ===== Helpers ===== */
 const € = (n) => (isFinite(n) ? n.toFixed(2) + " €" : "—");
 const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
 const num = (v, fallback=0) => {
@@ -448,23 +387,18 @@ function roleRate(roleName){
   const r = ROLE_RATES.find(x => x.role === roleName);
   return r ? Number(r.rate) : 0;
 }
-
 function costFromRoles(hoursMap){
-  // hoursMap: { "Role": heures, ... }
   let total = 0;
   for (const [role, h] of Object.entries(hoursMap)){
     total += roleRate(role) * Number(h);
   }
   return total;
 }
-
 function suggestedPU(costUnit){
-  // PU = coût / (1 - marge-cible)
   const m = clamp(state.pricing.targetMargin, 0, 0.95);
   if (!isFinite(costUnit) || costUnit <= 0) return 0;
   return costUnit / (1 - m);
 }
-
 function gearCostPerDay(invItem){
   const amort = Math.max(10, num(state.gearCost.amortDays, 120));
   if (invItem && invItem.purchasePrice && isFinite(invItem.purchasePrice) && invItem.purchasePrice > 0){
@@ -473,27 +407,37 @@ function gearCostPerDay(invItem){
   const fallback = clamp(num(state.gearCost.fallbackShare, 0.4), 0, 1);
   return (invItem ? invItem.dayRate : 0) * fallback;
 }
-
 function invFind(keyword){
+  if (KEYMAP[keyword] !== undefined) return KEYMAP[keyword];
   const k = (keyword || "").toLowerCase();
   if (!k) return -1;
-  return INVENTORY.findIndex(it => (it.name || "").toLowerCase().includes(k));
+  // fallback: normalized contains
+  const norm = (s)=>String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"");
+  const nk = norm(keyword);
+  let best = {i:-1, sc:0};
+  for (let i=0;i<INVENTORY.length;i++){
+    const it = INVENTORY[i];
+    const name = it.name || "";
+    const model = it.model || "";
+    let sc = 0;
+    if ((model||"").toLowerCase() === k) sc = 120;
+    else if (new RegExp("\\\\b"+keyword.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&')+"\\\\b","i").test(model)) sc = 100;
+    else if (nk && norm(name).includes(nk)) sc = 70;
+    else if ((name||"").toLowerCase().includes(k)) sc = 50;
+    if (sc>best.sc){ best={i,sc}; }
+  }
+  return best.sc>=60 ? best.i : -1;
 }
 
-function addServiceLine({name, desc="", unit="jour", qty=1, costUnit=0, unitPrice=null}){
-  const pu = (unitPrice === null)
-    ? (state.prefs.prefillPU && state.pricing.mode === "margin" ? suggestedPU(costUnit) : 0)
-    : unitPrice;
-
+function addServiceLine({name, desc="", unit="jour", qty=1, costUnit=0, unitPrice=0}){
   state.services.push({
     name, desc, unit,
     qty: num(qty,1),
     costUnit: num(costUnit,0),
-    unitPrice: num(pu,0)
+    unitPrice: num(unitPrice,0)
   });
 }
-
-function addGearLine({invIndex, qty=1, days=1, unitPrice=null, costPerDay=null}){
+function addGearLine({invIndex=0, qty=1, days=1, unitPrice=null, costPerDay=null}){
   const it = INVENTORY[invIndex] || null;
   const pu = (unitPrice === null) ? (it ? it.dayRate : 0) : unitPrice;
   const cpd = (costPerDay === null) ? (it ? gearCostPerDay(it) : 0) : costPerDay;
@@ -503,25 +447,20 @@ function addGearLine({invIndex, qty=1, days=1, unitPrice=null, costPerDay=null})
     qty: num(qty,1),
     days: num(days,1),
     unitPrice: num(pu,0),
-    costPerDay: num(cpd,0)
+    costPerDay: num(cpd,0),
+    unitAuto: unitPrice === null,
+    costAuto: costPerDay === null
   });
 }
-
 function addGearByKeyword(keyword, qty, days){
   const idx = invFind(keyword);
   if (idx >= 0) addGearLine({invIndex: idx, qty, days});
-  else {
-    // si pas trouvé : on n'ajoute rien (évite lignes “vides”)
-    console.warn("Matériel introuvable dans inventaire:", keyword);
-  }
+  else console.warn("Matériel introuvable:", keyword);
 }
 
-/* =======================
-   Packs (préremplis)
-   ======================= */
-
+/* ===== Packs (coûts basés sur ton calculateur) ===== */
 const COST = {
-  preprodDay: () => costFromRoles({"Organisation":6, "Script/Storyboard":2}), // 8h à 50€
+  preprodDay: () => costFromRoles({"Organisation":6, "Script/Storyboard":2}),
   shootDayLight: () => costFromRoles({"Chef opérateur":8, "Ingénieur du son":4, "Chef électricien":4}),
   eventShootDay: () => costFromRoles({"Cadreur":8, "Ingénieur du son":2}),
   liveDay: () => costFromRoles({"Réalisateur":8, "Monteur vision (switcher)":8, "Technicien vidéo":8, "Ingénieur du son":8}),
@@ -536,23 +475,18 @@ const PACKS = {
   film: {
     essentiel: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Pré-production", desc:"Cadrage, préparation, script léger", unit:"jour", qty:1, costUnit:COST.preprodDay()});
       addServiceLine({name:"Tournage", desc:"1 journée — équipe légère", unit:"jour", qty:1, costUnit:COST.shootDayLight()});
       addServiceLine({name:"Montage", desc:"Sélection + montage + exports", unit:"jour", qty:2, costUnit:COST.editDay()});
       addServiceLine({name:"Livraison / exports / archivage", desc:"Exports + livraison + sauvegardes", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
-      // Matériel film (1 jour tournage)
       addGearByKeyword("FX6", 1, 1);
       addGearByKeyword("FE 28-70mm", 1, 1);
       addGearByKeyword("Nitrotech", 1, 1);
       addGearByKeyword("Forza 60B", 2, 1);
       addGearByKeyword("Pied lumière standard", 4, 1);
     },
-
     standard: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Pré-production", desc:"Cadrage, repérage léger, script", unit:"jour", qty:1.5, costUnit:COST.preprodDay()});
       addServiceLine({name:"Tournage", desc:"1,5 journée — interviews + plans d’illustration", unit:"jour", qty:1.5, costUnit:COST.shootDayLight()});
       addServiceLine({name:"Montage", desc:"Montage + versions + exports", unit:"jour", qty:3, costUnit:COST.editDay()});
@@ -560,7 +494,6 @@ const PACKS = {
       addServiceLine({name:"Montage son / mix", desc:"Nettoyage, équilibre, export", unit:"jour", qty:0.5, costUnit:COST.soundHalfDay()});
       addServiceLine({name:"Habillage léger", desc:"Titres, lower thirds simples", unit:"jour", qty:0.5, costUnit:COST.motionHalfDay()});
       addServiceLine({name:"Livraison / exports / archivage", desc:"Exports + livraison + sauvegardes", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
       addGearByKeyword("FX6", 1, 2);
       addGearByKeyword("FE 28-70mm", 1, 2);
       addGearByKeyword("Nitrotech", 1, 2);
@@ -570,10 +503,8 @@ const PACKS = {
       addGearByKeyword("Forza FS 300", 1, 2);
       addGearByKeyword("Pied lumière standard", 6, 2);
     },
-
     premium: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Pré-production", desc:"Cadrage complet, script, planning, repérage", unit:"jour", qty:3, costUnit:COST.preprodDay()});
       addServiceLine({name:"Tournage", desc:"3 journées — interviews + b-roll avancé", unit:"jour", qty:3, costUnit:COST.shootDayLight()});
       addServiceLine({name:"Montage", desc:"Montage avancé + itérations", unit:"jour", qty:6, costUnit:COST.editDay()});
@@ -581,10 +512,9 @@ const PACKS = {
       addServiceLine({name:"Montage son / mix", desc:"Nettoyage + mix", unit:"jour", qty:1, costUnit:COST.soundHalfDay()});
       addServiceLine({name:"Habillage", desc:"Titres + animations simples", unit:"jour", qty:1, costUnit:COST.motionHalfDay()});
       addServiceLine({name:"Livraison / exports / archivage", desc:"Exports multi-formats + sauvegardes", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
       addGearByKeyword("FX6", 1, 3);
       addGearByKeyword("FE 28-70mm", 1, 3);
-      addGearByKeyword("Irix Cine", 1, 2);
+      addGearByKeyword("Irix", 1, 2);
       addGearByKeyword("Nitrotech", 1, 3);
       addGearByKeyword("Ronin RS4 Pro", 1, 2);
       addGearByKeyword("Nucleus", 1, 2);
@@ -597,12 +527,10 @@ const PACKS = {
   aftermovie: {
     essentiel: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Pré-production", desc:"Brief + organisation", unit:"jour", qty:0.5, costUnit:COST.preprodDay()});
       addServiceLine({name:"Tournage événement", desc:"Couverture 1 journée", unit:"jour", qty:1, costUnit:COST.eventShootDay()});
       addServiceLine({name:"Montage", desc:"Aftermovie 60–120s", unit:"jour", qty:1.5, costUnit:COST.editDay()});
       addServiceLine({name:"Livraison / exports", desc:"Exports + livraison", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
       addGearByKeyword("FX6", 1, 1);
       addGearByKeyword("Ronin RS4 Pro", 1, 1);
       addGearByKeyword("FE 28-70mm", 1, 1);
@@ -610,16 +538,13 @@ const PACKS = {
       addGearByKeyword("Forza 60B", 2, 1);
       addGearByKeyword("Pied lumière standard", 4, 1);
     },
-
     standard: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Pré-production", desc:"Brief + déroulé + plan de tournage", unit:"jour", qty:1, costUnit:COST.preprodDay()});
       addServiceLine({name:"Tournage événement", desc:"1 à 2 journées", unit:"jour", qty:1.5, costUnit:COST.eventShootDay()});
       addServiceLine({name:"Montage", desc:"Aftermovie + cutdowns réseaux", unit:"jour", qty:2.5, costUnit:COST.editDay()});
       addServiceLine({name:"Étalonnage", desc:"Cohérence look", unit:"jour", qty:0.5, costUnit:COST.colorHalfDay()});
       addServiceLine({name:"Livraison / exports", desc:"Exports + livraison", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
       addGearByKeyword("FX6", 1, 2);
       addGearByKeyword("Ronin RS4 Pro", 1, 2);
       addGearByKeyword("FE 28-70mm", 1, 2);
@@ -627,21 +552,18 @@ const PACKS = {
       addGearByKeyword("Forza 60B", 2, 2);
       addGearByKeyword("Pied lumière standard", 6, 2);
     },
-
     premium: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Pré-production", desc:"Organisation + script + coordination", unit:"jour", qty:1.5, costUnit:COST.preprodDay()});
       addServiceLine({name:"Tournage événement", desc:"2 journées", unit:"jour", qty:2, costUnit:COST.eventShootDay()});
       addServiceLine({name:"Montage", desc:"Aftermovie + versions multiples + itérations", unit:"jour", qty:4, costUnit:COST.editDay()});
       addServiceLine({name:"Étalonnage", desc:"Look final", unit:"jour", qty:1, costUnit:COST.colorHalfDay()});
       addServiceLine({name:"Habillage", desc:"Titres + animations", unit:"jour", qty:0.5, costUnit:COST.motionHalfDay()});
       addServiceLine({name:"Livraison / exports", desc:"Exports multi-formats", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
       addGearByKeyword("FX6", 1, 2);
       addGearByKeyword("Ronin RS4 Pro", 1, 2);
       addGearByKeyword("FE 28-70mm", 1, 2);
-      addGearByKeyword("Irix Cine", 1, 1);
+      addGearByKeyword("Irix", 1, 1);
       addGearByKeyword("Nitrotech", 1, 2);
       addGearByKeyword("Forza 60B", 4, 2);
       addGearByKeyword("Forza FS 300", 1, 2);
@@ -652,43 +574,31 @@ const PACKS = {
   live_teams: {
     essentiel: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Préparation live", desc:"Brief + plan technique + tests", unit:"jour", qty:0.5, costUnit:COST.preprodDay()});
       addServiceLine({name:"Exploitation live", desc:"1 journée — table ronde / Q&R", unit:"jour", qty:1, costUnit:COST.liveDay()});
       addServiceLine({name:"Livraison replay", desc:"Exports + livraison", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
-      // Matériel live minimal
       addGearByKeyword("ATEM", 1, 1);
       addGearByKeyword("HyperDeck Studio HD Mini", 1, 1);
       addGearByKeyword("Smart Videohub", 1, 1);
       addGearByKeyword("SmartView Duo", 1, 1);
       addGearByKeyword("Routeur réseau", 1, 1);
-
-      // Caméras (2 PTZ)
       addGearByKeyword("AW-UE145", 2, 1);
       addGearByKeyword("AW-RP150G", 1, 1);
-
-      // Audio
       addGearByKeyword("DM3", 1, 1);
       addGearByKeyword("Tio", 1, 1);
       addGearByKeyword("Micro HF", 2, 1);
       addGearByKeyword("Récepteur HF", 2, 1);
       addGearByKeyword("Pied micro", 2, 1);
-
-      // Câbles (tourets)
       addGearByKeyword("Touret combo", 1, 1);
       addGearByKeyword("Touret SDI", 1, 1);
       addGearByKeyword("Touret RJ45", 1, 1);
     },
-
     standard: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Préparation live", desc:"Brief + conduite + tests + répétition", unit:"jour", qty:1, costUnit:COST.preprodDay()});
       addServiceLine({name:"Exploitation live", desc:"1 journée", unit:"jour", qty:1, costUnit:COST.liveDay()});
       addServiceLine({name:"Montage léger replay", desc:"Nettoyage début/fin + export", unit:"jour", qty:0.5, costUnit:COST.editDay()});
       addServiceLine({name:"Livraison replay", desc:"Exports + livraison", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
       addGearByKeyword("ATEM", 1, 1);
       addGearByKeyword("HyperDeck Studio", 1, 1);
       addGearByKeyword("Smart Videohub", 1, 1);
@@ -697,30 +607,24 @@ const PACKS = {
       addGearByKeyword("Routeur réseau", 1, 1);
       addGearByKeyword("Talkback", 1, 1);
       addGearByKeyword("Intercom", 1, 1);
-
       addGearByKeyword("AW-UE145", 3, 1);
       addGearByKeyword("AW-RP150G", 1, 1);
-
       addGearByKeyword("DM3", 1, 1);
       addGearByKeyword("Tio", 1, 1);
       addGearByKeyword("Micro HF", 4, 1);
       addGearByKeyword("Récepteur HF", 4, 1);
       addGearByKeyword("Pied micro", 4, 1);
-
       addGearByKeyword("Touret combo", 1, 1);
       addGearByKeyword("Touret SDI", 2, 1);
       addGearByKeyword("Touret RJ45", 1, 1);
     },
-
     premium: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Préparation live", desc:"Plan technique + conduite + répétitions", unit:"jour", qty:1.5, costUnit:COST.preprodDay()});
       addServiceLine({name:"Exploitation live", desc:"1 journée", unit:"jour", qty:1, costUnit:COST.liveDay()});
       addServiceLine({name:"Montage replay", desc:"Nettoyage + chapitrage léger", unit:"jour", qty:1, costUnit:COST.editDay()});
       addServiceLine({name:"Habillage live", desc:"Lower thirds + visuels simples", unit:"jour", qty:0.5, costUnit:COST.motionHalfDay()});
       addServiceLine({name:"Livraison", desc:"Exports + livraison + archivage", unit:"forfait", qty:1, costUnit:COST.deliveryForfait()});
-
       addGearByKeyword("Régie PC vMix", 1, 1);
       addGearByKeyword("ATEM", 1, 1);
       addGearByKeyword("HyperDeck Studio", 1, 1);
@@ -731,18 +635,14 @@ const PACKS = {
       addGearByKeyword("Routeur réseau", 1, 1);
       addGearByKeyword("Talkback", 1, 1);
       addGearByKeyword("Intercom", 1, 1);
-
       addGearByKeyword("AW-UE145", 3, 1);
       addGearByKeyword("AW-RP150G", 1, 1);
-
       addGearByKeyword("DM3", 1, 1);
       addGearByKeyword("Tio", 1, 1);
       addGearByKeyword("Micro HF", 6, 1);
       addGearByKeyword("Récepteur HF", 6, 1);
       addGearByKeyword("Pied micro", 6, 1);
-
-      addGearByKeyword('75" + pied', 1, 1);
-
+      addGearByKeyword("75\" + pied", 1, 1);
       addGearByKeyword("Touret combo", 2, 1);
       addGearByKeyword("Touret SDI", 2, 1);
       addGearByKeyword("Touret RJ45", 2, 1);
@@ -752,18 +652,13 @@ const PACKS = {
   live_talkshow: {
     essentiel: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-      // talk-show “essentiel” = proche standard live + plus d’audio
-      PACKS.live_teams.standard(append);
-
+      PACKS.live_teams.standard(true);
       addServiceLine({name:"Cadrage plateau / répétition", desc:"Brief plateau + répétition", unit:"jour", qty:0.5, costUnit:COST.preprodDay()});
-      // Matériel additionnel léger
       addGearByKeyword("Moniteur rack", 1, 1);
       addGearByKeyword("Carte son", 1, 1);
     },
-
     standard: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Préparation talk-show", desc:"Conduite + plan plateau + répétition", unit:"jour", qty:1.5, costUnit:COST.preprodDay()});
       addServiceLine({name:"Exploitation live", desc:"1 journée — talk-show", unit:"jour", qty:1, costUnit:COST.liveDay()});
       addServiceLine({name:"Montage replay", desc:"Nettoyage + export + versions", unit:"jour", qty:1, costUnit:COST.editDay()});
@@ -780,28 +675,24 @@ const PACKS = {
       addGearByKeyword("Intercom", 1, 1);
       addGearByKeyword("HyperDeck Studio", 1, 1);
 
-      // 3 cam PTZ + pieds cam
       addGearByKeyword("AW-UE145", 3, 1);
       addGearByKeyword("AW-RP150G", 1, 1);
       addGearByKeyword("Pied + embase noire", 3, 1);
 
-      // Audio plateau
       addGearByKeyword("DM3", 1, 1);
       addGearByKeyword("Tio", 1, 1);
       addGearByKeyword("Micro HF", 4, 1);
       addGearByKeyword("Récepteur HF", 4, 1);
       addGearByKeyword("Pied micro", 4, 1);
 
-      addGearByKeyword('75" + pied', 1, 1);
+      addGearByKeyword("75\" + pied", 1, 1);
 
       addGearByKeyword("Touret combo", 2, 1);
       addGearByKeyword("Touret SDI", 3, 1);
       addGearByKeyword("Touret RJ45", 2, 1);
     },
-
     premium: (append=false) => {
       if (!append) { state.services=[]; state.gear=[]; }
-
       addServiceLine({name:"Préparation talk-show", desc:"Cadrage + conduite + répétitions + habillages", unit:"jour", qty:2, costUnit:COST.preprodDay()});
       addServiceLine({name:"Exploitation live", desc:"1 journée", unit:"jour", qty:1, costUnit:COST.liveDay()});
       addServiceLine({name:"Montage replay", desc:"Replay + chapitrage + cutdowns", unit:"jour", qty:2, costUnit:COST.editDay()});
@@ -819,20 +710,18 @@ const PACKS = {
       addGearByKeyword("HyperDeck Studio", 1, 1);
       addGearByKeyword("HyperDeck Studio HD Mini", 1, 1);
 
-      // 3 PTZ + 1 URSA
       addGearByKeyword("AW-UE145", 3, 1);
       addGearByKeyword("AW-RP150G", 1, 1);
       addGearByKeyword("URSA Broadcast G2", 1, 1);
       addGearByKeyword("Transmission vidéo", 2, 1);
       addGearByKeyword("Pied + embase noire", 4, 1);
 
-      // Audio renforcé
       addGearByKeyword("DM3", 1, 1);
       addGearByKeyword("Tio", 1, 1);
       addGearByKeyword("Micro HF", 6, 1);
       addGearByKeyword("Récepteur HF", 6, 1);
       addGearByKeyword("Pied micro", 6, 1);
-      addGearByKeyword('75" + pied', 1, 1);
+      addGearByKeyword("75\" + pied", 1, 1);
 
       addGearByKeyword("Touret combo", 2, 1);
       addGearByKeyword("Touret SDI", 4, 1);
@@ -842,9 +731,7 @@ const PACKS = {
   }
 };
 
-/* =======================
-   UI bindings
-   ======================= */
+/* ===== UI ===== */
 const els = {
   quoteNumber: document.getElementById("quoteNumber"),
   quoteDate: document.getElementById("quoteDate"),
@@ -855,25 +742,19 @@ const els = {
   projectName: document.getElementById("projectName"),
   projectPlace: document.getElementById("projectPlace"),
   notes: document.getElementById("notes"),
-
   pricingMode: document.getElementById("pricingMode"),
   targetMargin: document.getElementById("targetMargin"),
   vatRate: document.getElementById("vatRate"),
-
   amortDays: document.getElementById("amortDays"),
   fallbackGearCostShare: document.getElementById("fallbackGearCostShare"),
   prefillPU: document.getElementById("prefillPU"),
-
   packType: document.getElementById("packType"),
   packLevel: document.getElementById("packLevel"),
-
   pillVat: document.getElementById("pillVat"),
   pillMargin: document.getElementById("pillMargin"),
-
-  servicesTable: document.querySelector("#servicesTable tbody"),
-  gearTable: document.querySelector("#gearTable tbody"),
+  servicesBody: document.querySelector("#servicesTable tbody"),
+  gearBody: document.querySelector("#gearTable tbody"),
   totalsBlock: document.getElementById("totalsBlock"),
-
   btnAddService: document.getElementById("btnAddService"),
   btnAddGear: document.getElementById("btnAddGear"),
   btnLoadPack: document.getElementById("btnLoadPack"),
@@ -885,55 +766,26 @@ const els = {
   jsonFile: document.getElementById("jsonFile"),
 };
 
-function syncMetaFromUI(){
-  state.meta.quoteNumber = els.quoteNumber.value.trim();
-  state.meta.quoteDate = els.quoteDate.value;
-  state.meta.issuerName = els.issuerName.value.trim();
-  state.meta.vatRegime = els.vatRegime.value.trim();
-  state.meta.clientName = els.clientName.value.trim();
-  state.meta.clientContact = els.clientContact.value.trim();
-  state.meta.projectName = els.projectName.value.trim();
-  state.meta.projectPlace = els.projectPlace.value.trim();
-  state.meta.notes = els.notes.value.trim();
-}
-
-function syncPricingFromUI(){
+function syncControls(){
   state.pricing.mode = els.pricingMode.value;
   state.pricing.targetMargin = clamp(num(els.targetMargin.value, 0.5), 0, 0.95);
   state.pricing.vatRate = clamp(num(els.vatRate.value, 0.2), 0, 1);
-
   state.gearCost.amortDays = Math.max(10, Math.floor(num(els.amortDays.value, 120)));
   state.gearCost.fallbackShare = clamp(num(els.fallbackGearCostShare.value, 0.4), 0, 1);
-
   state.prefs.prefillPU = (els.prefillPU.value === "yes");
-
   els.pillVat.textContent = Math.round(state.pricing.vatRate*100) + "%";
   els.pillMargin.textContent = Math.round(state.pricing.targetMargin*100) + "%";
 }
 
-/* =======================
-   Rendering
-   ======================= */
-
-function render(){
-  syncMetaFromUI();
-  syncPricingFromUI();
-
-  renderServices();
-  renderGear();
-  renderTotals();
-}
-
-function makeInput(value, type="text", onChange){
+/* ===== Rendering (stable + recalculs fiables) ===== */
+function makeInput(value, type="text"){
   const i = document.createElement("input");
   i.className = "cell-input";
   i.type = type;
   i.value = value ?? "";
-  i.addEventListener("input", () => onChange(i.value));
   return i;
 }
-
-function makeSelect(options, value, onChange){
+function makeSelect(options, value){
   const s = document.createElement("select");
   s.className = "cell-input";
   for (const opt of options){
@@ -943,10 +795,8 @@ function makeSelect(options, value, onChange){
     if (opt.value === value) o.selected = true;
     s.appendChild(o);
   }
-  s.addEventListener("change", () => onChange(s.value));
   return s;
 }
-
 function iconBtn(text, cls, onClick){
   const b = document.createElement("button");
   b.textContent = text;
@@ -957,99 +807,94 @@ function iconBtn(text, cls, onClick){
   return b;
 }
 
-function lineTotalService(line){
-  const qty = num(line.qty,0);
-  const pu = (state.pricing.mode === "margin") ? (line.costUnit>0 ? suggestedPU(line.costUnit) : num(line.unitPrice,0)) : num(line.unitPrice,0);
-  return qty * pu;
+function serviceUnitPrice(line){
+  if (state.pricing.mode === "margin" && num(line.costUnit,0) > 0){
+    return suggestedPU(num(line.costUnit,0));
+  }
+  return num(line.unitPrice,0);
 }
-function lineCostService(line){
+function serviceLineTotal(line){
+  return num(line.qty,0) * serviceUnitPrice(line);
+}
+function serviceLineCost(line){
   return num(line.qty,0) * num(line.costUnit,0);
 }
-
-function renderServices(){
-  els.servicesTable.innerHTML = "";
-  state.services.forEach((line, idx) => {
-    const tr = document.createElement("tr");
-
-    // Intitulé
-    const tdName = document.createElement("td");
-    tdName.appendChild(makeInput(line.name, "text", v => { line.name = v; renderTotals(); }));
-    tr.appendChild(tdName);
-
-    // Desc
-    const tdDesc = document.createElement("td");
-    tdDesc.appendChild(makeInput(line.desc, "text", v => { line.desc = v; }));
-    tr.appendChild(tdDesc);
-
-    // Unité
-    const tdUnit = document.createElement("td"); tdUnit.className="col-unit";
-    tdUnit.appendChild(makeSelect([
-      {value:"jour", label:"jour"},
-      {value:"h", label:"h"},
-      {value:"forfait", label:"forfait"},
-    ], line.unit, v => { line.unit = v; }));
-    tr.appendChild(tdUnit);
-
-    // Qté
-    const tdQty = document.createElement("td"); tdQty.className="right col-qty";
-    const qtyInput = makeInput(line.qty, "number", v => { line.qty = num(v,0); renderTotals(); });
-    qtyInput.step="0.25"; qtyInput.min="0";
-    tdQty.appendChild(qtyInput);
-    tr.appendChild(tdQty);
-
-    // PU vente
-    const tdPU = document.createElement("td"); tdPU.className="right col-price";
-    const shownPU = (state.pricing.mode==="margin")
-      ? (line.costUnit>0 ? suggestedPU(line.costUnit) : num(line.unitPrice,0))
-      : num(line.unitPrice,0);
-    const puInput = makeInput(shownPU, "number", v => { line.unitPrice = num(v,0); renderTotals(); });
-    puInput.step="1"; puInput.min="0";
-    tdPU.appendChild(puInput);
-    tr.appendChild(tdPU);
-
-    // Coût interne
-    const tdCost = document.createElement("td"); tdCost.className="right col-cost";
-    const costInput = makeInput(line.costUnit, "number", v => { line.costUnit = num(v,0); renderTotals(); });
-    costInput.step="1"; costInput.min="0";
-    tdCost.appendChild(costInput);
-    tr.appendChild(tdCost);
-
-    // Total
-    const tdTot = document.createElement("td"); tdTot.className="right col-total";
-    tdTot.textContent = €(lineTotalService(line));
-    tr.appendChild(tdTot);
-
-    // Actions
-    const tdAct = document.createElement("td"); tdAct.className="center col-actions";
-    const bDel = iconBtn("Suppr.", "danger", () => { state.services.splice(idx,1); render(); });
-    tdAct.appendChild(bDel);
-    tr.appendChild(tdAct);
-
-    els.servicesTable.appendChild(tr);
-  });
-}
-
-function lineTotalGear(g){
+function gearLineTotal(g){
   return num(g.qty,0) * num(g.days,0) * num(g.unitPrice,0);
 }
-function lineCostGear(g){
+function gearLineCost(g){
   return num(g.qty,0) * num(g.days,0) * num(g.costPerDay,0);
 }
 
-function renderGear(){
-  els.gearTable.innerHTML = "";
+function renderTables(){
+  syncControls();
+
+  /* Services */
+  els.servicesBody.innerHTML = "";
+  state.services.forEach((line, idx) => {
+    const tr = document.createElement("tr");
+    tr.dataset.index = idx;
+
+    const tdName = document.createElement("td");
+    const iName = makeInput(line.name, "text");
+    iName.addEventListener("input", () => { line.name = iName.value; });
+    tdName.appendChild(iName); tr.appendChild(tdName);
+
+    const tdDesc = document.createElement("td");
+    const iDesc = makeInput(line.desc, "text");
+    iDesc.addEventListener("input", () => { line.desc = iDesc.value; });
+    tdDesc.appendChild(iDesc); tr.appendChild(tdDesc);
+
+    const tdUnit = document.createElement("td"); tdUnit.className="col-unit";
+    const sUnit = makeSelect([
+      {value:"jour", label:"jour"},
+      {value:"h", label:"h"},
+      {value:"forfait", label:"forfait"},
+    ], line.unit);
+    sUnit.addEventListener("change", () => { line.unit = sUnit.value; });
+    tdUnit.appendChild(sUnit); tr.appendChild(tdUnit);
+
+    const tdQty = document.createElement("td"); tdQty.className="right col-qty";
+    const iQty = makeInput(line.qty, "number"); iQty.step="0.25"; iQty.min="0";
+    iQty.addEventListener("input", () => { line.qty = num(iQty.value,0); refreshComputed(); });
+    tdQty.appendChild(iQty); tr.appendChild(tdQty);
+
+    const tdPU = document.createElement("td"); tdPU.className="right col-price";
+    const iPU = makeInput(serviceUnitPrice(line), "number"); iPU.step="1"; iPU.min="0";
+    iPU.addEventListener("input", () => { line.unitPrice = num(iPU.value,0); refreshComputed(); });
+    tdPU.appendChild(iPU); tr.appendChild(tdPU);
+
+    const tdCost = document.createElement("td"); tdCost.className="right col-cost";
+    const iCost = makeInput(line.costUnit, "number"); iCost.step="1"; iCost.min="0";
+    iCost.addEventListener("input", () => { line.costUnit = num(iCost.value,0); refreshComputed(); });
+    tdCost.appendChild(iCost); tr.appendChild(tdCost);
+
+    const tdTot = document.createElement("td"); tdTot.className="right col-total";
+    tdTot.classList.add("line-total");
+    tdTot.textContent = €(serviceLineTotal(line));
+    tr.appendChild(tdTot);
+
+    const tdAct = document.createElement("td"); tdAct.className="center col-actions";
+    tdAct.appendChild(iconBtn("Suppr.", "danger", () => { state.services.splice(idx,1); renderTables(); refreshComputed(); }));
+    tr.appendChild(tdAct);
+
+    els.servicesBody.appendChild(tr);
+  });
+
+  /* Gear */
+  els.gearBody.innerHTML = "";
   state.gear.forEach((g, idx) => {
     const tr = document.createElement("tr");
+    tr.dataset.index = idx;
 
-    // Select item
     const tdItem = document.createElement("td");
     const s = document.createElement("select");
-    s.className = "cell-input";
-    INVENTORY.forEach((it, i) => {
-      const o = document.createElement("option");
-      o.value = String(i);
-      o.textContent = `${it.name}  —  ${it.dayRate.toFixed(2)}€/j  (${it.source})`;
-      if (i === g.invIndex) o.selected = true;
+    s.className="cell-input";
+    INVENTORY.forEach((it,i) => {
+      const o=document.createElement("option");
+      o.value=String(i);
+      o.textContent = `${it.name} — ${Number(it.dayRate||0).toFixed(2)}€/j (${it.source})`;
+      if (i===g.invIndex) o.selected=true;
       s.appendChild(o);
     });
     s.addEventListener("change", () => {
@@ -1057,61 +902,91 @@ function renderGear(){
       const it = INVENTORY[g.invIndex];
       g.unitPrice = it.dayRate;
       g.costPerDay = gearCostPerDay(it);
-      render();
+      g.unitAuto = true;
+      g.costAuto = true;
+      renderTables();
+      refreshComputed();
     });
-    tdItem.appendChild(s);
-    tr.appendChild(tdItem);
+    tdItem.appendChild(s); tr.appendChild(tdItem);
 
-    // qty
     const tdQty = document.createElement("td"); tdQty.className="right col-qty";
-    const iQty = makeInput(g.qty, "number", v => { g.qty = num(v,0); renderTotals(); });
-    iQty.step="1"; iQty.min="0";
-    tdQty.appendChild(iQty);
-    tr.appendChild(tdQty);
+    const iQty = makeInput(g.qty,"number"); iQty.step="1"; iQty.min="0";
+    iQty.addEventListener("input", ()=>{ g.qty=num(iQty.value,0); refreshComputed(); });
+    tdQty.appendChild(iQty); tr.appendChild(tdQty);
 
-    // days
     const tdDays = document.createElement("td"); tdDays.className="right col-qty";
-    const iDays = makeInput(g.days, "number", v => { g.days = num(v,0); renderTotals(); });
-    iDays.step="0.5"; iDays.min="0";
-    tdDays.appendChild(iDays);
-    tr.appendChild(tdDays);
+    const iDays = makeInput(g.days,"number"); iDays.step="0.5"; iDays.min="0";
+    iDays.addEventListener("input", ()=>{ g.days=num(iDays.value,0); refreshComputed(); });
+    tdDays.appendChild(iDays); tr.appendChild(tdDays);
 
-    // pu/day
     const tdPU = document.createElement("td"); tdPU.className="right col-price";
-    const iPU = makeInput(g.unitPrice, "number", v => { g.unitPrice = num(v,0); renderTotals(); });
-    iPU.step="1"; iPU.min="0";
-    tdPU.appendChild(iPU);
-    tr.appendChild(tdPU);
+    const iPU = makeInput(g.unitPrice,"number"); iPU.step="1"; iPU.min="0";
+    iPU.addEventListener("input", ()=>{ g.unitPrice=num(iPU.value,0); g.unitAuto=false; refreshComputed(); });
+    tdPU.appendChild(iPU); tr.appendChild(tdPU);
 
-    // cost/day
     const tdCost = document.createElement("td"); tdCost.className="right col-cost";
-    const iCost = makeInput(g.costPerDay, "number", v => { g.costPerDay = num(v,0); renderTotals(); });
-    iCost.step="1"; iCost.min="0";
-    tdCost.appendChild(iCost);
-    tr.appendChild(tdCost);
+    const iCost = makeInput(g.costPerDay,"number"); iCost.step="1"; iCost.min="0";
+    iCost.addEventListener("input", ()=>{ g.costPerDay=num(iCost.value,0); g.costAuto=false; refreshComputed(); });
+    tdCost.appendChild(iCost); tr.appendChild(tdCost);
 
-    // total
-    const tdTot = document.createElement("td"); tdTot.className="right col-total";
-    tdTot.textContent = €(lineTotalGear(g));
+    const tdTot = document.createElement("td"); tdTot.className="right col-total line-total";
+    tdTot.textContent = €(gearLineTotal(g));
     tr.appendChild(tdTot);
 
-    // actions
     const tdAct = document.createElement("td"); tdAct.className="center col-actions";
-    tdAct.appendChild(iconBtn("Suppr.", "danger", () => { state.gear.splice(idx,1); render(); }));
+    tdAct.appendChild(iconBtn("Suppr.","danger",()=>{ state.gear.splice(idx,1); renderTables(); refreshComputed(); }));
     tr.appendChild(tdAct);
 
-    els.gearTable.appendChild(tr);
+    els.gearBody.appendChild(tr);
   });
+
+  refreshComputed();
+}
+
+function refreshComputed(){
+  syncControls();
+
+  // update auto gear cost (if amort/fallback changed)
+  state.gear.forEach(g => {
+    if (g.costAuto){
+      const it = INVENTORY[g.invIndex];
+      g.costPerDay = gearCostPerDay(it);
+    }
+  });
+
+  // update service rows PU readOnly + totals
+  [...els.servicesBody.querySelectorAll("tr")].forEach(tr => {
+    const idx = Number(tr.dataset.index);
+    const line = state.services[idx];
+    const puInput = tr.children[4].querySelector("input");
+    const totCell = tr.querySelector(".line-total");
+
+    const derived = (state.pricing.mode==="margin" && num(line.costUnit,0)>0);
+    puInput.readOnly = derived;
+    puInput.value = derived ? serviceUnitPrice(line).toFixed(2) : num(line.unitPrice,0);
+
+    totCell.textContent = €(serviceLineTotal(line));
+  });
+
+  // update gear totals
+  [...els.gearBody.querySelectorAll("tr")].forEach(tr => {
+    const idx = Number(tr.dataset.index);
+    const g = state.gear[idx];
+    const costInput = tr.children[4].querySelector("input");
+    if (g.costAuto) costInput.value = num(g.costPerDay,0);
+    tr.querySelector(".line-total").textContent = €(gearLineTotal(g));
+  });
+
+  renderTotals();
 }
 
 function renderTotals(){
-  // totals = services + gear
-  const htServices = state.services.reduce((s,l)=>s+lineTotalService(l),0);
-  const htGear = state.gear.reduce((s,g)=>s+lineTotalGear(g),0);
+  const htServices = state.services.reduce((s,l)=>s+serviceLineTotal(l),0);
+  const htGear = state.gear.reduce((s,g)=>s+gearLineTotal(g),0);
   const ht = htServices + htGear;
 
-  const costServices = state.services.reduce((s,l)=>s+lineCostService(l),0);
-  const costGear = state.gear.reduce((s,g)=>s+lineCostGear(g),0);
+  const costServices = state.services.reduce((s,l)=>s+serviceLineCost(l),0);
+  const costGear = state.gear.reduce((s,g)=>s+gearLineCost(g),0);
   const cost = costServices + costGear;
 
   const profit = ht - cost;
@@ -1145,53 +1020,58 @@ function renderTotals(){
   `;
 }
 
-/* =======================
-   Actions
-   ======================= */
-
+/* ===== Actions ===== */
 function loadPack(append=false){
-  syncPricingFromUI();
-
+  syncControls();
   const type = els.packType.value;
   const level = els.packLevel.value;
-
   if (!PACKS[type] || !PACKS[type][level]){
     alert("Pack introuvable.");
     return;
   }
   PACKS[type][level](append);
 
-  // si mode margin, et prefillPU, on recalc automatiquement l’affichage (les PU visibles)
-  render();
+  // prefill PU if desired (only meaningful in manual mode or cost=0)
+  if (state.prefs.prefillPU){
+    state.services.forEach(l => {
+      if (state.pricing.mode==="manual" && num(l.unitPrice,0)===0 && num(l.costUnit,0)>0){
+        l.unitPrice = suggestedPU(num(l.costUnit,0));
+      }
+    });
+  }
+  renderTables();
 }
-
 els.btnLoadPack.addEventListener("click", () => loadPack(false));
 els.btnAppendPack.addEventListener("click", () => loadPack(true));
-
-els.btnReset.addEventListener("click", () => {
-  state.services = [];
-  state.gear = [];
-  render();
-});
+els.btnReset.addEventListener("click", () => { state.services=[]; state.gear=[]; renderTables(); });
 
 els.btnAddService.addEventListener("click", () => {
   addServiceLine({name:"Nouvelle prestation", desc:"", unit:"jour", qty:1, costUnit:0, unitPrice:0});
-  render();
+  renderTables();
 });
-
-els.btnAddGear.addEventListener("click", () => {
-  addGearLine({invIndex: 0, qty:1, days:1});
-  render();
-});
+els.btnAddGear.addEventListener("click", () => { addGearLine({invIndex:0, qty:1, days:1}); renderTables(); });
 
 els.btnPrint.addEventListener("click", () => window.print());
 
 els.btnExportJson.addEventListener("click", () => {
-  syncMetaFromUI(); syncPricingFromUI();
-  const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+  const payload = {
+    ...state,
+    meta: {
+      quoteNumber: els.quoteNumber.value.trim(),
+      quoteDate: els.quoteDate.value,
+      issuerName: els.issuerName.value.trim(),
+      vatRegime: els.vatRegime.value.trim(),
+      clientName: els.clientName.value.trim(),
+      clientContact: els.clientContact.value.trim(),
+      projectName: els.projectName.value.trim(),
+      projectPlace: els.projectPlace.value.trim(),
+      notes: els.notes.value.trim()
+    }
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = (state.meta.quoteNumber || "devis_mcp") + ".json";
+  a.download = (payload.meta.quoteNumber || "devis_mcp") + ".json";
   a.click();
   URL.revokeObjectURL(a.href);
 });
@@ -1203,34 +1083,31 @@ els.jsonFile.addEventListener("change", async () => {
   const txt = await f.text();
   try{
     const obj = JSON.parse(txt);
-    // merge simple
-    Object.assign(state.meta, obj.meta || {});
     Object.assign(state.pricing, obj.pricing || {});
     Object.assign(state.gearCost, obj.gearCost || {});
     Object.assign(state.prefs, obj.prefs || {});
     state.services = Array.isArray(obj.services) ? obj.services : [];
     state.gear = Array.isArray(obj.gear) ? obj.gear : [];
 
-    // repush meta to UI
-    els.quoteNumber.value = state.meta.quoteNumber || "";
-    els.quoteDate.value = state.meta.quoteDate || "";
-    els.issuerName.value = state.meta.issuerName || "";
-    els.vatRegime.value = state.meta.vatRegime || "";
-    els.clientName.value = state.meta.clientName || "";
-    els.clientContact.value = state.meta.clientContact || "";
-    els.projectName.value = state.meta.projectName || "";
-    els.projectPlace.value = state.meta.projectPlace || "";
-    els.notes.value = state.meta.notes || "";
+    const m = obj.meta || {};
+    els.quoteNumber.value = m.quoteNumber || "";
+    els.quoteDate.value = m.quoteDate || "";
+    els.issuerName.value = m.issuerName || "Momentum Creative Productions (MCP)";
+    els.vatRegime.value = m.vatRegime || "Assujetti TVA — Régime simplifié";
+    els.clientName.value = m.clientName || "";
+    els.clientContact.value = m.clientContact || "";
+    els.projectName.value = m.projectName || "";
+    els.projectPlace.value = m.projectPlace || "";
+    els.notes.value = m.notes || "";
 
     els.pricingMode.value = state.pricing.mode || "margin";
     els.targetMargin.value = state.pricing.targetMargin ?? 0.5;
     els.vatRate.value = state.pricing.vatRate ?? 0.2;
-
     els.amortDays.value = state.gearCost.amortDays ?? 120;
     els.fallbackGearCostShare.value = state.gearCost.fallbackShare ?? 0.4;
     els.prefillPU.value = state.prefs.prefillPU ? "yes" : "no";
 
-    render();
+    renderTables();
   }catch(e){
     alert("JSON invalide.");
   }finally{
@@ -1238,24 +1115,18 @@ els.jsonFile.addEventListener("change", async () => {
   }
 });
 
-// live updates
-[
-  els.quoteNumber, els.quoteDate, els.issuerName, els.vatRegime,
-  els.clientName, els.clientContact, els.projectName, els.projectPlace, els.notes,
-  els.pricingMode, els.targetMargin, els.vatRate,
-  els.amortDays, els.fallbackGearCostShare, els.prefillPU
-].forEach(el => el.addEventListener("input", render));
-[els.pricingMode, els.prefillPU].forEach(el => el.addEventListener("change", render));
+// Recalc when global settings change
+[els.pricingMode, els.targetMargin, els.vatRate, els.amortDays, els.fallbackGearCostShare, els.prefillPU]
+  .forEach(el => el.addEventListener("input", () => { refreshComputed(); }));
 
-// init date
+/* ===== init ===== */
 (function init(){
   const d = new Date();
   const iso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
   els.quoteDate.value = iso;
   els.quoteNumber.value = "MCP-" + d.getFullYear() + "-001";
-  render();
+  renderTables();
 })();
 </script>
-
 </body>
 </html>
