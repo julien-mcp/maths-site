@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MCP — Générateur de devis (offline, 1 fichier)</title>
+  <title>MCP — Générateur de devis (V2, intégré Excel)</title>
   <style>
     :root{
       --bg:#0b0d12;
       --card:#111522;
-      --card2:#0f1320;
       --muted:#8c93a7;
       --text:#e8ecf6;
       --accent:#7c5cff;
@@ -18,9 +17,7 @@
       --line:#222a3d;
       --shadow: 0 14px 40px rgba(0,0,0,.45);
       --radius:18px;
-      --radius2:14px;
       --pad:16px;
-      --pad2:12px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
@@ -34,9 +31,8 @@
                   linear-gradient(180deg, #070910 0%, var(--bg) 100%);
       color:var(--text);
     }
-    a{color:inherit}
     .wrap{
-      max-width:1200px;
+      max-width:1220px;
       margin:0 auto;
       padding:24px 16px 80px;
       display:grid;
@@ -58,9 +54,7 @@
       background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
       box-shadow: var(--shadow);
     }
-    .brand{
-      display:flex; gap:12px; align-items:center;
-    }
+    .brand{display:flex; gap:12px; align-items:center;}
     .logo{
       width:42px;height:42px;border-radius:14px;
       background: conic-gradient(from 180deg, var(--accent), var(--accent2), var(--accent));
@@ -68,9 +62,7 @@
     }
     .brand h1{margin:0;font-size:15px;letter-spacing:.4px}
     .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
-    .top-actions{
-      display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center;
-    }
+    .top-actions{display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center;}
     button, .btn{
       appearance:none;
       border:1px solid var(--line);
@@ -102,10 +94,7 @@
       white-space:nowrap;
     }
     .dot{width:8px;height:8px;border-radius:999px;background:var(--accent2)}
-    .grid{
-      display:grid;
-      gap:14px;
-    }
+    .grid{display:grid; gap:14px;}
     .card{
       border:1px solid var(--line);
       border-radius: var(--radius);
@@ -121,23 +110,11 @@
       border-bottom:1px solid var(--line);
       background: rgba(0,0,0,.12);
     }
-    .card .hd h2{
-      margin:0;
-      font-size:14px;
-      letter-spacing:.3px;
-    }
-    .card .hd .sub{
-      color:var(--muted);
-      font-size:12px;
-      margin-left:10px;
-      font-weight:600;
-    }
-    .card .bd{
-      padding: 14px 16px 16px;
-    }
+    .card .hd h2{margin:0;font-size:14px;letter-spacing:.3px}
+    .card .hd .sub{color:var(--muted);font-size:12px;margin-left:10px;font-weight:600}
+    .card .bd{padding: 14px 16px 16px;}
     .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
     @media (max-width: 680px){ .row{grid-template-columns: 1fr;} }
-
     label{
       display:block;
       font-size:12px;
@@ -157,24 +134,12 @@
       font-size:13px;
     }
     textarea{min-height: 70px; resize: vertical}
-    input::placeholder, textarea::placeholder{color: rgba(140,147,167,.65)}
     input:focus, select:focus, textarea:focus{
       border-color: rgba(124,92,255,.7);
       box-shadow: 0 0 0 3px rgba(124,92,255,.15);
     }
-    .hint{
-      margin-top:6px;
-      font-size:12px;
-      color:rgba(140,147,167,.92);
-      line-height:1.25;
-    }
+    .hint{margin-top:6px;font-size:12px;color:rgba(140,147,167,.92);line-height:1.25}
     .hr{height:1px;background:var(--line); margin:14px 0}
-    .sectionTitle{
-      display:flex; align-items:center; gap:10px;
-      margin: 0 0 10px;
-      font-weight:800;
-      letter-spacing:.2px;
-    }
     .badge{
       font-family: var(--mono);
       font-size:11px;
@@ -184,8 +149,6 @@
       background: rgba(255,255,255,.03);
       color: var(--muted);
     }
-
-    /* tables */
     table{
       width:100%;
       border-collapse: collapse;
@@ -212,20 +175,11 @@
     .td-actions{white-space:nowrap; text-align:right}
     .mono{font-family:var(--mono)}
     .right{text-align:right}
-    .muted{color:var(--muted)}
-    .ok{color: var(--accent2); font-weight:800}
-    .bad{color: var(--danger); font-weight:800}
-    .warn{color: var(--warn); font-weight:800}
 
     /* preview */
-    .preview{
-      position: sticky;
-      top: 16px;
-      align-self: start;
-    }
-    @media (max-width: 980px){
-      .preview{position: static;}
-    }
+    .preview{position: sticky; top: 16px; align-self: start;}
+    @media (max-width: 980px){ .preview{position: static;} }
+
     .doc{
       background: #fff;
       color:#111;
@@ -234,97 +188,31 @@
       border:1px solid rgba(0,0,0,.08);
       box-shadow: 0 18px 55px rgba(0,0,0,.35);
     }
-    .doc .page{
-      padding: 22px 24px 24px;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
-    .doc h3, .doc h4, .doc p{margin:0}
-    .doc small{color:#666}
+    .doc .page{padding: 22px 24px 24px; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;}
     .doc .top{
       display:flex; justify-content:space-between; gap:14px; align-items:flex-start;
       border-bottom: 1px solid #eee;
       padding-bottom: 12px;
       margin-bottom: 12px;
     }
-    .doc .top .mcp{
-      max-width: 60%;
-    }
-    .doc .top .mcp .name{
-      font-weight:900; letter-spacing:.2px; font-size:16px;
-    }
-    .doc .top .mcp .meta{
-      font-size:12px; color:#444; margin-top:6px; line-height:1.3;
-    }
-    .doc .top .quote{
-      text-align:right;
-      min-width: 240px;
-    }
-    .doc .top .quote .title{
-      font-weight:900; font-size:18px;
-    }
-    .doc .top .quote .ref{
-      font-family: var(--mono);
-      font-size:12px;
-      color:#333;
-      margin-top: 6px;
-      line-height:1.3;
-    }
-    .doc .blocks{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-      margin-bottom: 12px;
-    }
-    .doc .box{
-      border:1px solid #eee;
-      border-radius: 14px;
-      padding: 10px 12px;
-      background:#fafafa;
-    }
-    .doc .box .t{
-      font-weight:900; font-size:12px; color:#333; margin-bottom:6px;
-    }
-    .doc .box .c{
-      font-size:12px; color:#333; line-height:1.35;
-      white-space: pre-wrap;
-    }
-    .doc .items{
-      width:100%;
-      border-collapse:collapse;
-      margin: 10px 0 12px;
-      font-size:12px;
-    }
-    .doc .items th, .doc .items td{
-      border-bottom:1px solid #eee;
-      padding:8px 8px;
-      font-size:12px;
-    }
+    .doc .top .mcp .name{font-weight:900; letter-spacing:.2px; font-size:16px;}
+    .doc .top .mcp .meta{font-size:12px; color:#444; margin-top:6px; line-height:1.3; white-space:pre-wrap;}
+    .doc .top .quote{text-align:right; min-width: 240px;}
+    .doc .top .quote .title{font-weight:900; font-size:18px;}
+    .doc .top .quote .ref{font-family: var(--mono); font-size:12px; color:#333; margin-top: 6px; line-height:1.3; white-space:pre-wrap;}
+    .doc .blocks{display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom: 12px;}
+    .doc .box{border:1px solid #eee; border-radius: 14px; padding: 10px 12px; background:#fafafa;}
+    .doc .box .t{font-weight:900; font-size:12px; color:#333; margin-bottom:6px;}
+    .doc .box .c{font-size:12px; color:#333; line-height:1.35; white-space: pre-wrap;}
+    .doc .items{width:100%; border-collapse:collapse; margin: 10px 0 12px; font-size:12px;}
+    .doc .items th, .doc .items td{border-bottom:1px solid #eee; padding:8px 8px; font-size:12px;}
     .doc .items th{color:#555; background:#fafafa}
     .doc .items td.right{text-align:right}
-    .doc .totals{
-      margin-top: 10px;
-      display:grid;
-      grid-template-columns: 1fr 260px;
-      gap:12px;
-      align-items:start;
-    }
-    .doc .notes{
-      font-size:11.5px; color:#333; line-height:1.35;
-    }
-    .doc .sum{
-      border:1px solid #eee;
-      border-radius: 14px;
-      padding: 10px 12px;
-      background:#fafafa;
-    }
-    .doc .sum .line{
-      display:flex; justify-content:space-between; gap:10px;
-      padding:4px 0;
-      font-size:12px;
-    }
-    .doc .sum .line.total{
-      font-weight:900; font-size:13px; border-top:1px solid #e9e9e9; margin-top:6px; padding-top:8px;
-    }
+    .doc .totals{margin-top: 10px; display:grid; grid-template-columns: 1fr 260px; gap:12px; align-items:start;}
+    .doc .notes{font-size:11.5px; color:#333; line-height:1.35;}
+    .doc .sum{border:1px solid #eee; border-radius: 14px; padding: 10px 12px; background:#fafafa;}
+    .doc .sum .line{display:flex; justify-content:space-between; gap:10px; padding:4px 0; font-size:12px;}
+    .doc .sum .line.total{font-weight:900; font-size:13px; border-top:1px solid #e9e9e9; margin-top:6px; padding-top:8px;}
     .doc .footer{
       border-top:1px solid #eee;
       margin-top:12px;
@@ -334,7 +222,12 @@
       display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
     }
 
-    /* print */
+    .checks{display:grid; gap:8px; margin-top:10px}
+    .check{display:flex; gap:10px; align-items:flex-start; padding:10px 10px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.02)}
+    .check input{width:auto; margin-top:2px}
+    .check .t{font-weight:800; font-size:13px}
+    .check .d{color:var(--muted); font-size:12px; margin-top:4px; line-height:1.25}
+
     @media print{
       body{background:#fff}
       header, .card:not(.printable), .preview .card.hdtools{display:none !important}
@@ -342,7 +235,6 @@
       .preview{position:static}
       .doc{box-shadow:none; border:none; border-radius:0}
       .doc .page{padding:16mm}
-      .doc .top{margin-bottom: 10px}
     }
   </style>
 </head>
@@ -353,12 +245,12 @@
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
         <div>
-          <h1>MCP — Momentum Creative Productions</h1>
-          <p>Outil de devis (HTML/CSS + JS local) · TVA FR · objectif résultat ≥ 50% · impression PDF</p>
+          <h1>MCP — Générateur de devis (V2)</h1>
+          <p>Inventaire + taux horaires importés · matériel dégressif · marge-cible · PDF via impression</p>
         </div>
       </div>
       <div class="top-actions">
-        <span class="pill"><span class="dot"></span> Offline · sauvegarde locale</span>
+        <span class="pill"><span class="dot"></span> Offline · autosave</span>
         <button class="btn small" id="btnNew">Nouveau</button>
         <button class="btn small" id="btnSave">Sauver</button>
         <button class="btn small" id="btnExport">Exporter JSON</button>
@@ -368,34 +260,29 @@
       </div>
     </header>
 
-    <!-- LEFT: builder -->
     <div class="grid">
       <div class="card printable">
         <div class="hd">
-          <div>
-            <h2>Paramètres globaux <span class="sub">TVA · marge · dégressivité · mentions</span></h2>
-          </div>
-          <div class="pill"><span class="dot" style="background:var(--accent)"></span><span id="kpiMargin" class="mono">—</span></div>
+          <div><h2>Paramètres globaux <span class="sub">TVA · marge · dégressivité</span></h2></div>
+          <div class="pill"><span class="dot" id="dotMargin"></span><span id="kpiMargin" class="mono">—</span></div>
         </div>
         <div class="bd">
           <div class="row">
             <div>
               <label>Mode de chiffrage</label>
               <select id="pricingMode">
-                <option value="sell">Mode vente (prix unitaires saisis)</option>
-                <option value="target">Mode marge-cible (prix auto = coût / (1 - marge))</option>
-                <option value="hybrid">Hybride (prix saisis + contrôle marge)</option>
+                <option value="sell">Mode vente (prix saisis)</option>
+                <option value="target">Mode marge-cible (PU = coût/(1-marge))</option>
+                <option value="hybrid" selected>Hybride (prix saisis + alerte)</option>
               </select>
               <div class="hint">
-                - <b>Vente</b> : tu fixes les prix (packs, jours, loc matériel).<br/>
-                - <b>Marge-cible</b> : tu saisis les <i>coûts</i> et l’outil sort le prix pour viser ta marge (ex: 50%).<br/>
-                - <b>Hybride</b> : tu fixes les prix, mais l’outil t’alerte si tu descends sous l’objectif.
+                En “marge-cible”, l’outil calcule automatiquement les PU à partir des coûts.
               </div>
             </div>
             <div>
               <label>Objectif résultat (marge sur CA)</label>
               <input id="targetMargin" type="number" min="0" max="0.95" step="0.01" value="0.50" />
-              <div class="hint">Ex : 0,50 = <b>50%</b> de résultat sur le CA HT (profit / CA). (Différent du “markup” sur coût.)</div>
+              <div class="hint">0,50 = 50% (profit / CA HT).</div>
             </div>
           </div>
 
@@ -408,33 +295,30 @@
                 <option value="0.055">5,5%</option>
                 <option value="0">0% (hors TVA / exonéré)</option>
               </select>
-              <div class="hint">Tu m’as dit : assujetti TVA, régime simplifié → le taux dépend de la nature de la prestation (par défaut 20%).</div>
             </div>
             <div>
-              <label>Dégressivité matériel (barème)</label>
+              <label>Dégressivité matériel</label>
               <select id="degressivityPreset">
-                <option value="mcp" selected>MCP (1:100%, 2:70%, 3:60%, 4:55%, 5:50%, 6+:45%)</option>
-                <option value="soft">Douce (1:100%, 2:80%, 3:70%, 4+:65%)</option>
-                <option value="aggr">Agressive (1:100%, 2:65%, 3:55%, 4:50%, 5+:45%)</option>
+                <option value="mcp" selected>1:100% · 2:70% · 3:60% · 4:55% · 5:50% · 6+:45%</option>
+                <option value="soft">Douce (1:100 · 2:80 · 3:70 · 4+:65)</option>
+                <option value="aggr">Agressive (1:100 · 2:65 · 3:55 · 4:50 · 5+:45)</option>
                 <option value="custom">Personnalisée (texte)</option>
               </select>
-              <div class="hint">Le barème s’applique au <b>tarif jour</b> de chaque item, selon le nombre de jours de location.</div>
             </div>
           </div>
 
           <div id="customDegWrap" style="display:none; margin-top:10px">
             <label>Barème personnalisé</label>
-            <input id="customDeg" placeholder='Ex: 1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45' />
-            <div class="hint">Format : <span class="mono">jour:facteur</span>. Le dernier peut être <span class="mono">6+</span> pour “6 jours et plus”.</div>
+            <input id="customDeg" value='1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45' />
+            <div class="hint">Format : <span class="mono">jour:facteur</span> (ex: <span class="mono">6+</span>).</div>
           </div>
 
           <div class="hr"></div>
 
           <div class="row">
             <div>
-              <label>Référence devis (auto)</label>
-              <input id="quoteRef" placeholder="DEV-2026-0001" />
-              <div class="hint">Laisse vide → génération auto à l’enregistrement.</div>
+              <label>Référence devis</label>
+              <input id="quoteRef" placeholder="DEV-2026-0001 (auto si vide)" />
             </div>
             <div>
               <label>Validité (jours)</label>
@@ -445,32 +329,35 @@
           <div class="row" style="margin-top:10px">
             <div>
               <label>Conditions de paiement</label>
-              <input id="paymentTerms" placeholder="Ex: 40% à la commande, solde à 30 jours fin de mois" value="40% à la commande, solde à la livraison (J+30)" />
+              <input id="paymentTerms" value="40% à la commande, solde à la livraison (J+30)" />
             </div>
             <div>
-              <label>Mentions / notes (client)</label>
-              <input id="publicNotes" placeholder="Ex: inclus 1 aller-retour de modifications, droits musicaux non inclus..." value="Inclut 1 aller-retour de modifications. Toute demande supplémentaire fera l’objet d’un avenant." />
+              <label>Remise HT (€)</label>
+              <input id="discount" type="number" step="1" value="0" />
             </div>
           </div>
 
+          <div style="margin-top:10px">
+            <label>Notes (client)</label>
+            <input id="publicNotes" value="Inclut 1 aller-retour de modifications. Toute demande supplémentaire fera l’objet d’un avenant." />
+          </div>
         </div>
       </div>
 
       <div class="card printable">
         <div class="hd">
-          <h2>Informations entreprise & client <span class="sub">pour le document</span></h2>
+          <h2>Entreprise & client <span class="sub">document</span></h2>
           <span class="badge">Identité</span>
         </div>
         <div class="bd">
-          <div class="sectionTitle">MCP <span class="badge">éditeur</span></div>
           <div class="row">
             <div>
-              <label>Nom commercial</label>
+              <label>Nom entreprise</label>
               <input id="mcpName" value="Momentum Creative Productions (MCP)" />
             </div>
             <div>
-              <label>Ville / adresse (optionnel)</label>
-              <input id="mcpAddr" placeholder="Ex: 69000 Lyon — France" value="Lyon — France" />
+              <label>Adresse / ville</label>
+              <input id="mcpAddr" value="Lyon — France" />
             </div>
           </div>
           <div class="row" style="margin-top:10px">
@@ -486,14 +373,13 @@
 
           <div class="hr"></div>
 
-          <div class="sectionTitle">Client <span class="badge">destinataire</span></div>
           <div class="row">
             <div>
-              <label>Entreprise</label>
+              <label>Client — entreprise</label>
               <input id="clientCompany" placeholder="Nom de l'entreprise" />
             </div>
             <div>
-              <label>Contact</label>
+              <label>Client — contact</label>
               <input id="clientContact" placeholder="Nom + fonction" />
             </div>
           </div>
@@ -522,14 +408,14 @@
 
       <div class="card printable">
         <div class="hd">
-          <h2>Projet <span class="sub">cadre, dates, type de prestation</span></h2>
+          <h2>Projet <span class="sub">brief</span></h2>
           <span class="badge">Brief</span>
         </div>
         <div class="bd">
           <div class="row">
             <div>
               <label>Titre du projet</label>
-              <input id="projectTitle" placeholder="Ex: Film institutionnel — Usine X" />
+              <input id="projectTitle" placeholder="Ex: Film corporate — site industriel" />
             </div>
             <div>
               <label>Lieu</label>
@@ -538,128 +424,152 @@
           </div>
           <div class="row" style="margin-top:10px">
             <div>
-              <label>Date(s) prévues</label>
+              <label>Date(s)</label>
               <input id="projectDates" placeholder="Ex: 15–16 janvier 2026" />
             </div>
             <div>
               <label>Type</label>
               <select id="projectType">
-                <option value="Film institutionnel">Film institutionnel</option>
-                <option value="Film corporate">Film corporate</option>
-                <option value="Aftermovie">Aftermovie événement</option>
-                <option value="Live interne (Teams/table ronde)">Live interne (Teams/table ronde)</option>
-                <option value="Live plateau (talk-show)">Live plateau (talk-show)</option>
-                <option value="Autre">Autre</option>
+                <option>Live TV / Webcast (interne ou externe)</option>
+                <option>Film institutionnel / corporate (image)</option>
+                <option>Film startup / investisseurs (pitch)</option>
+                <option>Film marque employeur (recrutement)</option>
+                <option>Aftermovie évènement</option>
+                <option>Film communication interne / formation</option>
+                <option>Autre</option>
               </select>
             </div>
           </div>
           <div style="margin-top:10px">
-            <label>Description / périmètre</label>
-            <textarea id="projectDesc" placeholder="Objectifs, livrables, contraintes (accès, sécurité, délais), diffusion, formats..."></textarea>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="row">
-            <div>
-              <label>Pack rapide (pré-remplissage)</label>
-              <select id="quickPack">
-                <option value="">— Aucun —</option>
-                <option value="film_s">Film (simple) : 1 jour tournage + 1 jour montage</option>
-                <option value="film_m">Film (standard) : 2 jours tournage + 3 jours post-prod</option>
-                <option value="after_s">Aftermovie : 1 jour tournage + 1 jour montage</option>
-                <option value="live_teams">Live interne Teams : 2 cams + audio + habillage léger</option>
-                <option value="live_talk">Talk-show : 3 cams + régie + habillage + replay</option>
-              </select>
-              <div class="hint">Ces packs sont des bases rapides. Ajuste ensuite lignes, coûts, et matériel.</div>
-            </div>
-            <div>
-              <label>Taux journalier “MCP” (simple)</label>
-              <input id="dayRateMCP" type="number" step="1" value="600" />
-              <div class="hint">Tu m’as donné 600€/jour pour tournage, montage et préparation (mode vente).</div>
-            </div>
+            <label>Description</label>
+            <textarea id="projectDesc" placeholder="Objectifs, livrables, diffusion, contraintes..."></textarea>
           </div>
         </div>
       </div>
 
       <div class="card printable">
         <div class="hd">
-          <h2>Lignes — prestations <span class="sub">packs / jours / options</span></h2>
+          <h2>Catalogue MCP <span class="sub">générer un pack (structure)</span></h2>
+          <span class="badge">Packs</span>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label>Prestation (catalogue)</label>
+              <select id="catalogType">
+                <option value="Live TV / Webcast (interne ou externe)">Live TV / Webcast</option>
+                <option value="Film institutionnel / corporate (image)">Film institutionnel / corporate</option>
+                <option value="Film startup / investisseurs (pitch)">Film startup / investisseurs (pitch)</option>
+                <option value="Film marque employeur (recrutement)">Film marque employeur</option>
+                <option value="Aftermovie évènement">Aftermovie évènement</option>
+                <option value="Film communication interne / formation">Com interne / formation</option>
+              </select>
+              <div class="hint">Basé sur ton catalogue. (Tu ajustes ensuite jours/PU.)</div>
+            </div>
+            <div>
+              <label>Niveau</label>
+              <select id="catalogPack">
+                <option value="Essentiel">Essentiel</option>
+                <option value="Standard" selected>Standard</option>
+                <option value="Premium">Premium</option>
+              </select>
+              <div class="hint">Essentiel = 1 AR · Standard = 2 AR · Premium = 3+ AR.</div>
+            </div>
+          </div>
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn primary" id="btnGeneratePack">Générer le pack (remplace lignes)</button>
+            <button class="btn" id="btnAutoReprice">Auto-PU marge-cible</button>
+          </div>
+
+          <div class="hr"></div>
+
+          <label>Options / add-ons (catalogue)</label>
+          <div class="checks" id="addonsList"></div>
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn" id="btnAddAddons">Ajouter options sélectionnées</button>
+            <button class="btn danger" id="btnClearAddons">Tout décocher</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card printable">
+        <div class="hd">
+          <h2>Lignes — prestations <span class="sub">inclut rôles (heures)</span></h2>
           <div class="pill"><span class="dot"></span><span class="mono" id="countService">0</span>&nbsp;lignes</div>
         </div>
         <div class="bd">
           <div class="row">
             <div>
-              <label>Ajouter une ligne prestation</label>
+              <label>Ajouter une ligne</label>
               <select id="serviceTemplate">
                 <option value="custom">Ligne libre</option>
-                <option value="prep">Préparation / repérage (jour)</option>
+                <option value="prep">Pré-production (jour)</option>
                 <option value="shoot">Tournage (jour)</option>
+                <option value="live_prod">Production live (jour)</option>
                 <option value="edit">Montage (jour)</option>
                 <option value="color">Étalonnage (jour)</option>
-                <option value="sound">Mixage / sound design (jour)</option>
-                <option value="motion">Motion design / habillage (jour)</option>
+                <option value="sound">Mixage (jour)</option>
+                <option value="motion">Motion design (jour)</option>
                 <option value="delivery">Exports / livraisons (forfait)</option>
-                <option value="live_prod">Production live (jour)</option>
-                <option value="live_replay">Replays / chapitrage / dérush (jour)</option>
               </select>
+              <div class="hint">Les rôles (heures) sont ajoutés dynamiquement depuis ton calculateur.</div>
             </div>
             <div style="display:flex; align-items:end; gap:10px">
               <button class="btn primary" id="addService">+ Ajouter</button>
-              <button class="btn danger" id="clearServices" title="Supprime toutes les lignes prestations">Tout vider</button>
+              <button class="btn danger" id="clearServices">Tout vider</button>
             </div>
           </div>
 
           <div style="margin-top:12px; overflow:auto">
-            <table id="tblServices">
+            <table>
               <thead>
                 <tr>
                   <th style="min-width:220px">Désignation</th>
                   <th style="min-width:240px">Description</th>
                   <th class="right" style="width:90px">Qté</th>
-                  <th style="width:80px">Unité</th>
+                  <th style="width:90px">Unité</th>
                   <th class="right" style="width:140px">PU HT (€)</th>
-                  <th class="right" style="width:140px">Coût HT (€)</th>
+                  <th class="right" style="width:150px">Coût unit. (€)</th>
                   <th class="right" style="width:140px">Total HT (€)</th>
+                  <th class="right" style="width:150px">Coût total (€)</th>
                   <th class="td-actions" style="width:140px">Actions</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody id="tblServices"></tbody>
             </table>
           </div>
 
           <div class="hint" style="margin-top:10px">
-            <b>Astuce marge-cible :</b> renseigne le coût (temps, charges, sous-traitance), puis laisse le PU vide en mode “marge-cible” → calcul automatique pour viser ton objectif (≥ 50%).
+            <b>Coût unit.</b> = coût par unité (ex: €/heure, €/jour). Le coût total est calculé automatiquement.
           </div>
         </div>
       </div>
 
       <div class="card printable">
         <div class="hd">
-          <h2>Lignes — matériel <span class="sub">tarif/jour + dégressivité</span></h2>
+          <h2>Lignes — matériel <span class="sub">qté · jours · dégressivité</span></h2>
           <div class="pill"><span class="dot"></span><span class="mono" id="countGear">0</span>&nbsp;items</div>
         </div>
         <div class="bd">
           <div class="row">
             <div>
-              <label>Ajouter un item matériel</label>
+              <label>Ajouter un item</label>
               <select id="gearItem"></select>
-              <div class="hint">
-                Liste embarquée (démo). Tu peux coller/importer ton inventaire Excel via CSV (bouton ci-dessous).
-              </div>
+              <div class="hint">Préchargé depuis Inventaire matériel.xlsx (items avec tarif loc/jour).</div>
             </div>
             <div style="display:flex; align-items:end; gap:10px; flex-wrap:wrap">
               <button class="btn primary" id="addGear">+ Ajouter</button>
               <button class="btn" id="btnImportCSV">Importer inventaire CSV</button>
-              <input id="csvArea" placeholder="Colle ici un CSV (nom;tarif_jour)" style="display:none" />
+              <input id="csvArea" placeholder="Colle CSV: nom;tarif_jour;quantité (quantité optionnelle)" style="display:none" />
             </div>
           </div>
 
           <div style="margin-top:12px; overflow:auto">
-            <table id="tblGear">
+            <table>
               <thead>
                 <tr>
-                  <th style="min-width:260px">Matériel</th>
+                  <th style="min-width:280px">Matériel</th>
+                  <th class="right" style="width:90px">Qté</th>
                   <th class="right" style="width:90px">Jours</th>
                   <th class="right" style="width:140px">Tarif J1 (€)</th>
                   <th class="right" style="width:120px">Facteur</th>
@@ -667,20 +577,15 @@
                   <th class="td-actions" style="width:140px">Actions</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody id="tblGear"></tbody>
             </table>
-          </div>
-
-          <div class="hint" style="margin-top:10px">
-            Le total matériel = somme des jours pondérés par le barème (ex : J2=70%).  
-            Le barème est modifiable dans “Paramètres globaux”.
           </div>
         </div>
       </div>
 
       <div class="card printable">
         <div class="hd">
-          <h2>Frais & divers <span class="sub">déplacements, repas, droits, sous-traitance</span></h2>
+          <h2>Lignes — frais & divers <span class="sub">déplacements, sous-traitance…</span></h2>
           <div class="pill"><span class="dot"></span><span class="mono" id="countFees">0</span>&nbsp;lignes</div>
         </div>
         <div class="bd">
@@ -689,11 +594,11 @@
               <label>Ajouter une ligne</label>
               <select id="feeTemplate">
                 <option value="custom">Ligne libre</option>
-                <option value="travel">Déplacements (km, péage, train)</option>
+                <option value="travel">Déplacements</option>
                 <option value="meals">Repas / catering</option>
                 <option value="hotel">Hébergement</option>
                 <option value="music">Droits musicaux / licences</option>
-                <option value="st">Sous-traitance (ex: opérateur, sound, graphiste)</option>
+                <option value="st">Sous-traitance</option>
                 <option value="misc">Divers</option>
               </select>
             </div>
@@ -704,107 +609,63 @@
           </div>
 
           <div style="margin-top:12px; overflow:auto">
-            <table id="tblFees">
+            <table>
               <thead>
                 <tr>
-                  <th style="min-width:240px">Désignation</th>
+                  <th style="min-width:220px">Désignation</th>
                   <th style="min-width:240px">Description</th>
                   <th class="right" style="width:90px">Qté</th>
-                  <th style="width:80px">Unité</th>
+                  <th style="width:90px">Unité</th>
                   <th class="right" style="width:140px">PU HT (€)</th>
-                  <th class="right" style="width:140px">Coût HT (€)</th>
+                  <th class="right" style="width:150px">Coût unit. (€)</th>
                   <th class="right" style="width:140px">Total HT (€)</th>
+                  <th class="right" style="width:150px">Coût total (€)</th>
                   <th class="td-actions" style="width:140px">Actions</th>
                 </tr>
               </thead>
-              <tbody></tbody>
+              <tbody id="tblFees"></tbody>
             </table>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="row">
-            <div>
-              <label>Remises (HT)</label>
-              <input id="discount" type="number" step="1" value="0" />
-              <div class="hint">Valeur positive = remise en € HT (sera soustraite).</div>
-            </div>
-            <div>
-              <label>Avance / acompte (info)</label>
-              <input id="depositInfo" placeholder="Ex: acompte 40% à la commande" value="Acompte 40% à la commande" />
-            </div>
           </div>
         </div>
       </div>
 
       <div class="card printable">
         <div class="hd">
-          <h2>Contrôle marge & recommandations <span class="sub">objectif ≥ 50%</span></h2>
+          <h2>Contrôle marge <span class="sub">HT</span></h2>
           <span class="badge">Analyse</span>
         </div>
         <div class="bd">
           <div class="row">
-            <div class="card" style="box-shadow:none">
-              <div class="hd" style="background:rgba(0,0,0,.08)"><h2 style="font-size:13px">Indicateurs</h2><span class="sub">HT</span></div>
-              <div class="bd" style="padding:12px 14px">
-                <div style="display:grid; gap:8px">
-                  <div class="row" style="grid-template-columns:1fr 1fr; gap:10px">
-                    <div class="pill" style="justify-content:space-between"><span>CA HT</span><span class="mono" id="kpiSales">—</span></div>
-                    <div class="pill" style="justify-content:space-between"><span>Coûts HT</span><span class="mono" id="kpiCosts">—</span></div>
-                  </div>
-                  <div class="row" style="grid-template-columns:1fr 1fr; gap:10px">
-                    <div class="pill" style="justify-content:space-between"><span>Résultat</span><span class="mono" id="kpiProfit">—</span></div>
-                    <div class="pill" style="justify-content:space-between"><span>Marge sur CA</span><span class="mono" id="kpiProfitRate">—</span></div>
-                  </div>
-                  <div class="pill" style="justify-content:space-between">
-                    <span>Markup sur coût</span><span class="mono" id="kpiMarkup">—</span>
-                  </div>
-                </div>
-                <div class="hint" style="margin-top:10px">
-                  <b>Marge sur CA</b> = (CA − coûts) / CA.<br/>
-                  <b>Markup</b> = (CA − coûts) / coûts. (souvent plus grand)
-                </div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none">
-              <div class="hd" style="background:rgba(0,0,0,.08)"><h2 style="font-size:13px">Conseil prix</h2><span class="sub">marge cible</span></div>
-              <div class="bd" style="padding:12px 14px">
-                <div class="pill" style="justify-content:space-between">
-                  <span>CA conseillé (pour atteindre l’objectif)</span><span class="mono" id="kpiSuggestSales">—</span>
-                </div>
-                <div class="hint" style="margin-top:10px">
-                  Si tu utilises <b>Mode marge-cible</b>, l’outil calcule automatiquement les PU.  
-                  En <b>Hybride</b>, il te donne un CA recommandé si tu es sous la cible.
-                </div>
-                <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
-                  <button class="btn good" id="btnAutoReprice">Auto-ajuster les PU (marge-cible)</button>
-                  <button class="btn" id="btnInsertDayRate">Insérer lignes “600€/jour”</button>
-                </div>
-                <div class="hint" style="margin-top:10px">
-                  “Insérer 600€/jour” = mode vente rapide (prépa/tournage/montage), à adapter pour institutionnel/live.
-                </div>
-              </div>
-            </div>
+            <div class="pill" style="justify-content:space-between"><span>CA HT</span><span class="mono" id="kpiSales">—</span></div>
+            <div class="pill" style="justify-content:space-between"><span>Coûts HT</span><span class="mono" id="kpiCosts">—</span></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div class="pill" style="justify-content:space-between"><span>Résultat</span><span class="mono" id="kpiProfit">—</span></div>
+            <div class="pill" style="justify-content:space-between"><span>Marge sur CA</span><span class="mono" id="kpiProfitRate">—</span></div>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <div class="pill" style="justify-content:space-between"><span>CA conseillé (cible)</span><span class="mono" id="kpiSuggestSales">—</span></div>
+            <div class="pill" style="justify-content:space-between"><span>Total TTC</span><span class="mono" id="kpiTTC">—</span></div>
+          </div>
+          <div class="hint" style="margin-top:10px">
+            NB : le “coût” ici vient de tes coûts unitaires (heures/jours/etc.). Le matériel est compté en CA (location), pas en coût d’amortissement.
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- RIGHT: preview -->
     <div class="preview">
       <div class="card hdtools">
         <div class="hd">
-          <h2>Aperçu du devis <span class="sub">document imprimable</span></h2>
+          <h2>Aperçu <span class="sub">imprimable</span></h2>
           <span class="badge">Preview</span>
         </div>
         <div class="bd">
           <div class="pill" style="justify-content:space-between">
-            <span>Total TTC</span><span class="mono" id="kpiTTC">—</span>
+            <span>Total TTC</span><span class="mono" id="kpiTTC2">—</span>
           </div>
           <div class="hint" style="margin-top:10px">
-            Clique <b>Imprimer / PDF</b> pour générer un PDF propre (via l’impression navigateur).
+            Clique <b>Imprimer / PDF</b> pour sortir un PDF propre.
           </div>
         </div>
       </div>
@@ -835,7 +696,7 @@
             </div>
           </div>
 
-          <table class="items" id="docItems">
+          <table class="items">
             <thead>
               <tr>
                 <th>Désignation</th>
@@ -846,12 +707,12 @@
                 <th class="right">Total HT</th>
               </tr>
             </thead>
-            <tbody></tbody>
+            <tbody id="docItems"></tbody>
           </table>
 
           <div class="totals">
             <div class="notes">
-              <div><b>Conditions</b></div>
+              <div><b>Conditions de paiement</b></div>
               <div id="docTerms">—</div>
               <div style="margin-top:8px"><b>Notes</b></div>
               <div id="docNotes">—</div>
@@ -876,32 +737,328 @@
   </div>
 
 <script>
-/* =========================================================
-   MCP — Générateur de devis (vanilla JS)
-   - Mode vente / marge-cible / hybride
-   - TVA (par défaut 20%)
-   - Dégressivité matériel
-   - Export/Import JSON + localStorage
-   - Impression PDF via window.print()
-   ========================================================= */
+/* =========================
+   MCP Devis — V2 (intégrée)
+   ========================= */
 
 const fmtEUR = (v) => new Intl.NumberFormat('fr-FR', {style:'currency', currency:'EUR'}).format(isFinite(v)? v : 0);
 const fmtPct = (v) => (isFinite(v)? (v*100).toFixed(1) : '0.0') + ' %';
 const todayStr = () => new Intl.DateTimeFormat('fr-FR', {year:'numeric', month:'2-digit', day:'2-digit'}).format(new Date());
+const clamp = (v,a,b)=>Math.min(Math.max(v,a),b);
 
-/** Inventaire démo (à remplacer/importer depuis ton Inventaire matériel.xlsx)
- *  Format: {name, dayRate}
- */
 let INVENTORY = [
-  {name:"Pack captation (cam + trépied) — démo", dayRate: 250},
-  {name:"Pack audio (HF + enregistreur) — démo", dayRate: 120},
-  {name:"Éclairage (2 panneaux) — démo", dayRate: 90},
-  {name:"Régie live (switcher / monitoring) — démo", dayRate: 300},
-  {name:"PTZ / télécommande — démo", dayRate: 180},
-  {name:"Divers (câblage / stands) — démo", dayRate: 50},
+  {
+    "name": "Câbles — Câble HDMI 5m — Divers HDMI Premium",
+    "dayRate": 5,
+    "qtyAvail": 10,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Câble SDI 5m — Divers SDI 12G",
+    "dayRate": 6,
+    "qtyAvail": 30,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Câble XLR 10m — Divers XLR",
+    "dayRate": 2.5,
+    "qtyAvail": 30,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Câble XLR 20m — Divers XLR",
+    "dayRate": 3,
+    "qtyAvail": 5,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Câble XLR 5m — Divers XLR",
+    "dayRate": 2,
+    "qtyAvail": 5,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Touret combo — Divers 3G-SDI + RJ45 type 7 – 50m",
+    "dayRate": 40,
+    "qtyAvail": 10,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Touret HDMI — Divers HDMI fibre 50m",
+    "dayRate": 17,
+    "qtyAvail": 3,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Touret RJ45 50m — Divers RJ45",
+    "dayRate": 10,
+    "qtyAvail": 4,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Touret SDI 50m — Divers SDI",
+    "dayRate": 15,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — Touret XLR 50m — Divers XLR",
+    "dayRate": 15,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Câbles — XLR 2m — Divers XLR",
+    "dayRate": 1,
+    "qtyAvail": 30,
+    "source": "Somegec"
+  },
+  {
+    "name": "Divers — Gaffer — Divers Gaffer",
+    "dayRate": 3,
+    "qtyAvail": 20,
+    "source": "Somegec"
+  },
+  {
+    "name": "Divers — Multiprise — Divers Multiprise",
+    "dayRate": 1,
+    "qtyAvail": 30,
+    "source": "Somegec"
+  },
+  {
+    "name": "Divers — Piles — Divers AA, AAA",
+    "dayRate": 2,
+    "qtyAvail": 30,
+    "source": "Somegec"
+  },
+  {
+    "name": "Divers — Serre-câble — Divers Velcro",
+    "dayRate": 0.5,
+    "qtyAvail": 200,
+    "source": "Somegec"
+  },
+  {
+    "name": "Divers — Talkback — Divers Talkback",
+    "dayRate": 25,
+    "qtyAvail": 6,
+    "source": "Somegec"
+  },
+  {
+    "name": "Divers — Adaptateurs — Divers HDMI/SDI",
+    "dayRate": 2,
+    "qtyAvail": 20,
+    "source": "Somegec"
+  },
+  {
+    "name": "Divers — Support — Divers Support écran",
+    "dayRate": 20,
+    "qtyAvail": 6,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Micro Converter SDI to HDMI",
+    "dayRate": 5,
+    "qtyAvail": 10,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Teranex Mini SDI to HDMI 12G",
+    "dayRate": 10,
+    "qtyAvail": 4,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Teranex Mini HDMI to SDI 12G",
+    "dayRate": 10,
+    "qtyAvail": 4,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Moniteur — Blackmagic SmartView Duo 2",
+    "dayRate": 20,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Routeur — Blackmagic Videohub 20x20 12G",
+    "dayRate": 70,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Switcher — Blackmagic ATEM 1 M/E Constellation HD",
+    "dayRate": 100,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Switcher — Blackmagic ATEM Television Studio HD8 ISO",
+    "dayRate": 150,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Télécommande — Blackmagic ATEM 1 M/E Advanced Panel 10",
+    "dayRate": 150,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Télécommande — Blackmagic ATEM Camera Control Panel",
+    "dayRate": 50,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Enregistreur — Blackmagic HyperDeck Studio HD Plus",
+    "dayRate": 50,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Mini Converter Optical Fiber 12G",
+    "dayRate": 10,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Mini Converter SDI to Audio 4K",
+    "dayRate": 5,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Mini Converter SDI to HDMI 6G",
+    "dayRate": 5,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Mini Converter HDMI to SDI 6G",
+    "dayRate": 5,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Convertisseur — Blackmagic Mini Converter UpDownCross HD",
+    "dayRate": 10,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Multiview — Blackmagic Multiview 16",
+    "dayRate": 60,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Station — Blackmagic Web Presenter 4K",
+    "dayRate": 40,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Régie — Tally — Tally-MA Blackmagic",
+    "dayRate": 15,
+    "qtyAvail": 4,
+    "source": "Somegec"
+  },
+  {
+    "name": "Caméra — Caméra — Sony FX6",
+    "dayRate": 160,
+    "qtyAvail": 1,
+    "source": "Lyon"
+  },
+  {
+    "name": "Caméra — Follow focus — Tilta Nucleus Nano II",
+    "dayRate": 180,
+    "qtyAvail": 1,
+    "source": "Lyon"
+  },
+  {
+    "name": "Caméra — Gimbal — DJI Ronin RS4 Pro Combo",
+    "dayRate": 54,
+    "qtyAvail": 1,
+    "source": "Lyon"
+  },
+  {
+    "name": "Caméra — Objectif — Sony FE 28-70mm F2 GM",
+    "dayRate": 89,
+    "qtyAvail": 1,
+    "source": "Lyon"
+  },
+  {
+    "name": "Caméra — Trépied — Manfrotto Nitrotech 608 + twin leg carbon",
+    "dayRate": 35,
+    "qtyAvail": 1,
+    "source": "Lyon"
+  },
+  {
+    "name": "Caméra — Objectif — Irix Irix Cine Directors Set Sony E Metric",
+    "dayRate": 350,
+    "qtyAvail": 1,
+    "source": "Lyon"
+  },
+  {
+    "name": "Audio — Micro — Sennheiser MKH 416",
+    "dayRate": 25,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Audio — HF — Sennheiser EW-DP 835 Set",
+    "dayRate": 25,
+    "qtyAvail": 2,
+    "source": "Somegec"
+  },
+  {
+    "name": "Audio — Enregistreur — Zoom F6",
+    "dayRate": 15,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Lumière — Panneau LED — Aputure Amaran 300c",
+    "dayRate": 30,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Lumière — Panneau LED — Nanlite Forza 60B II",
+    "dayRate": 20,
+    "qtyAvail": 1,
+    "source": "Somegec"
+  },
+  {
+    "name": "Lumière — Pied — Manfrotto 1004BAC",
+    "dayRate": 5,
+    "qtyAvail": 3,
+    "source": "Somegec"
+  }
 ];
 
-/** Barèmes dégressifs */
+const ROLE_RATES = [
+  { "section": "PRE-PRODUCTION", "role": "Recherche", "rate": 50.0 },
+  { "section": "PRE-PRODUCTION", "role": "Script/Storyboard", "rate": 50.0 },
+  { "section": "PRE-PRODUCTION", "role": "Organisation", "rate": 50.0 },
+  { "section": "PRE-PRODUCTION", "role": "Ideation", "rate": 50.0 },
+  { "section": "PRODUCTION", "role": "Réalisateur", "rate": 91.5 },
+  { "section": "PRODUCTION", "role": "Chef opérateur", "rate": 82.8 },
+  { "section": "PRODUCTION", "role": "Cadreur", "rate": 36.5 },
+  { "section": "PRODUCTION", "role": "Chef électricien", "rate": 38.2 },
+  { "section": "PRODUCTION", "role": "Technicien vidéo", "rate": 39.0 },
+  { "section": "PRODUCTION", "role": "Ingénieur du son", "rate": 37.0 },
+  { "section": "PRODUCTION", "role": "Assistant son", "rate": 35.1 },
+  { "section": "PRODUCTION", "role": "Monteur vision (switcher)", "rate": 37.6 },
+  { "section": "PRODUCTION", "role": "Maquillage", "rate": 40.0 },
+  { "section": "POST - PRODUCTION", "role": "Chef monteur", "rate": 39.0 },
+  { "section": "POST - PRODUCTION", "role": "Étalonneur", "rate": 37.2 },
+  { "section": "POST - PRODUCTION", "role": "Monteur son", "rate": 36.5 },
+  { "section": "POST - PRODUCTION", "role": "Assistant monteur", "rate": 35.3 },
+  { "section": "POST - PRODUCTION", "role": "Graphiste habillages", "rate": 37.2 },
+  { "section": "TALENT", "role": "Présentateur/Journaliste", "rate": 3000.0 }
+];
+
 const DEG_PRESETS = {
   mcp: [
     {day:1, factor:1.00},
@@ -909,25 +1066,24 @@ const DEG_PRESETS = {
     {day:3, factor:0.60},
     {day:4, factor:0.55},
     {day:5, factor:0.50},
-    {day:6, factor:0.45, plus:true}, // 6+
+    {day:6, factor:0.45, plus:true},
   ],
   soft: [
     {day:1, factor:1.00},
     {day:2, factor:0.80},
     {day:3, factor:0.70},
-    {day:4, factor:0.65, plus:true}, // 4+
+    {day:4, factor:0.65, plus:true},
   ],
   aggr: [
     {day:1, factor:1.00},
     {day:2, factor:0.65},
     {day:3, factor:0.55},
     {day:4, factor:0.50},
-    {day:5, factor:0.45, plus:true}, // 5+
+    {day:5, factor:0.45, plus:true},
   ]
 };
 
 function parseCustomDeg(str){
-  // "1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45"
   const parts = (str||"").split(",").map(s=>s.trim()).filter(Boolean);
   const out = [];
   for(const p of parts){
@@ -940,94 +1096,97 @@ function parseCustomDeg(str){
       out.push({day, factor, plus});
     }
   }
-  // sort by day
   out.sort((a,b)=>a.day-b.day);
   return out.length ? out : DEG_PRESETS.mcp;
 }
-
 function getDegCurve(){
   const preset = el.degressivityPreset.value;
   if(preset === "custom") return parseCustomDeg(el.customDeg.value);
   return DEG_PRESETS[preset] || DEG_PRESETS.mcp;
 }
-
 function degFactorForDay(dayIndex, curve){
-  // dayIndex: 1..N
-  // find exact match first; else last "plus" if dayIndex >= plus.day; else nearest previous
-  let exact = curve.find(x=>x.day===dayIndex && !x.plus);
+  const exact = curve.find(x=>x.day===dayIndex && !x.plus);
   if(exact) return exact.factor;
-
-  // find last "plus" that applies
-  let plus = curve.filter(x=>x.plus && dayIndex>=x.day).sort((a,b)=>b.day-a.day)[0];
+  const plus = curve.filter(x=>x.plus && dayIndex>=x.day).sort((a,b)=>b.day-a.day)[0];
   if(plus) return plus.factor;
-
-  // fallback: find nearest previous defined factor
-  let prev = curve.filter(x=>x.day<=dayIndex && !x.plus).sort((a,b)=>b.day-a.day)[0];
+  const prev = curve.filter(x=>x.day<=dayIndex && !x.plus).sort((a,b)=>b.day-a.day)[0];
   return prev ? prev.factor : 1.0;
 }
-
-function degressiveTotal(dayRate, days, curve){
+function degressiveTotalPerUnit(dayRate, days, curve){
   let total = 0;
   for(let d=1; d<=days; d++){
     total += dayRate * degFactorForDay(d, curve);
   }
   const avgFactor = days>0 ? (total / (dayRate * days)) : 1;
-  return {total, avgFactor};
+  return {totalPerUnit: total, avgFactor};
 }
 
-/** State model */
+/* -------- Add-ons du catalogue -------- */
+const ADDONS = [
+  {id:"st_fr",   name:"Sous-titres FR (création + incrustation)", desc:"Accessibilité, visionnage sans son", unit:"forfait", qty:1},
+  {id:"st_en",   name:"Traduction + sous-titres EN", desc:"Communication internationale / investisseurs", unit:"forfait", qty:1},
+  {id:"vo_fr",   name:"Voix off (FR)", desc:"Narration corporate / formation", unit:"forfait", qty:1},
+  {id:"vo_en",   name:"Voix off (EN)", desc:"International", unit:"forfait", qty:1},
+  {id:"md_s",    name:"Motion design “simple”", desc:"Titres, lower thirds, chiffres", unit:"jour", qty:0.5},
+  {id:"md_a",    name:"Motion design “avancé”", desc:"Data, 2D/3D légère", unit:"jour", qty:1},
+  {id:"drone",   name:"Drone (pilote + autorisations)", desc:"Plans d’ensemble, sites, événement", unit:"forfait", qty:1},
+  {id:"studio",  name:"Studio / plateau (location)", desc:"Interviews propres, fond neutre, live", unit:"jour", qty:1},
+  {id:"telep",   name:"Téléprompteur", desc:"Discours dirigeants, messages précis", unit:"jour", qty:1},
+  {id:"makeup",  name:"Maquillage / coiffure", desc:"Interviews, marque employeur", unit:"jour", qty:1},
+  {id:"cam2",    name:"2e caméra / cadreur", desc:"Multi-angles, live, événement", unit:"jour", qty:1},
+  {id:"rush",    name:"Livraison express (24–48h)", desc:"Aftermovie ou urgent corporate", unit:"forfait", qty:1}
+];
+
 const state = {
   meta: {
-    pricingMode: "sell",
-    targetMargin: 0.50,
-    vatRate: 0.20,
-    degressivityPreset: "mcp",
-    customDeg: "1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45",
-    quoteRef: "",
-    validityDays: 30,
-    paymentTerms: "40% à la commande, solde à la livraison (J+30)",
-    publicNotes: "Inclut 1 aller-retour de modifications. Toute demande supplémentaire fera l’objet d’un avenant.",
-    depositInfo: "Acompte 40% à la commande",
-    discount: 0,
-    dayRateMCP: 600
+    pricingMode:"hybrid",
+    targetMargin:0.50,
+    vatRate:0.20,
+    degressivityPreset:"mcp",
+    customDeg:"1:1,2:0.7,3:0.6,4:0.55,5:0.5,6+:0.45",
+    quoteRef:"",
+    validityDays:30,
+    paymentTerms:"40% à la commande, solde à la livraison (J+30)",
+    discount:0,
+    publicNotes:"Inclut 1 aller-retour de modifications. Toute demande supplémentaire fera l’objet d’un avenant."
   },
-  mcp: { name: "Momentum Creative Productions (MCP)", addr:"Lyon — France", siret:"", vat:"" },
-  client: { company:"", contact:"", email:"", phone:"", addr:"", ids:"" },
-  project: { title:"", place:"", dates:"", type:"Film corporate", desc:"" },
-  services: [],
-  gear: [],
-  fees: []
+  mcp:{name:"Momentum Creative Productions (MCP)", addr:"Lyon — France", siret:"", vat:""},
+  client:{company:"", contact:"", email:"", phone:"", addr:"", ids:""},
+  project:{title:"", place:"", dates:"", type:"Film institutionnel / corporate (image)", desc:""},
+  services:[],
+  gear:[],
+  fees:[]
 };
 
 function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
 
-/** Helpers: compute line pricing */
+/* ==============
+   Pricing engine
+   ============== */
 function computeLine(line){
-  // line: {qty, unit, unitPrice, cost, desc}
   const qty = +line.qty || 0;
-  const cost = +line.cost || 0;
+  const costUnit = +line.costUnit || 0;
+  const costTotal = costUnit * qty;
+
   const mode = el.pricingMode.value;
   const target = clamp(+el.targetMargin.value || 0, 0, 0.95);
 
-  let unitPrice = (line.unitPrice === "" || line.unitPrice === null || typeof line.unitPrice === "undefined") ? NaN : (+line.unitPrice || 0);
+  let unitPrice = (line.unitPrice === "" || line.unitPrice === null || typeof line.unitPrice === "undefined")
+    ? NaN
+    : (+line.unitPrice || 0);
 
   if(mode === "target"){
-    // compute unit price from cost so that margin on CA = target:
-    // CA = cost / (1 - target)
-    // if cost is total line cost, then line CA should satisfy. We'll price per unit: (cost/qty)/(1-target)
-    const cPerUnit = qty>0 ? (cost/qty) : cost;
-    unitPrice = cPerUnit / Math.max(1 - target, 0.05);
+    unitPrice = costUnit / Math.max(1 - target, 0.05);
   }
-  // in sell/hybrid: keep as-is; if unitPrice not provided, default to 0
   if(!Number.isFinite(unitPrice)) unitPrice = 0;
 
   const total = unitPrice * qty;
-  return {qty, unitPrice, cost, total};
+  return {qty, unitPrice, costUnit, costTotal, total};
 }
 
-function clamp(v, a, b){ return Math.min(Math.max(v, a), b); }
-
-/** DOM refs */
+/* ==========
+   DOM refs
+   ========== */
 const el = {
   pricingMode: document.getElementById("pricingMode"),
   targetMargin: document.getElementById("targetMargin"),
@@ -1039,10 +1198,8 @@ const el = {
   quoteRef: document.getElementById("quoteRef"),
   validityDays: document.getElementById("validityDays"),
   paymentTerms: document.getElementById("paymentTerms"),
-  publicNotes: document.getElementById("publicNotes"),
   discount: document.getElementById("discount"),
-  depositInfo: document.getElementById("depositInfo"),
-  dayRateMCP: document.getElementById("dayRateMCP"),
+  publicNotes: document.getElementById("publicNotes"),
 
   mcpName: document.getElementById("mcpName"),
   mcpAddr: document.getElementById("mcpAddr"),
@@ -1062,16 +1219,22 @@ const el = {
   projectType: document.getElementById("projectType"),
   projectDesc: document.getElementById("projectDesc"),
 
-  quickPack: document.getElementById("quickPack"),
+  catalogType: document.getElementById("catalogType"),
+  catalogPack: document.getElementById("catalogPack"),
+  btnGeneratePack: document.getElementById("btnGeneratePack"),
+  addonsList: document.getElementById("addonsList"),
+  btnAddAddons: document.getElementById("btnAddAddons"),
+  btnClearAddons: document.getElementById("btnClearAddons"),
+
   serviceTemplate: document.getElementById("serviceTemplate"),
   addService: document.getElementById("addService"),
   clearServices: document.getElementById("clearServices"),
-  tblServices: document.getElementById("tblServices").querySelector("tbody"),
+  tblServices: document.getElementById("tblServices"),
   countService: document.getElementById("countService"),
 
   gearItem: document.getElementById("gearItem"),
   addGear: document.getElementById("addGear"),
-  tblGear: document.getElementById("tblGear").querySelector("tbody"),
+  tblGear: document.getElementById("tblGear"),
   countGear: document.getElementById("countGear"),
   btnImportCSV: document.getElementById("btnImportCSV"),
   csvArea: document.getElementById("csvArea"),
@@ -1079,30 +1242,27 @@ const el = {
   feeTemplate: document.getElementById("feeTemplate"),
   addFee: document.getElementById("addFee"),
   clearFees: document.getElementById("clearFees"),
-  tblFees: document.getElementById("tblFees").querySelector("tbody"),
+  tblFees: document.getElementById("tblFees"),
   countFees: document.getElementById("countFees"),
 
-  // KPIs
   kpiSales: document.getElementById("kpiSales"),
   kpiCosts: document.getElementById("kpiCosts"),
   kpiProfit: document.getElementById("kpiProfit"),
   kpiProfitRate: document.getElementById("kpiProfitRate"),
-  kpiMarkup: document.getElementById("kpiMarkup"),
   kpiSuggestSales: document.getElementById("kpiSuggestSales"),
   kpiTTC: document.getElementById("kpiTTC"),
+  kpiTTC2: document.getElementById("kpiTTC2"),
   kpiMargin: document.getElementById("kpiMargin"),
+  dotMargin: document.getElementById("dotMargin"),
 
   btnAutoReprice: document.getElementById("btnAutoReprice"),
-  btnInsertDayRate: document.getElementById("btnInsertDayRate"),
 
-  // top actions
   btnNew: document.getElementById("btnNew"),
   btnSave: document.getElementById("btnSave"),
   btnExport: document.getElementById("btnExport"),
   importFile: document.getElementById("importFile"),
   btnPrint: document.getElementById("btnPrint"),
 
-  // doc fields
   docMcpName: document.getElementById("docMcpName"),
   docMcpMeta: document.getElementById("docMcpMeta"),
   docRef: document.getElementById("docRef"),
@@ -1110,7 +1270,7 @@ const el = {
   docValidity: document.getElementById("docValidity"),
   docClient: document.getElementById("docClient"),
   docProject: document.getElementById("docProject"),
-  docItems: document.getElementById("docItems").querySelector("tbody"),
+  docItems: document.getElementById("docItems"),
   docHT: document.getElementById("docHT"),
   docDisc: document.getElementById("docDisc"),
   docVAT: document.getElementById("docVAT"),
@@ -1122,8 +1282,10 @@ const el = {
   docPay: document.getElementById("docPay"),
 };
 
+/* ==========
+   Sync state
+   ========== */
 function syncStateFromInputs(){
-  // meta
   state.meta.pricingMode = el.pricingMode.value;
   state.meta.targetMargin = +el.targetMargin.value || 0;
   state.meta.vatRate = +el.vatRate.value || 0;
@@ -1132,18 +1294,14 @@ function syncStateFromInputs(){
   state.meta.quoteRef = el.quoteRef.value.trim();
   state.meta.validityDays = +el.validityDays.value || 0;
   state.meta.paymentTerms = el.paymentTerms.value;
-  state.meta.publicNotes = el.publicNotes.value;
   state.meta.discount = +el.discount.value || 0;
-  state.meta.depositInfo = el.depositInfo.value;
-  state.meta.dayRateMCP = +el.dayRateMCP.value || 0;
+  state.meta.publicNotes = el.publicNotes.value;
 
-  // mcp
   state.mcp.name = el.mcpName.value;
   state.mcp.addr = el.mcpAddr.value;
   state.mcp.siret = el.mcpSiret.value;
   state.mcp.vat = el.mcpVat.value;
 
-  // client
   state.client.company = el.clientCompany.value;
   state.client.contact = el.clientContact.value;
   state.client.email = el.clientEmail.value;
@@ -1151,14 +1309,12 @@ function syncStateFromInputs(){
   state.client.addr = el.clientAddr.value;
   state.client.ids = el.clientIds.value;
 
-  // project
   state.project.title = el.projectTitle.value;
   state.project.place = el.projectPlace.value;
   state.project.dates = el.projectDates.value;
   state.project.type = el.projectType.value;
   state.project.desc = el.projectDesc.value;
 }
-
 function syncInputsFromState(){
   el.pricingMode.value = state.meta.pricingMode;
   el.targetMargin.value = state.meta.targetMargin;
@@ -1168,10 +1324,8 @@ function syncInputsFromState(){
   el.quoteRef.value = state.meta.quoteRef;
   el.validityDays.value = state.meta.validityDays;
   el.paymentTerms.value = state.meta.paymentTerms;
-  el.publicNotes.value = state.meta.publicNotes;
   el.discount.value = state.meta.discount;
-  el.depositInfo.value = state.meta.depositInfo;
-  el.dayRateMCP.value = state.meta.dayRateMCP;
+  el.publicNotes.value = state.meta.publicNotes;
 
   el.mcpName.value = state.mcp.name;
   el.mcpAddr.value = state.mcp.addr;
@@ -1192,59 +1346,9 @@ function syncInputsFromState(){
   el.projectDesc.value = state.project.desc;
 }
 
-function renderInventorySelect(){
-  el.gearItem.innerHTML = "";
-  INVENTORY.forEach((it, idx)=>{
-    const opt = document.createElement("option");
-    opt.value = idx;
-    opt.textContent = `${it.name} — ${fmtEUR(it.dayRate)}/j (J1)`;
-    el.gearItem.appendChild(opt);
-  });
-}
-
-function addServiceLine(templateKey){
-  const rate = +el.dayRateMCP.value || 600;
-  const templates = {
-    custom: {name:"Prestation", desc:"", unit:"forfait", qty:1, unitPrice:"", cost:0},
-    prep: {name:"Préparation / repérage", desc:"Pré-production, repérage, planification", unit:"jour", qty:1, unitPrice: rate, cost:0},
-    shoot:{name:"Tournage", desc:"Captation sur site (équipe + réalisation)", unit:"jour", qty:1, unitPrice: rate, cost:0},
-    edit: {name:"Montage", desc:"Montage, titrage léger, exports", unit:"jour", qty:1, unitPrice: rate, cost:0},
-    color:{name:"Étalonnage", desc:"Correction colorimétrique", unit:"jour", qty:1, unitPrice: rate, cost:0},
-    sound:{name:"Mixage", desc:"Nettoyage voix, équilibrage, mastering", unit:"jour", qty:1, unitPrice: rate, cost:0},
-    motion:{name:"Motion design", desc:"Habillage, titres, animations", unit:"jour", qty:1, unitPrice: rate, cost:0},
-    delivery:{name:"Livraisons", desc:"Exports, versions, livraison finale", unit:"forfait", qty:1, unitPrice: 120, cost:0},
-    live_prod:{name:"Production live", desc:"Réalisation live, régie, coordination", unit:"jour", qty:1, unitPrice: rate, cost:0},
-    live_replay:{name:"Replays / dérush", desc:"Relecture, découpe, chapitrage, exports", unit:"jour", qty:1, unitPrice: rate, cost:0},
-  };
-  const t = templates[templateKey] || templates.custom;
-  state.services.push({id:uid(), ...t});
-}
-
-function addFeeLine(templateKey){
-  const templates = {
-    custom:{name:"Frais", desc:"", unit:"forfait", qty:1, unitPrice:"", cost:0},
-    travel:{name:"Déplacements", desc:"km, péages, train, parking", unit:"forfait", qty:1, unitPrice:"", cost:0},
-    meals:{name:"Repas / catering", desc:"Repas équipe / plateau", unit:"forfait", qty:1, unitPrice:"", cost:0},
-    hotel:{name:"Hébergement", desc:"Hôtel / logement", unit:"nuit", qty:1, unitPrice:"", cost:0},
-    music:{name:"Droits musicaux", desc:"Licences, banques sonores, diffusion", unit:"forfait", qty:1, unitPrice:"", cost:0},
-    st:{name:"Sous-traitance", desc:"Prestataire externe", unit:"forfait", qty:1, unitPrice:"", cost:0},
-    misc:{name:"Divers", desc:"", unit:"forfait", qty:1, unitPrice:"", cost:0},
-  };
-  const t = templates[templateKey] || templates.custom;
-  state.fees.push({id:uid(), ...t});
-}
-
-function addGearLine(invIndex){
-  const it = INVENTORY[invIndex];
-  if(!it) return;
-  state.gear.push({id:uid(), name:it.name, dayRate:it.dayRate, days:1});
-}
-
-function removeById(arr, id){
-  const i = arr.findIndex(x=>x.id===id);
-  if(i>=0) arr.splice(i,1);
-}
-
+/* ==========
+   UI helpers
+   ========== */
 function buildEditableCell(value, onChange, type="text", attrs={}){
   const input = document.createElement("input");
   input.type = type;
@@ -1253,10 +1357,72 @@ function buildEditableCell(value, onChange, type="text", attrs={}){
   input.addEventListener("input", ()=>onChange(input.value));
   return input;
 }
+function removeById(arr, id){
+  const i = arr.findIndex(x=>x.id===id);
+  if(i>=0) arr.splice(i,1);
+}
 
+/* ==========
+   Templates
+   ========== */
+function addServiceLine(key){
+  const templates = {
+    custom: {name:"Prestation", desc:"", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+    prep:   {name:"Pré-production", desc:"Cadrage, conducteur / script, repérage", unit:"jour", qty:1, unitPrice:"", costUnit:0},
+    shoot:  {name:"Tournage", desc:"Captation sur site", unit:"jour", qty:1, unitPrice:"", costUnit:0},
+    live_prod:{name:"Production live", desc:"Réalisation live + régie", unit:"jour", qty:1, unitPrice:"", costUnit:0},
+    edit:   {name:"Montage", desc:"Montage + exports", unit:"jour", qty:1, unitPrice:"", costUnit:0},
+    color:  {name:"Étalonnage", desc:"Correction colorimétrique", unit:"jour", qty:0.5, unitPrice:"", costUnit:0},
+    sound:  {name:"Mixage", desc:"Nettoyage voix / équilibrage / mastering", unit:"jour", qty:0.5, unitPrice:"", costUnit:0},
+    motion: {name:"Motion design", desc:"Habillage, titres, chiffres", unit:"jour", qty:0.5, unitPrice:"", costUnit:0},
+    delivery:{name:"Livraisons", desc:"Exports, versions, livraison finale", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+  };
+
+  if(key.startsWith("role:")){
+    const idx = parseInt(key.split(":")[1], 10);
+    const r = ROLE_RATES[idx];
+    if(!r) return;
+    state.services.push({
+      id:uid(),
+      name:`Rôle (heures) — ${r.role}`,
+      desc:`Section: ${r.section} · Taux horaire (coût): ${r.rate} €/h`,
+      unit:"heure",
+      qty:8,
+      unitPrice:"",
+      costUnit:r.rate
+    });
+    return;
+  }
+
+  const t = templates[key] || templates.custom;
+  state.services.push({id:uid(), ...t});
+}
+
+function addFeeLine(key){
+  const templates = {
+    custom:{name:"Frais", desc:"", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+    travel:{name:"Déplacements", desc:"km, péages, train, parking", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+    meals:{name:"Repas / catering", desc:"Repas équipe / plateau", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+    hotel:{name:"Hébergement", desc:"Hôtel / logement", unit:"nuit", qty:1, unitPrice:"", costUnit:0},
+    music:{name:"Droits musicaux", desc:"Licences, banques sonores, diffusion", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+    st:{name:"Sous-traitance", desc:"Prestataire externe", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+    misc:{name:"Divers", desc:"", unit:"forfait", qty:1, unitPrice:"", costUnit:0},
+  };
+  const t = templates[key] || templates.custom;
+  state.fees.push({id:uid(), ...t});
+}
+
+function addGearLine(invIndex){
+  const it = INVENTORY[invIndex];
+  if(!it) return;
+  state.gear.push({id:uid(), name:it.name, dayRate:it.dayRate, qty:1, days:1, source:it.source});
+}
+
+/* ==========
+   Render tables
+   ========== */
 function renderLinesTable(tbody, lines, kind){
   tbody.innerHTML = "";
-
   lines.forEach(line=>{
     const tr = document.createElement("tr");
 
@@ -1267,16 +1433,14 @@ function renderLinesTable(tbody, lines, kind){
     const c2 = document.createElement("td");
     const ta = document.createElement("textarea");
     ta.value = line.desc ?? "";
-    ta.style.minHeight = "44px";
+    ta.style.minHeight="44px";
     ta.addEventListener("input", ()=>{line.desc=ta.value; refresh();});
     c2.appendChild(ta);
     tr.appendChild(c2);
 
-    const c3 = document.createElement("td");
-    c3.className="right";
-    const qtyInput = buildEditableCell(line.qty, v=>{line.qty = +v || 0; refresh();}, "number", {step:"0.25", min:"0"});
-    qtyInput.style.textAlign="right";
-    c3.appendChild(qtyInput);
+    const c3 = document.createElement("td"); c3.className="right";
+    const qty = buildEditableCell(line.qty, v=>{line.qty=+v||0; refresh();}, "number", {step:"0.25", min:"0"});
+    qty.style.textAlign="right"; c3.appendChild(qty);
     tr.appendChild(c3);
 
     const c4 = document.createElement("td");
@@ -1289,39 +1453,34 @@ function renderLinesTable(tbody, lines, kind){
     c4.appendChild(unitSel);
     tr.appendChild(c4);
 
-    const c5 = document.createElement("td");
-    c5.className="right";
-    const pu = buildEditableCell(line.unitPrice ?? "", v=>{ line.unitPrice = v==="" ? "" : (+v||0); refresh();}, "number", {step:"1", min:"0"});
-    pu.style.textAlign="right";
-    c5.appendChild(pu);
+    const c5 = document.createElement("td"); c5.className="right";
+    const pu = buildEditableCell(line.unitPrice ?? "", v=>{ line.unitPrice = v==="" ? "" : (+v||0); refresh(); }, "number", {step:"1", min:"0"});
+    pu.style.textAlign="right"; c5.appendChild(pu);
     tr.appendChild(c5);
 
-    const c6 = document.createElement("td");
-    c6.className="right";
-    const cost = buildEditableCell(line.cost ?? 0, v=>{ line.cost = (+v||0); refresh(); }, "number", {step:"1"});
-    cost.style.textAlign="right";
-    c6.appendChild(cost);
+    const c6 = document.createElement("td"); c6.className="right";
+    const cu = buildEditableCell(line.costUnit ?? 0, v=>{ line.costUnit = (+v||0); refresh(); }, "number", {step:"0.1", min:"0"});
+    cu.style.textAlign="right"; c6.appendChild(cu);
     tr.appendChild(c6);
 
     const computed = computeLine(line);
 
-    const c7 = document.createElement("td");
-    c7.className="right mono";
-    c7.textContent = fmtEUR(computed.total);
+    const c7 = document.createElement("td"); c7.className="right mono"; c7.textContent = fmtEUR(computed.total);
     tr.appendChild(c7);
 
-    const c8 = document.createElement("td");
-    c8.className="td-actions";
+    const c8 = document.createElement("td"); c8.className="right mono"; c8.textContent = fmtEUR(computed.costTotal);
+    tr.appendChild(c8);
+
+    const c9 = document.createElement("td"); c9.className="td-actions";
     const b1 = document.createElement("button");
-    b1.className="btn small danger";
-    b1.textContent = "Supprimer";
+    b1.className="btn small danger"; b1.textContent="Supprimer";
     b1.addEventListener("click", ()=>{
       if(kind==="services") removeById(state.services, line.id);
       if(kind==="fees") removeById(state.fees, line.id);
       refresh();
     });
-    c8.appendChild(b1);
-    tr.appendChild(c8);
+    c9.appendChild(b1);
+    tr.appendChild(c9);
 
     tbody.appendChild(tr);
   });
@@ -1338,77 +1497,73 @@ function renderGearTable(){
     c1.appendChild(buildEditableCell(line.name, v=>{line.name=v; refresh();}));
     tr.appendChild(c1);
 
-    const c2 = document.createElement("td");
-    c2.className="right";
-    const days = buildEditableCell(line.days, v=>{line.days=+v||0; refresh();}, "number", {step:"1", min:"0"});
-    days.style.textAlign="right";
-    c2.appendChild(days);
+    const c2 = document.createElement("td"); c2.className="right";
+    const q = buildEditableCell(line.qty, v=>{line.qty=+v||0; refresh();}, "number", {step:"1", min:"0"});
+    q.style.textAlign="right"; c2.appendChild(q);
     tr.appendChild(c2);
 
-    const c3 = document.createElement("td");
-    c3.className="right";
-    const dr = buildEditableCell(line.dayRate, v=>{line.dayRate=+v||0; refresh();}, "number", {step:"1", min:"0"});
-    dr.style.textAlign="right";
-    c3.appendChild(dr);
+    const c3 = document.createElement("td"); c3.className="right";
+    const d = buildEditableCell(line.days, v=>{line.days=+v||0; refresh();}, "number", {step:"1", min:"0"});
+    d.style.textAlign="right"; c3.appendChild(d);
     tr.appendChild(c3);
 
-    const calc = degressiveTotal(+line.dayRate||0, +line.days||0, curve);
-
-    const c4 = document.createElement("td");
-    c4.className="right mono";
-    c4.textContent = (isFinite(calc.avgFactor)? calc.avgFactor.toFixed(2) : "—");
+    const c4 = document.createElement("td"); c4.className="right";
+    const dr = buildEditableCell(line.dayRate, v=>{line.dayRate=+v||0; refresh();}, "number", {step:"1", min:"0"});
+    dr.style.textAlign="right"; c4.appendChild(dr);
     tr.appendChild(c4);
 
-    const c5 = document.createElement("td");
-    c5.className="right mono";
-    c5.textContent = fmtEUR(calc.total);
+    const calc = degressiveTotalPerUnit(+line.dayRate||0, +line.days||0, curve);
+    const total = (calc.totalPerUnit||0) * (+line.qty||0);
+
+    const c5 = document.createElement("td"); c5.className="right mono";
+    c5.textContent = (isFinite(calc.avgFactor)? calc.avgFactor.toFixed(2) : "—");
     tr.appendChild(c5);
 
-    const c6 = document.createElement("td");
-    c6.className="td-actions";
-    const b1 = document.createElement("button");
-    b1.className="btn small danger";
-    b1.textContent = "Supprimer";
-    b1.addEventListener("click", ()=>{ removeById(state.gear, line.id); refresh(); });
-    c6.appendChild(b1);
+    const c6 = document.createElement("td"); c6.className="right mono";
+    c6.textContent = fmtEUR(total);
     tr.appendChild(c6);
+
+    const c7 = document.createElement("td"); c7.className="td-actions";
+    const b1 = document.createElement("button");
+    b1.className="btn small danger"; b1.textContent="Supprimer";
+    b1.addEventListener("click", ()=>{ removeById(state.gear, line.id); refresh(); });
+    c7.appendChild(b1);
+    tr.appendChild(c7);
 
     el.tblGear.appendChild(tr);
   });
 }
 
+/* ==========
+   Totals / KPIs
+   ========== */
 function totals(){
-  // sales totals HT
   let sales = 0;
   let costs = 0;
 
-  // services
   state.services.forEach(l=>{
     const c = computeLine(l);
     sales += c.total;
-    costs += c.cost || 0;
+    costs += c.costTotal;
   });
 
-  // gear (sales only; cost optional non géré ici)
   const curve = getDegCurve();
   state.gear.forEach(g=>{
-    const calc = degressiveTotal(+g.dayRate||0, +g.days||0, curve);
-    sales += calc.total;
+    const calc = degressiveTotalPerUnit(+g.dayRate||0, +g.days||0, curve);
+    sales += (calc.totalPerUnit||0) * (+g.qty||0);
   });
 
-  // fees
   state.fees.forEach(l=>{
     const c = computeLine(l);
     sales += c.total;
-    costs += c.cost || 0;
+    costs += c.costTotal;
   });
 
-  const discount = +el.discount.value || 0;
-  sales -= Math.max(discount, 0);
+  const discount = Math.max(+el.discount.value || 0, 0);
+  sales -= discount;
 
   const profit = sales - costs;
   const profitRate = sales>0 ? profit/sales : 0;
-  const markup = costs>0 ? profit/costs : 0;
 
   const target = clamp(+el.targetMargin.value||0, 0, 0.95);
   const suggestedSales = costs / Math.max(1 - target, 0.05);
@@ -1416,11 +1571,10 @@ function totals(){
   const vat = Math.max(sales, 0) * (+el.vatRate.value || 0);
   const ttc = Math.max(sales, 0) + vat;
 
-  return {sales, costs, profit, profitRate, markup, suggestedSales, vat, ttc, discount};
+  return {sales, costs, profit, profitRate, suggestedSales, vat, ttc, discount};
 }
 
 function ensureQuoteRef(){
-  // If no ref, create a simple one
   if(state.meta.quoteRef && state.meta.quoteRef.trim()) return state.meta.quoteRef.trim();
   const now = new Date();
   const y = now.getFullYear();
@@ -1433,50 +1587,16 @@ function ensureQuoteRef(){
   return ref;
 }
 
-function refresh(){
-  syncStateFromInputs();
-
-  // custom deg show
-  el.customDegWrap.style.display = (el.degressivityPreset.value === "custom") ? "block" : "none";
-
-  renderLinesTable(el.tblServices, state.services, "services");
-  renderGearTable();
-  renderLinesTable(el.tblFees, state.fees, "fees");
-
-  el.countService.textContent = state.services.length;
-  el.countGear.textContent = state.gear.length;
-  el.countFees.textContent = state.fees.length;
-
-  // KPIs
-  const t = totals();
-  el.kpiSales.textContent = fmtEUR(t.sales);
-  el.kpiCosts.textContent = fmtEUR(t.costs);
-  el.kpiProfit.textContent = fmtEUR(t.profit);
-  el.kpiProfitRate.textContent = fmtPct(t.profitRate);
-  el.kpiMarkup.textContent = fmtPct(t.markup);
-  el.kpiSuggestSales.textContent = fmtEUR(t.suggestedSales);
-  el.kpiTTC.textContent = fmtEUR(t.ttc);
-
-  // margin pill
-  const target = clamp(+el.targetMargin.value||0, 0, 0.95);
-  const ok = (t.sales<=0) ? false : (t.profitRate >= target - 1e-6);
-  el.kpiMargin.textContent = `${fmtPct(t.profitRate)} (cible ${fmtPct(target)})`;
-  el.kpiMargin.parentElement.querySelector(".dot").style.background = ok ? "var(--accent2)" : "var(--danger)";
-
-  // doc render
-  renderDoc();
-
-  // persist draft (auto)
-  localStorage.setItem("mcp_quote_autosave", JSON.stringify(state));
-}
-
+/* ==========
+   Document render
+   ========== */
 function renderDoc(){
   const t = totals();
   const ref = state.meta.quoteRef?.trim() ? state.meta.quoteRef.trim() : "—";
-  const date = todayStr();
-  const validity = (state.meta.validityDays>0) ? `${state.meta.validityDays} jours` : "—";
+  el.docRef.textContent = `Réf. ${ref}`;
+  el.docDate.textContent = `Date ${todayStr()}`;
+  el.docValidity.textContent = `Validité ${state.meta.validityDays>0 ? state.meta.validityDays+" jours" : "—"}`;
 
-  // MCP header meta
   let mcpMeta = (state.mcp.addr||"").trim();
   const extras = [];
   if(state.mcp.siret?.trim()) extras.push(`SIRET: ${state.mcp.siret.trim()}`);
@@ -1485,11 +1605,7 @@ function renderDoc(){
 
   el.docMcpName.textContent = state.mcp.name || "Momentum Creative Productions (MCP)";
   el.docMcpMeta.textContent = mcpMeta || "—";
-  el.docRef.textContent = `Réf. ${ref}`;
-  el.docDate.textContent = `Date ${date}`;
-  el.docValidity.textContent = `Validité ${validity}`;
 
-  // Client block
   const clientLines = [];
   clientLines.push((state.client.company||"—").trim());
   if(state.client.contact?.trim()) clientLines.push(state.client.contact.trim());
@@ -1501,7 +1617,6 @@ function renderDoc(){
   if(state.client.ids?.trim()) clientLines.push(state.client.ids.trim());
   el.docClient.textContent = clientLines.filter(Boolean).join("\n") || "—";
 
-  // Project block
   const projLines = [];
   projLines.push((state.project.title||"—").trim());
   const meta = [];
@@ -1512,8 +1627,8 @@ function renderDoc(){
   if(state.project.desc?.trim()) projLines.push(state.project.desc.trim());
   el.docProject.textContent = projLines.filter(Boolean).join("\n") || "—";
 
-  // items rows (services + gear + fees)
   el.docItems.innerHTML = "";
+
   const rows = [];
 
   state.services.forEach(l=>{
@@ -1521,17 +1636,17 @@ function renderDoc(){
     rows.push({name:l.name, desc:l.desc, qty:c.qty, unit:l.unit, pu:c.unitPrice, total:c.total});
   });
 
-  // gear with degressivity (keep description short)
   const curve = getDegCurve();
   state.gear.forEach(g=>{
-    const calc = degressiveTotal(+g.dayRate||0, +g.days||0, curve);
+    const calc = degressiveTotalPerUnit(+g.dayRate||0, +g.days||0, curve);
+    const total = (calc.totalPerUnit||0) * (+g.qty||0);
     rows.push({
       name:`Location matériel — ${g.name}`,
-      desc:`Tarif J1: ${fmtEUR(+g.dayRate||0)} · Dégressivité appliquée`,
-      qty:+g.days||0,
-      unit:"jour",
-      pu:+g.dayRate||0,
-      total:calc.total
+      desc:`Source: ${g.source || ""} · Tarif J1: ${fmtEUR(+g.dayRate||0)} · Dégressivité appliquée`,
+      qty:+g.qty||0,
+      unit:"qté",
+      pu: calc.totalPerUnit||0,
+      total
     });
   });
 
@@ -1540,26 +1655,25 @@ function renderDoc(){
     rows.push({name:l.name, desc:l.desc, qty:c.qty, unit:l.unit, pu:c.unitPrice, total:c.total});
   });
 
-  // discount line displayed in totals only
   rows.forEach(r=>{
     const tr = document.createElement("tr");
-    const td1 = document.createElement("td"); td1.textContent = r.name || "";
-    const td2 = document.createElement("td"); td2.textContent = r.desc || "";
-    const td3 = document.createElement("td"); td3.className="right"; td3.textContent = (r.qty ?? 0);
-    const td4 = document.createElement("td"); td4.textContent = r.unit || "";
-    const td5 = document.createElement("td"); td5.className="right"; td5.textContent = fmtEUR(r.pu ?? 0);
-    const td6 = document.createElement("td"); td6.className="right"; td6.textContent = fmtEUR(r.total ?? 0);
-    tr.append(td1,td2,td3,td4,td5,td6);
+    tr.innerHTML = `
+      <td>${(r.name||"")}</td>
+      <td>${(r.desc||"")}</td>
+      <td class="right">${(r.qty ?? 0)}</td>
+      <td>${(r.unit||"")}</td>
+      <td class="right">${fmtEUR(r.pu ?? 0)}</td>
+      <td class="right">${fmtEUR(r.total ?? 0)}</td>
+    `;
     el.docItems.appendChild(tr);
   });
 
-  // totals
   el.docHT.textContent = fmtEUR(t.sales);
-  el.docDisc.textContent = (t.discount>0) ? "− " + fmtEUR(t.discount) : fmtEUR(0);
+  el.docDisc.textContent = t.discount>0 ? "− "+fmtEUR(t.discount) : fmtEUR(0);
   el.docVAT.textContent = fmtEUR(t.vat);
   el.docTTC.textContent = fmtEUR(t.ttc);
 
-  el.docTerms.textContent = (state.meta.paymentTerms || "—") + (state.meta.depositInfo ? `\n${state.meta.depositInfo}` : "");
+  el.docTerms.textContent = state.meta.paymentTerms || "—";
   el.docPay.textContent = state.meta.paymentTerms || "—";
   el.docNotes.textContent = state.meta.publicNotes || "—";
 
@@ -1568,90 +1682,122 @@ function renderDoc(){
   el.docFooterLeft.textContent = `${state.mcp.name || "Momentum Creative Productions"} — Devis ${ref}`;
 }
 
-/** Quick packs */
-function applyQuickPack(key){
-  state.services = [];
-  state.fees = [];
-  state.gear = [];
-
-  const rate = +el.dayRateMCP.value || 600;
-
-  if(key==="film_s"){
-    addServiceLine("prep"); state.services[state.services.length-1].qty=0.5;
-    addServiceLine("shoot"); state.services[state.services.length-1].qty=1;
-    addServiceLine("edit");  state.services[state.services.length-1].qty=1;
-  } else if(key==="film_m"){
-    addServiceLine("prep"); state.services[state.services.length-1].qty=1;
-    addServiceLine("shoot"); state.services[state.services.length-1].qty=2;
-    addServiceLine("edit");  state.services[state.services.length-1].qty=2;
-    addServiceLine("color"); state.services[state.services.length-1].qty=0.5;
-    addServiceLine("sound"); state.services[state.services.length-1].qty=0.5;
-  } else if(key==="after_s"){
-    addServiceLine("prep"); state.services[state.services.length-1].qty=0.25;
-    addServiceLine("shoot"); state.services[state.services.length-1].qty=1;
-    addServiceLine("edit");  state.services[state.services.length-1].qty=1;
-  } else if(key==="live_teams"){
-    addServiceLine("prep"); state.services[state.services.length-1].qty=0.5;
-    addServiceLine("live_prod"); state.services[state.services.length-1].qty=1;
-    addServiceLine("delivery"); state.services[state.services.length-1].unitPrice = 120;
-    // gear demo
-    addGearLine(0); state.gear[state.gear.length-1].days = 1;
-    addGearLine(1); state.gear[state.gear.length-1].days = 1;
-    addGearLine(3); state.gear[state.gear.length-1].days = 1;
-  } else if(key==="live_talk"){
-    addServiceLine("prep"); state.services[state.services.length-1].qty=1;
-    addServiceLine("live_prod"); state.services[state.services.length-1].qty=1;
-    addServiceLine("live_replay"); state.services[state.services.length-1].qty=1;
-    addServiceLine("motion"); state.services[state.services.length-1].qty=0.5;
-    addGearLine(3); state.gear[state.gear.length-1].days = 1;
-    addGearLine(4); state.gear[state.gear.length-1].days = 1;
-    addGearLine(1); state.gear[state.gear.length-1].days = 1;
+/* ==========
+   Packs generator
+   ========== */
+function setNotesForPack(pack){
+  if(pack==="Essentiel"){
+    el.publicNotes.value = "Pack Essentiel — 1 master + exports web · 1 aller-retour inclus. Toute demande supplémentaire fera l’objet d’un avenant.";
+  } else if(pack==="Standard"){
+    el.publicNotes.value = "Pack Standard — 1 master + 2–4 cutdowns + formats réseaux · 2 aller-retours inclus. Toute demande supplémentaire fera l’objet d’un avenant.";
+  } else {
+    el.publicNotes.value = "Pack Premium — master + déclinaisons multi-formats + kit social (assets) · 3+ aller-retours, suivi projet. Toute demande supplémentaire fera l’objet d’un avenant.";
   }
-  // ensure unitPrice defaults in sell/hybrid
-  state.services.forEach(s=>{
-    if(s.unitPrice==="" || s.unitPrice===null || typeof s.unitPrice==="undefined") s.unitPrice = rate;
+}
+function generatePack(type, pack){
+  // wipe
+  state.services = [];
+  state.gear = [];
+  state.fees = [];
+
+  // update project type
+  el.projectType.value = type;
+
+  // default “structure” (jours) à ajuster ensuite
+  const days = (pack==="Essentiel") ? {pre:0.75, prod:1, post:1.25, md:0.25} :
+               (pack==="Standard")  ? {pre:1.25, prod:1.5, post:2.5,  md:0.75} :
+                                      {pre:2.5,  prod:3,   post:5,    md:2};
+
+  addServiceLine("prep");  state.services[state.services.length-1].qty = days.pre;
+
+  if(type.startsWith("Live TV")){
+    addServiceLine("live_prod"); state.services[state.services.length-1].qty = Math.max(1, Math.round(days.prod));
+    addServiceLine("delivery");  state.services[state.services.length-1].qty = 1;
+  } else {
+    addServiceLine("shoot"); state.services[state.services.length-1].qty = days.prod;
+    addServiceLine("edit");  state.services[state.services.length-1].qty = days.post;
+    addServiceLine("color"); state.services[state.services.length-1].qty = (pack==="Essentiel") ? 0.25 : (pack==="Standard") ? 0.5 : 1;
+    addServiceLine("sound"); state.services[state.services.length-1].qty = (pack==="Essentiel") ? 0.25 : (pack==="Standard") ? 0.5 : 1;
+  }
+
+  if(pack!=="Essentiel"){
+    addServiceLine("motion"); state.services[state.services.length-1].qty = days.md;
+  }
+
+  setNotesForPack(pack);
+}
+
+/* ==========
+   Add-ons
+   ========== */
+function renderAddons(){
+  el.addonsList.innerHTML = "";
+  ADDONS.forEach(a=>{
+    const div = document.createElement("div");
+    div.className="check";
+    div.innerHTML = `
+      <input type="checkbox" id="addon_${a.id}" />
+      <div>
+        <div class="t">${a.name}</div>
+        <div class="d">${a.desc}</div>
+      </div>
+    `;
+    el.addonsList.appendChild(div);
   });
-
-  refresh();
 }
-
-function autoRepriceToTarget(){
-  // Apply target pricing to every service/fee line: unitPrice = (cost/qty)/(1-target)
-  const target = clamp(+el.targetMargin.value||0, 0, 0.95);
-  const safeDen = Math.max(1 - target, 0.05);
-
-  [...state.services, ...state.fees].forEach(l=>{
-    const qty = +l.qty||0;
-    const cost = +l.cost||0;
-    const cPer = qty>0 ? cost/qty : cost;
-    l.unitPrice = cPer / safeDen;
+function addSelectedAddons(){
+  ADDONS.forEach(a=>{
+    const cb = document.getElementById("addon_"+a.id);
+    if(cb && cb.checked){
+      // motion design -> service line, otherwise fee line
+      if(a.id.startsWith("md")){
+        state.services.push({id:uid(), name:a.name, desc:a.desc, unit:a.unit, qty:a.qty, unitPrice:"", costUnit:0});
+      } else {
+        state.fees.push({id:uid(), name:a.name, desc:a.desc, unit:a.unit, qty:a.qty, unitPrice:"", costUnit:0});
+      }
+    }
   });
-  refresh();
 }
 
-function insertDayRateLines(){
-  // Insert common “600€/jour” as sell lines
-  const rate = +el.dayRateMCP.value || 600;
-  state.services.push({id:uid(), name:"Préparation", desc:"Pré-production, échanges, repérage, planning", unit:"jour", qty:1, unitPrice:rate, cost:0});
-  state.services.push({id:uid(), name:"Tournage", desc:"Captation sur site", unit:"jour", qty:1, unitPrice:rate, cost:0});
-  state.services.push({id:uid(), name:"Montage", desc:"Montage + exports", unit:"jour", qty:1, unitPrice:rate, cost:0});
-  refresh();
+/* ==========
+   Inventory select + roles select
+   ========== */
+function renderInventorySelect(){
+  el.gearItem.innerHTML = "";
+  INVENTORY.forEach((it, idx)=>{
+    const opt = document.createElement("option");
+    opt.value = idx;
+    opt.textContent = `[${it.source}] ${it.name} — ${fmtEUR(it.dayRate)}/j (J1) · dispo ${it.qtyAvail}`;
+    el.gearItem.appendChild(opt);
+  });
+}
+function injectRoleOptions(){
+  const og = document.createElement("optgroup");
+  og.label = "Rôles (heures — coûts depuis Calculateur)";
+  ROLE_RATES.forEach((r, idx)=>{
+    const o = document.createElement("option");
+    o.value = "role:"+idx;
+    o.textContent = `${r.section} — ${r.role} (${r.rate} €/h)`;
+    og.appendChild(o);
+  });
+  el.serviceTemplate.appendChild(og);
 }
 
-/** CSV inventory import (simple) */
+/* ==========
+   CSV inventory import
+   ========== */
 function importInventoryFromCSV(text){
-  // Accept lines like:
-  // name;tarif
-  // or name,tarif
   const lines = (text||"").split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
   const out = [];
   for(const l of lines){
     const sep = l.includes(";") ? ";" : (l.includes(",") ? "," : null);
     if(!sep) continue;
-    const [name, rate] = l.split(sep);
-    const r = parseFloat((rate||"").trim().replace(",","."));
-    if(name && Number.isFinite(r)){
-      out.push({name:name.trim(), dayRate:r});
+    const parts = l.split(sep).map(x=>x.trim());
+    const name = parts[0];
+    const rate = parseFloat((parts[1]||"").replace(",","."));
+    const qty  = parts[2] ? parseInt(parts[2],10) : 1;
+    if(name && Number.isFinite(rate)){
+      out.push({name, dayRate:rate, qtyAvail: Number.isFinite(qty)? qty : 1, source:"CSV"});
     }
   }
   if(out.length){
@@ -1659,42 +1805,82 @@ function importInventoryFromCSV(text){
     renderInventorySelect();
     alert(`Inventaire importé (${out.length} items).`);
   } else {
-    alert("CSV non reconnu. Attendu : lignes 'nom;tarif_jour'.");
+    alert("CSV non reconnu. Attendu : nom;tarif_jour;quantité(optionnel)");
   }
+}
+
+/* ==========
+   Refresh
+   ========== */
+function refresh(){
+  syncStateFromInputs();
+  el.customDegWrap.style.display = (el.degressivityPreset.value === "custom") ? "block" : "none";
+
+  renderLinesTable(el.tblServices, state.services, "services");
+  renderGearTable();
+  renderLinesTable(el.tblFees, state.fees, "fees");
+
+  el.countService.textContent = state.services.length;
+  el.countGear.textContent = state.gear.length;
+  el.countFees.textContent = state.fees.length;
+
+  const t = totals();
+  el.kpiSales.textContent = fmtEUR(t.sales);
+  el.kpiCosts.textContent = fmtEUR(t.costs);
+  el.kpiProfit.textContent = fmtEUR(t.profit);
+  el.kpiProfitRate.textContent = fmtPct(t.profitRate);
+  el.kpiSuggestSales.textContent = fmtEUR(t.suggestedSales);
+  el.kpiTTC.textContent = fmtEUR(t.ttc);
+  el.kpiTTC2.textContent = fmtEUR(t.ttc);
+
+  const target = clamp(+el.targetMargin.value||0, 0, 0.95);
+  const ok = (t.sales>0) && (t.profitRate >= target - 1e-6);
+  el.kpiMargin.textContent = `${fmtPct(t.profitRate)} (cible ${fmtPct(target)})`;
+  el.dotMargin.style.background = ok ? "var(--accent2)" : "var(--danger)";
+
+  renderDoc();
+
+  localStorage.setItem("mcp_quote_autosave_v2", JSON.stringify(state));
+}
+
+/* ==========
+   Actions
+   ========== */
+function autoRepriceToTarget(){
+  const target = clamp(+el.targetMargin.value||0, 0, 0.95);
+  const den = Math.max(1 - target, 0.05);
+  [...state.services, ...state.fees].forEach(l=>{
+    l.unitPrice = (+l.costUnit||0) / den;
+  });
   refresh();
 }
 
-/** Save/load/export */
 function saveToLocal(){
   syncStateFromInputs();
   ensureQuoteRef();
-  const key = "mcp_quote_saved_" + state.meta.quoteRef;
+  const key = "mcp_quote_saved_v2_" + state.meta.quoteRef;
   localStorage.setItem(key, JSON.stringify(state));
   alert(`Devis sauvegardé : ${state.meta.quoteRef}`);
   refresh();
 }
 
 function newQuote(){
-  if(!confirm("Créer un nouveau devis ? (cela remplace le brouillon en cours)")) return;
-  // reset but keep MCP identity
+  if(!confirm("Créer un nouveau devis ? (remplace le brouillon)")) return;
   const keepMcp = {...state.mcp};
-  const keepMeta = {...state.meta};
-  Object.assign(state, JSON.parse(JSON.stringify({
-    meta: {...keepMeta, quoteRef:""},
+  Object.assign(state, {
+    meta:{...state.meta, quoteRef:""},
     mcp: keepMcp,
     client:{company:"",contact:"",email:"",phone:"",addr:"",ids:""},
-    project:{title:"",place:"",dates:"",type:"Film corporate",desc:""},
-    services:[],
-    gear:[],
-    fees:[]
-  })));
+    project:{title:"",place:"",dates:"",type:"Film institutionnel / corporate (image)",desc:""},
+    services:[], gear:[], fees:[]
+  });
   syncInputsFromState();
   refresh();
 }
 
 function exportJSON(){
   syncStateFromInputs();
-  const ref = state.meta.quoteRef?.trim() ? state.meta.quoteRef.trim() : "DEVIS";
+  const ref = state.meta.quoteRef?.trim() ? state.meta.quoteRef.trim() : "DEVIS_MCP";
   const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -1708,10 +1894,7 @@ function importJSON(file){
   reader.onload = () => {
     try{
       const obj = JSON.parse(reader.result);
-      // minimal validation
-      if(!obj || typeof obj !== "object") throw new Error("invalid");
       Object.assign(state, obj);
-      // ensure arrays exist
       state.services = state.services || [];
       state.gear = state.gear || [];
       state.fees = state.fees || [];
@@ -1725,66 +1908,46 @@ function importJSON(file){
   reader.readAsText(file);
 }
 
-/** Events */
 function bindAll(){
-  // show/hide custom deg
-  el.degressivityPreset.addEventListener("change", refresh);
-  el.customDeg.addEventListener("input", refresh);
-
-  // any input refresh
   document.querySelectorAll("input,select,textarea").forEach(x=>{
-    if(["importFile"].includes(x.id)) return;
+    if(["importFile","csvArea"].includes(x.id)) return;
     x.addEventListener("input", refresh);
     x.addEventListener("change", refresh);
   });
 
-  el.addService.addEventListener("click", ()=>{
-    addServiceLine(el.serviceTemplate.value);
-    refresh();
-  });
-  el.clearServices.addEventListener("click", ()=>{
-    if(confirm("Supprimer toutes les lignes prestations ?")){
-      state.services = [];
+  el.addService.addEventListener("click", ()=>{ addServiceLine(el.serviceTemplate.value); refresh(); });
+  el.clearServices.addEventListener("click", ()=>{ if(confirm("Supprimer toutes les prestations ?")){ state.services=[]; refresh(); }});
+
+  el.addGear.addEventListener("click", ()=>{ addGearLine(+el.gearItem.value); refresh(); });
+
+  el.addFee.addEventListener("click", ()=>{ addFeeLine(el.feeTemplate.value); refresh(); });
+  el.clearFees.addEventListener("click", ()=>{ if(confirm("Supprimer tous les frais ?")){ state.fees=[]; refresh(); }});
+
+  el.btnGeneratePack.addEventListener("click", ()=>{
+    if(confirm("Générer le pack et remplacer toutes les lignes ?")){
+      generatePack(el.catalogType.value, el.catalogPack.value);
       refresh();
     }
   });
 
-  el.addGear.addEventListener("click", ()=>{
-    addGearLine(+el.gearItem.value);
-    refresh();
+  el.btnAddAddons.addEventListener("click", ()=>{ addSelectedAddons(); refresh(); });
+  el.btnClearAddons.addEventListener("click", ()=>{
+    ADDONS.forEach(a=>{
+      const cb = document.getElementById("addon_"+a.id);
+      if(cb) cb.checked=false;
+    });
   });
 
-  el.addFee.addEventListener("click", ()=>{
-    addFeeLine(el.feeTemplate.value);
-    refresh();
-  });
-  el.clearFees.addEventListener("click", ()=>{
-    if(confirm("Supprimer toutes les lignes frais ?")){
-      state.fees = [];
-      refresh();
-    }
-  });
-
-  el.quickPack.addEventListener("change", ()=>{
-    if(el.quickPack.value) applyQuickPack(el.quickPack.value);
-  });
-
-  el.btnAutoReprice.addEventListener("click", ()=>{
-    el.pricingMode.value = "target";
-    refresh();
-    autoRepriceToTarget();
-  });
-
-  el.btnInsertDayRate.addEventListener("click", insertDayRateLines);
+  el.btnAutoReprice.addEventListener("click", autoRepriceToTarget);
 
   el.btnImportCSV.addEventListener("click", ()=>{
-    // toggle text area
     const shown = el.csvArea.style.display !== "none";
     el.csvArea.style.display = shown ? "none" : "block";
     if(!shown) el.csvArea.focus();
     else{
       importInventoryFromCSV(el.csvArea.value);
       el.csvArea.value = "";
+      refresh();
     }
   });
 
@@ -1805,16 +1968,14 @@ function bindAll(){
 }
 
 function boot(){
-  // restore autosave if exists
-  const auto = localStorage.getItem("mcp_quote_autosave");
+  const auto = localStorage.getItem("mcp_quote_autosave_v2");
   if(auto){
-    try{
-      const obj = JSON.parse(auto);
-      Object.assign(state, obj);
-    } catch(_) {}
+    try{ Object.assign(state, JSON.parse(auto)); } catch(_) {}
   }
   syncInputsFromState();
   renderInventorySelect();
+  injectRoleOptions();
+  renderAddons();
   bindAll();
   refresh();
 }
