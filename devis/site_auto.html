@@ -3,465 +3,516 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Site vitrine générique d'une entreprise d'automatisation industrielle (maquette pour capture vidéo)." />
-  <title>Entreprise d’automatisation industrielle — Maquette</title>
+  <meta name="description" content="Maquette générique d'un site d'automatisation industrielle (pour capture vidéo)." />
+  <title>Automatisation industrielle — Maquette</title>
 
   <style>
     :root{
-      --bg: #0e1620;
-      --panel: #121f2b;
-      --panel2:#0f1b26;
-      --text:#e9eef4;
-      --muted:#b8c4d3;
-      --line:#213446;
+      --bg:#ffffff;
+      --bg2:#f4f6f8;
+      --panel:#ffffff;
+      --text:#1e2a33;
+      --muted:#5b6b78;
+      --line:#dde3e8;
 
-      --brand:#2aa7ff;
-      --brand2:#18d6a3;
-      --warn:#ffcc66;
+      /* Palette “indus” : bleu + navy + rouge (sobre, pas premium) */
+      --blue:#1f6fb5;
+      --navy:#163a5a;
+      --red:#d43b3b;
 
-      --shadow: 0 10px 25px rgba(0,0,0,.35);
-      --radius: 14px;
-      --radius2: 20px;
+      --shadow: 0 10px 18px rgba(13,24,34,.10);
+      --radius: 12px;
 
       --max: 1120px;
-      --pad: clamp(16px, 3vw, 28px);
-      --h1: clamp(28px, 4vw, 44px);
-      --h2: clamp(20px, 2.6vw, 28px);
-      --h3: 16px;
+      --pad: clamp(14px, 2.5vw, 24px);
 
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      --h1: clamp(26px, 3.2vw, 40px);
+      --h2: clamp(20px, 2.4vw, 28px);
+
+      --sans: Arial, Helvetica, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", sans-serif;
     }
 
     *{ box-sizing:border-box; }
-    html{ scroll-behavior:smooth; }
     body{
       margin:0;
       font-family:var(--sans);
       color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 20% -10%, rgba(42,167,255,.22), transparent 60%),
-        radial-gradient(900px 600px at 90% 0%, rgba(24,214,163,.16), transparent 55%),
-        linear-gradient(180deg, var(--bg), #0b121a 55%, #070c12);
-      line-height:1.5;
+      background: var(--bg);
+      line-height:1.55;
     }
-
     a{ color:inherit; text-decoration:none; }
     a:hover{ text-decoration:underline; text-underline-offset: 3px; }
-
+    img{ max-width:100%; display:block; }
     .wrap{ max-width:var(--max); margin:0 auto; padding:0 var(--pad); }
 
-    /* Top bar */
+    /* Top header */
     .topbar{
-      background: rgba(10,18,26,.75);
-      border-bottom:1px solid rgba(255,255,255,.06);
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(10px);
+      background:#fff;
+      border-bottom:1px solid var(--line);
+      position: sticky;
+      top:0;
+      z-index:50;
     }
     .topbar-inner{
       display:flex; align-items:center; justify-content:space-between;
-      gap:16px; padding:14px 0;
+      gap:16px;
+      padding: 14px 0;
     }
     .brand{
-      display:flex; align-items:center; gap:10px;
-      min-width: 240px;
+      display:flex; align-items:center; gap:12px;
+      min-width: 280px;
     }
-    .logo{
-      width:34px; height:34px; border-radius:10px;
-      background: linear-gradient(135deg, var(--brand), var(--brand2));
-      box-shadow: 0 10px 18px rgba(42,167,255,.18);
-      position:relative;
+    .brand-title{
+      line-height:1.15;
     }
-    .logo::after{
-      content:"";
-      position:absolute; inset:8px;
-      border-radius:8px;
-      border:2px solid rgba(255,255,255,.45);
+    .brand-title strong{
+      display:block;
+      font-size:14px;
+      letter-spacing:.2px;
+      color: var(--navy);
     }
-    .brand strong{ font-size:14px; letter-spacing:.2px; }
-    .brand small{ display:block; color:var(--muted); font-size:12px; margin-top:2px; }
+    .brand-title small{
+      display:block;
+      font-size:12px;
+      color: var(--muted);
+      margin-top:2px;
+    }
 
-    nav{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    nav{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
     nav a{
       font-size:13px;
-      color:rgba(233,238,244,.88);
-      padding:8px 10px;
-      border-radius:10px;
+      color: #1f2b35;
+      padding: 8px 10px;
+      border-radius: 10px;
     }
     nav a:hover{
-      background: rgba(255,255,255,.06);
+      background: rgba(22,58,90,.06);
       text-decoration:none;
     }
-    .cta{
-      background: linear-gradient(135deg, rgba(42,167,255,.95), rgba(24,214,163,.92));
-      color:#06202a;
-      font-weight:700;
-      box-shadow: 0 10px 20px rgba(24,214,163,.18);
-    }
-    .cta:hover{ filter:brightness(1.02); }
 
-    /* Hero */
-    .hero{
-      padding: 44px 0 28px;
-    }
-    .hero-grid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:24px;
-      align-items:stretch;
-    }
-    @media (max-width: 900px){
-      .hero-grid{ grid-template-columns: 1fr; }
-      .brand{ min-width:auto; }
-    }
-
-    .kicker{
-      display:inline-flex; align-items:center; gap:10px;
-      font-size:12px;
-      color: rgba(233,238,244,.88);
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      padding:8px 10px;
-      border-radius:999px;
-    }
-    .kicker .dot{
-      width:8px; height:8px; border-radius:99px;
-      background: var(--brand2);
-      box-shadow: 0 0 0 4px rgba(24,214,163,.12);
-    }
-    h1{
-      margin:14px 0 12px;
-      font-size:var(--h1);
-      line-height:1.12;
-      letter-spacing:-.5px;
-    }
-    .lead{
-      color: rgba(233,238,244,.82);
-      font-size:15px;
-      max-width: 60ch;
-    }
-    .hero-actions{
-      margin-top:18px;
-      display:flex; gap:12px; flex-wrap:wrap;
-    }
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
       gap:10px;
-      padding:12px 14px;
-      border-radius:12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(233,238,244,.95);
-      font-weight:650;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-weight:700;
       font-size:13px;
-      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+      box-shadow: 0 6px 12px rgba(0,0,0,.06);
+      cursor:pointer;
     }
-    .btn:hover{ background: rgba(255,255,255,.07); text-decoration:none; }
+    .btn:hover{ filter:brightness(0.99); text-decoration:none; }
     .btn.primary{
-      background: linear-gradient(135deg, rgba(42,167,255,.95), rgba(24,214,163,.92));
-      color:#06202a;
-      border: none;
+      background: linear-gradient(180deg, var(--blue), #1b5f9b);
+      color:#fff;
+      border-color: rgba(0,0,0,.0);
+      box-shadow: 0 10px 16px rgba(31,111,181,.18);
+    }
+    .btn.red{
+      background: linear-gradient(180deg, var(--red), #b73333);
+      color:#fff;
+      border-color: rgba(0,0,0,.0);
+      box-shadow: 0 10px 16px rgba(212,59,59,.18);
     }
 
-    .cards{
-      margin-top:18px;
+    /* Hero */
+    .hero{
+      background:
+        linear-gradient(180deg, #f7fafc 0%, #ffffff 55%);
+      border-bottom:1px solid var(--line);
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 20px;
+      align-items: stretch;
+      padding: 22px 0 26px;
+    }
+    @media (max-width: 940px){
+      .hero-grid{ grid-template-columns:1fr; }
+      .brand{ min-width:auto; }
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:12px;
+      color: #234153;
+      background: #eaf2fb;
+      border: 1px solid #d3e3f7;
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+    .badge .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--red);
+    }
+    h1{
+      margin: 12px 0 10px;
+      font-size: var(--h1);
+      line-height:1.12;
+      letter-spacing:-.2px;
+      color: var(--navy);
+    }
+    .lead{
+      margin:0;
+      color: var(--muted);
+      font-size: 14.5px;
+      max-width: 62ch;
+    }
+
+    .hero-actions{
+      margin-top: 14px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+
+    .hero-right{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-right .top{
+      background: var(--navy);
+      color:#fff;
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      font-weight:700;
+      font-size:13px;
+    }
+    .hero-right .top span{
+      font-weight:600;
+      opacity:.95;
+    }
+    .hero-right .content{
+      padding: 14px;
+    }
+
+    .kpis{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
-      gap:12px;
+      gap: 10px;
+      margin-top: 12px;
     }
-    @media (max-width: 900px){
-      .cards{ grid-template-columns: 1fr; }
+    @media (max-width: 940px){
+      .kpis{ grid-template-columns: 1fr; }
     }
-    .card{
-      background: rgba(18,31,43,.75);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: var(--shadow);
+    .kpi{
+      background: var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
     }
-    .card b{ display:block; font-size:12px; letter-spacing:.3px; color:rgba(233,238,244,.9); }
-    .card p{ margin:8px 0 0; font-size:13px; color:rgba(184,196,211,.95); }
-
-    /* Fake video module */
-    .video{
-      background: rgba(18,31,43,.72);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: var(--radius2);
-      padding: 14px;
-      box-shadow: var(--shadow);
-      display:flex; flex-direction:column; gap:10px;
-    }
-    .thumb{
-      position:relative;
-      border-radius: 16px;
-      overflow:hidden;
-      aspect-ratio: 16/10;
-      background:
-        radial-gradient(600px 250px at 10% 10%, rgba(42,167,255,.30), transparent 55%),
-        radial-gradient(550px 250px at 90% 20%, rgba(24,214,163,.22), transparent 55%),
-        linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
-        linear-gradient(180deg, #0f1b26, #0b121a);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .thumb::after{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0, rgba(255,255,255,.05) 1px, transparent 1px, transparent 16px);
-      opacity:.22;
-      pointer-events:none;
-    }
-    .play{
-      position:absolute;
-      left: 16px; bottom:16px;
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      background: rgba(7,12,18,.55);
-      border: 1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(8px);
-    }
-    .tri{
-      width:0; height:0;
-      border-left: 10px solid var(--brand2);
-      border-top: 7px solid transparent;
-      border-bottom: 7px solid transparent;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.25));
-    }
-    .play span{
-      font-size:12px; color: rgba(233,238,244,.92);
-      font-weight:650;
-    }
-
-    .video small{ color:rgba(184,196,211,.92); }
-    .meta{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    .pill{
-      background: rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-      padding:10px 12px;
-      border-radius: 14px;
-      font-size:12px;
-      color: rgba(233,238,244,.9);
-    }
-    .pill em{
-      font-style:normal;
+    .kpi b{
       display:block;
-      color: rgba(184,196,211,.92);
-      font-weight:500;
-      margin-top:4px;
+      font-size:18px;
+      color: var(--navy);
+      margin-bottom:2px;
+    }
+    .kpi small{
+      color: var(--muted);
+      font-size:12px;
+    }
+
+    /* “Slider” simple façon site indus */
+    .slider{
+      border-top:1px solid var(--line);
+      margin-top: 14px;
+    }
+    .slides{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding-top: 14px;
+    }
+    .slide{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
+      align-items:center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow:hidden;
+      background:#fff;
+    }
+    @media (max-width: 940px){
+      .slide{ grid-template-columns: 1fr; }
+    }
+    .slide img{
+      height: 170px;
+      width:100%;
+      object-fit: cover;
+    }
+    .slide .txt{
+      padding: 12px 14px;
+    }
+    .slide .txt b{
+      display:block;
+      color: var(--navy);
+      margin-bottom:4px;
+      font-size:14px;
+    }
+    .slide .txt p{
+      margin:0;
+      color: var(--muted);
+      font-size:13px;
     }
 
     /* Sections */
-    section{ padding: 34px 0; }
+    section{ padding: 28px 0; }
     .section-head{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:18px;
-      margin-bottom: 14px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom: 12px;
     }
-    h2{ margin:0; font-size:var(--h2); letter-spacing:-.2px; }
-    .sub{ margin:0; color:rgba(184,196,211,.95); max-width:70ch; font-size:14px; }
+    h2{
+      margin:0;
+      font-size: var(--h2);
+      color: var(--navy);
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size:14px;
+      max-width: 70ch;
+    }
 
-    .grid-2{
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 940px){
+      .grid3{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .img{
+      height: 140px;
+      background: #eef3f7;
+    }
+    .card .img img{
+      height: 140px;
+      width:100%;
+      object-fit: cover;
+    }
+    .card .body{
+      padding: 12px 14px;
+    }
+    .tag{
+      display:inline-block;
+      font-size:11px;
+      font-weight:700;
+      color: #0c3551;
+      background:#eaf2fb;
+      border:1px solid #d3e3f7;
+      padding: 5px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .card h3{
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: var(--navy);
+    }
+    .card p{
+      margin:0;
+      color: var(--muted);
+      font-size:13px;
+    }
+
+    /* Bandeau “preuves” */
+    .proof{
+      background: var(--bg2);
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+    }
+    .proof-grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap:16px;
+      gap: 14px;
+      align-items: stretch;
     }
-    @media (max-width: 900px){
-      .grid-2{ grid-template-columns: 1fr; }
+    @media (max-width: 940px){
+      .proof-grid{ grid-template-columns:1fr; }
     }
     .panel{
-      background: rgba(18,31,43,.65);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius2);
-      padding: 18px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
+      padding: 14px;
     }
-
     .list{
       margin: 10px 0 0;
-      padding: 0;
+      padding:0;
       list-style:none;
       display:grid;
       gap:10px;
     }
     .list li{
-      display:flex; gap:10px;
+      display:flex;
+      gap:10px;
       align-items:flex-start;
     }
-    .check{
-      width:18px; height:18px; border-radius:6px;
-      background: rgba(24,214,163,.18);
-      border: 1px solid rgba(24,214,163,.35);
-      margin-top:2px;
-      flex: 0 0 auto;
+    .tick{
+      width:18px; height:18px;
+      border-radius:6px;
+      background:#e8f6ee;
+      border:1px solid #c9e9d5;
       position:relative;
+      flex: 0 0 auto;
+      margin-top:2px;
     }
-    .check:after{
+    .tick::after{
       content:"";
       position:absolute;
       left:5px; top:3px;
       width:6px; height:10px;
-      border-right:2px solid rgba(24,214,163,.9);
-      border-bottom:2px solid rgba(24,214,163,.9);
+      border-right:2px solid #1f7a4a;
+      border-bottom:2px solid #1f7a4a;
       transform: rotate(35deg);
     }
     .list b{ font-size:13px; }
-    .list span{ color:rgba(184,196,211,.95); font-size:13px; display:block; margin-top:2px; }
-
-    /* Services grid */
-    .svc{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-    }
-    @media (max-width: 900px){ .svc{ grid-template-columns: 1fr; } }
-
-    .svc .item{
-      background: rgba(18,31,43,.62);
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: var(--radius);
-      padding: 16px;
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-    .svc .item:before{
-      content:"";
-      position:absolute; inset:-80px -60px auto auto;
-      width:180px; height:180px; border-radius:999px;
-      background: radial-gradient(circle at 30% 30%, rgba(42,167,255,.22), transparent 60%);
-      transform: rotate(18deg);
-    }
-    .tag{
-      display:inline-flex; align-items:center;
-      font-family: var(--mono);
-      font-size:11px;
-      color: rgba(233,238,244,.86);
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.08);
-      padding:6px 8px;
-      border-radius:999px;
-    }
-    .svc h3{ margin:10px 0 6px; font-size:15px; }
-    .svc p{ margin:0; color: rgba(184,196,211,.95); font-size:13px; }
-
-    /* Logos */
-    .logos{
-      display:grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap:10px;
-      opacity:.95;
-    }
-    @media (max-width: 900px){ .logos{ grid-template-columns: repeat(3, 1fr); } }
-    .logo-box{
-      border-radius: 14px;
-      border: 1px dashed rgba(255,255,255,.14);
-      background: rgba(255,255,255,.03);
-      height: 48px;
-      display:flex; align-items:center; justify-content:center;
-      color: rgba(184,196,211,.9);
-      font-size:12px;
-      letter-spacing:.2px;
-    }
+    .list span{ display:block; color:var(--muted); font-size:13px; margin-top:2px; }
 
     /* Process */
     .steps{
       display:grid;
       grid-template-columns: repeat(4, 1fr);
-      gap:12px;
+      gap: 10px;
     }
-    @media (max-width: 900px){ .steps{ grid-template-columns: 1fr; } }
+    @media (max-width: 940px){
+      .steps{ grid-template-columns: 1fr; }
+    }
     .step{
-      background: rgba(18,31,43,.62);
-      border: 1px solid rgba(255,255,255,.08);
+      background:#fff;
+      border:1px solid var(--line);
       border-radius: var(--radius);
-      padding: 16px;
       box-shadow: var(--shadow);
+      padding: 12px 14px;
     }
     .step .n{
-      width:34px; height:34px; border-radius:12px;
+      width:30px; height:30px;
+      border-radius:10px;
+      background:#eaf2fb;
+      border:1px solid #d3e3f7;
       display:flex; align-items:center; justify-content:center;
-      font-family:var(--mono);
-      background: rgba(42,167,255,.16);
-      border: 1px solid rgba(42,167,255,.28);
-      color: rgba(233,238,244,.95);
-      margin-bottom:10px;
+      font-weight:800;
+      color:#0c3551;
+      margin-bottom: 8px;
+      font-size:12px;
     }
-    .step b{ display:block; font-size:13px; margin-bottom:6px; }
-    .step p{ margin:0; color:rgba(184,196,211,.95); font-size:13px; }
+    .step b{ display:block; color:var(--navy); font-size:13px; margin-bottom:5px; }
+    .step p{ margin:0; color:var(--muted); font-size:13px; }
 
     /* Contact */
-    form{
-      display:grid;
-      gap:12px;
-    }
-    label{ font-size:12px; color: rgba(233,238,244,.88); }
-    input, textarea, select{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(7,12,18,.35);
-      color: rgba(233,238,244,.95);
-      outline: none;
-    }
-    input::placeholder, textarea::placeholder{ color: rgba(184,196,211,.65); }
-    textarea{ min-height: 110px; resize: vertical; }
-    .form-row{
+    .contact-grid{
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap:12px;
+      gap: 12px;
     }
-    @media (max-width: 900px){ .form-row{ grid-template-columns: 1fr; } }
-
+    @media (max-width: 940px){
+      .contact-grid{ grid-template-columns:1fr; }
+    }
+    label{ font-size:12px; color:#2a3a46; font-weight:700; }
+    input, textarea, select{
+      width:100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:#22313b;
+      outline:none;
+    }
+    textarea{ min-height: 110px; resize: vertical; }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 940px){
+      .row2{ grid-template-columns:1fr; }
+    }
     .note{
       font-size:12px;
-      color: rgba(184,196,211,.92);
-      border-left: 3px solid rgba(42,167,255,.55);
-      padding: 10px 12px;
-      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      background: #fff;
+      border:1px solid var(--line);
+      border-left: 4px solid var(--blue);
       border-radius: 12px;
+      padding: 10px 12px;
     }
 
     footer{
-      padding: 26px 0 40px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      color: rgba(184,196,211,.88);
-      font-size:12px;
+      background:#0f2536;
+      color: rgba(255,255,255,.86);
+      padding: 20px 0 34px;
+      margin-top: 10px;
     }
-
-    /* Cookie banner */
-    .cookie{
-      position:fixed; left: 14px; right: 14px; bottom: 14px;
-      max-width: 920px; margin:0 auto;
-      background: rgba(18,31,43,.92);
+    footer a{ color:#fff; text-decoration:underline; }
+    .foot-grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 12px;
+      align-items:start;
+    }
+    @media (max-width: 940px){
+      .foot-grid{ grid-template-columns:1fr; }
+    }
+    .foot-box{
+      background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
+      border-radius: 12px;
       padding: 12px 14px;
-      box-shadow: var(--shadow);
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      backdrop-filter: blur(10px);
-      z-index: 80;
     }
-    .cookie p{ margin:0; font-size:12px; color: rgba(233,238,244,.86); }
-    .cookie .cookie-actions{ display:flex; gap:8px; flex-wrap:wrap; }
-    .mini{
-      font-size:12px; padding:10px 12px; border-radius:12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(233,238,244,.95);
-      cursor:pointer;
-      font-weight:650;
-    }
-    .mini.ok{ background: rgba(24,214,163,.18); border-color: rgba(24,214,163,.28); }
-    .mini:hover{ filter:brightness(1.05); }
 
-    /* Small utility */
-    .muted{ color: rgba(184,196,211,.92); }
-    .hr{ height:1px; background: rgba(255,255,255,.08); margin: 18px 0; }
+    /* Cookie */
+    .cookie{
+      position:fixed;
+      left: 12px; right: 12px; bottom: 12px;
+      max-width: 920px; margin:0 auto;
+      background:#ffffff;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      z-index:80;
+    }
+    .cookie p{ margin:0; font-size:12px; color: var(--muted); }
+    .cookie .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+    .mini{
+      font-size:12px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .mini.ok{ background:#eaf2fb; border-color:#d3e3f7; }
   </style>
 </head>
 
@@ -469,363 +520,404 @@
   <header class="topbar">
     <div class="wrap topbar-inner">
       <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
+        <!-- Logo crédible (SVG) : “engrenage + éclair” -->
+        <svg width="42" height="42" viewBox="0 0 64 64" aria-label="Logo" role="img">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#1f6fb5"/>
+              <stop offset="1" stop-color="#163a5a"/>
+            </linearGradient>
+          </defs>
+          <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#g1)"/>
+          <g fill="none" stroke="#ffffff" stroke-width="3" opacity="0.95">
+            <circle cx="32" cy="32" r="12"/>
+            <path d="M32 15v-5M32 54v-5M49 32h5M10 32h5M44 20l4-4M16 48l4-4M44 44l4 4M16 16l4 4"/>
+          </g>
+          <path d="M36 18 26 34h8l-6 12 12-16h-8z" fill="#d43b3b"/>
+        </svg>
+
+        <div class="brand-title">
           <strong>Entreprise d’automatisation industrielle</strong>
-          <small>Conception • Intégration • Maintenance • Ingénierie</small>
+          <small>Intégration • Rétrofit • Support • Ingénierie</small>
         </div>
       </div>
 
       <nav aria-label="Navigation principale">
-        <a href="#solutions">Solutions</a>
+        <a href="#solutions">Nos solutions</a>
         <a href="#secteurs">Secteurs</a>
-        <a href="#references">Références</a>
+        <a href="#references">Réalisations</a>
         <a href="#method">Méthode</a>
-        <a href="#recrutement">Recrutement</a>
-        <a class="cta" href="#contact">Demander un échange</a>
+        <a href="#actus">Actualités</a>
+        <a class="btn primary" href="#contact">Contact</a>
       </nav>
     </div>
   </header>
 
   <main>
-    <section class="hero">
+    <!-- HERO -->
+    <div class="hero">
       <div class="wrap hero-grid">
         <div>
-          <div class="kicker"><span class="dot" aria-hidden="true"></span> Automatisation & contrôle-commande • France</div>
-          <h1>Des solutions d’automatisation fiables, maintenables et adaptées à vos contraintes de production.</h1>
+          <div class="badge"><span class="dot" aria-hidden="true"></span> Automatisme & génie électrique • Intervention France</div>
+          <h1>Des systèmes automatisés fiables, documentés et faciles à maintenir.</h1>
           <p class="lead">
-            Nous accompagnons des sites industriels dans la conception, l’intégration et l’amélioration de leurs systèmes
-            automatisés : sécurité, performance, disponibilité et évolutivité.
+            Nous accompagnons des sites industriels dans la conception et l’intégration d’armoires, d’automates et de supervision.
+            Objectif : sécurité, disponibilité, et clarté pour vos équipes.
           </p>
 
           <div class="hero-actions">
             <a class="btn primary" href="#contact">Parler d’un projet</a>
-            <a class="btn" href="#method">Voir notre méthode</a>
-            <a class="btn" href="#solutions">Découvrir nos solutions</a>
+            <a class="btn" href="#method">Notre méthode</a>
+            <a class="btn red" href="#references">Voir des exemples</a>
           </div>
 
-          <div class="cards" aria-label="Chiffres clés">
-            <div class="card">
-              <b>+10 ans d’expérience</b>
-              <p>Projets d’intégration, rétrofit et support sur sites industriels.</p>
-            </div>
-            <div class="card">
-              <b>Interventions sur site</b>
-              <p>De l’audit au commissioning, avec support et maintenance.</p>
-            </div>
-            <div class="card">
-              <b>Qualité & traçabilité</b>
-              <p>Documentation claire, standards, tests et recettes.</p>
+          <div class="kpis" aria-label="Indicateurs">
+            <div class="kpi"><b>30+</b><small>années d’expérience (exemple)</small></div>
+            <div class="kpi"><b>70</b><small>collaborateurs (exemple)</small></div>
+            <div class="kpi"><b>45 000</b><small>km / an sur sites (exemple)</small></div>
+          </div>
+
+          <div class="slider">
+            <div class="slides">
+              <div class="slide" aria-label="Bloc activité 1">
+                <img alt="Illustration atelier" src="https://images.unsplash.com/photo-1581092919535-7146ff3f3a7e?auto=format&fit=crop&w=1200&q=70" />
+                <div class="txt">
+                  <b>Industrie — Armoires, automatisme, supervision</b>
+                  <p>Conception sur-mesure, installation sur site, tests, mise en service, passation et documentation.</p>
+                </div>
+              </div>
+
+              <div class="slide" aria-label="Bloc activité 2">
+                <img alt="Illustration maintenance" src="https://images.unsplash.com/photo-1581091870622-7b1f4c1f8d8f?auto=format&fit=crop&w=1200&q=70" />
+                <div class="txt">
+                  <b>Support & maintenance</b>
+                  <p>Diagnostic, interventions planifiées, assistance à distance, amélioration continue.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <aside class="video" aria-label="Module vidéo">
-          <div class="thumb" role="img" aria-label="Vignette vidéo d'illustration">
-            <div class="play">
-              <div class="tri" aria-hidden="true"></div>
-              <span>Voir la présentation (1:22)</span>
-            </div>
+        <aside class="hero-right" aria-label="Encart entreprise">
+          <div class="top">
+            <span>Présentation</span>
+            <button class="btn" style="border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.10); color:#fff; box-shadow:none"
+                    onclick="fake360()">Visite 360°</button>
           </div>
-          <small class="muted">Exemple de contenu “hero” pour une page d’accueil. (Maquette)</small>
-          <div class="meta">
-            <div class="pill"><strong>Réactivité</strong><em>Support & interventions planifiées</em></div>
-            <div class="pill"><strong>Sécurité</strong><em>Approche pragmatique & normes</em></div>
-            <div class="pill"><strong>Fiabilité</strong><em>Conception maintenable</em></div>
-            <div class="pill"><strong>Clarté</strong><em>Documentation & passation</em></div>
+          <div class="content">
+            <p class="lead" style="max-width:none; margin:0 0 12px;">
+              PME d’automatisation industrielle (maquette) intervenant de l’étude à la mise en service,
+              avec un suivi terrain et des livrables clairs.
+            </p>
+
+            <div class="panel" style="background:var(--bg2); box-shadow:none;">
+              <b style="color:var(--navy); display:block; margin-bottom:6px;">Ce que vous obtenez</b>
+              <ul class="list" style="margin-top:0;">
+                <li><span class="tick" aria-hidden="true"></span><div><b>Un système stable</b><span>tests, validation, recette.</span></div></li>
+                <li><span class="tick" aria-hidden="true"></span><div><b>Une doc claire</b><span>pour vos équipes maintenance.</span></div></li>
+                <li><span class="tick" aria-hidden="true"></span><div><b>Un support fiable</b><span>interventions & suivi.</span></div></li>
+              </ul>
+            </div>
+
+            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn primary" href="#contact">Demander un devis</a>
+              <a class="btn" href="#solutions">Nos solutions</a>
+            </div>
           </div>
         </aside>
       </div>
-    </section>
+    </div>
 
+    <!-- SOLUTIONS -->
     <section id="solutions">
       <div class="wrap">
         <div class="section-head">
           <div>
-            <h2>Solutions & services</h2>
-            <p class="sub">Un accompagnement complet, de l’étude à la mise en service, avec une attention particulière à la maintenabilité et à la sécurité.</p>
+            <h2>Nos solutions</h2>
+            <p class="sub">Une offre complète, sans jargon : nous concevons, installons, mettons en route et assurons le suivi.</p>
           </div>
         </div>
 
-        <div class="svc">
-          <div class="item">
-            <span class="tag">INTÉGRATION</span>
-            <h3>Automates & supervision</h3>
-            <p>Architecture, programmation, HMI/SCADA, tests, recette et mise en production.</p>
-          </div>
-          <div class="item">
-            <span class="tag">RÉTROFIT</span>
-            <h3>Migration & modernisation</h3>
-            <p>Remise à niveau d’installations : sécurisation, standardisation, performance, pérennité.</p>
-          </div>
-          <div class="item">
-            <span class="tag">SÉCURITÉ</span>
-            <h3>Analyse & conformité</h3>
-            <p>Audit, analyse de risques, mise en conformité, dispositifs de sécurité, validation.</p>
-          </div>
-          <div class="item">
-            <span class="tag">INGÉNIERIE</span>
-            <h3>Études & conception</h3>
-            <p>Spécifications, schémas, documentation, choix techniques et plan de tests.</p>
-          </div>
-          <div class="item">
-            <span class="tag">MAINTENANCE</span>
-            <h3>Support & interventions</h3>
-            <p>Diagnostic, amélioration continue, assistance à distance, interventions sur site.</p>
-          </div>
-          <div class="item">
-            <span class="tag">PROJET</span>
-            <h3>Coordination & pilotage</h3>
-            <p>Planning, jalons, reporting, gestion des risques, coordination des intervenants.</p>
-          </div>
+        <div class="grid3">
+          <article class="card">
+            <div class="img">
+              <img alt="Armoire électrique" src="https://images.unsplash.com/photo-1581090700227-1b1f2a9c70de?auto=format&fit=crop&w=1200&q=70">
+            </div>
+            <div class="body">
+              <span class="tag">INTÉGRATION</span>
+              <h3>Armoires & câblage</h3>
+              <p>Conception sur-mesure, réalisation atelier, installation sur site, repérage et schémas.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="img">
+              <img alt="Automate et supervision" src="https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=1200&q=70">
+            </div>
+            <div class="body">
+              <span class="tag">AUTOMATISME</span>
+              <h3>Automates & supervision</h3>
+              <p>Programmation, écrans opérateur, alarmes, tableaux de bord, tests et recettes.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="img">
+              <img alt="Intervention sur site" src="https://images.unsplash.com/photo-1581093458791-9f3c3900df59?auto=format&fit=crop&w=1200&q=70">
+            </div>
+            <div class="body">
+              <span class="tag">SUPPORT</span>
+              <h3>Maintenance & dépannage</h3>
+              <p>Interventions planifiées, diagnostic, assistance, continuité de production.</p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section id="secteurs">
+    <!-- SECTEURS / PREUVES -->
+    <section class="proof" id="secteurs">
       <div class="wrap">
         <div class="section-head">
           <div>
-            <h2>Secteurs</h2>
-            <p class="sub">Une expérience multi-industries : contraintes spécifiques, environnements exigeants, continuité de production.</p>
+            <h2>Secteurs & attentes</h2>
+            <p class="sub">Vos enjeux : réduire les arrêts, sécuriser les installations, améliorer la lisibilité pour les équipes.</p>
           </div>
         </div>
 
-        <div class="grid-2">
+        <div class="proof-grid">
           <div class="panel">
-            <h3>Exemples d’applications</h3>
+            <h3 style="margin:0;color:var(--navy);font-size:15px;">Exemples d’applications</h3>
             <ul class="list">
-              <li><span class="check" aria-hidden="true"></span><div><b>Lignes de production</b><span>Optimisation, cadence, réduction des arrêts, traçabilité.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Machines spéciales</b><span>Conception automatisme, interverrouillages, sécurité, test & recette.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Énergie & utilités</b><span>Supervision, monitoring, alarmes, continuité de service.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Intralogistique</b><span>Convoyage, capteurs, coordination, interface opérateur.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Lignes de production</b><span>performance, stabilité, traçabilité.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Machines spéciales</b><span>mise en service, recettes, sécurités.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Utilités / énergie</b><span>monitoring, alarmes, supervision.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Rétrofit</b><span>modernisation sans tout arrêter.</span></div></li>
             </ul>
           </div>
 
           <div class="panel">
-            <h3>Ce que recherchent nos clients</h3>
-            <div class="hr"></div>
-            <p class="muted" style="margin:0 0 10px;">
-              Pas seulement “faire marcher” — mais livrer un système <b>stable</b>, <b>documenté</b>, et <b>transmissible</b>.
-            </p>
+            <h3 style="margin:0;color:var(--navy);font-size:15px;">Ce qui rassure un décideur</h3>
             <ul class="list">
-              <li><span class="check" aria-hidden="true"></span><div><b>Prise en main rapide</b><span>Documentation claire + standards de programmation.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Moins d’arrêts imprévus</b><span>Analyse, tests, validation, procédures.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Support réactif</b><span>Assistance & interventions planifiées.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Vision long terme</b><span>Modernisation et évolutivité.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Plan clair</b><span>planning, jalons, livrables.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Tests & validation</b><span>FAT/SAT, recette, PV.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Documentation</b><span>schémas, repérage, passation.</span></div></li>
+              <li><span class="tick" aria-hidden="true"></span><div><b>Support</b><span>interventions et suivi.</span></div></li>
             </ul>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- RÉFÉRENCES -->
     <section id="references">
       <div class="wrap">
         <div class="section-head">
           <div>
-            <h2>Références (exemples anonymisés)</h2>
-            <p class="sub">Pour cette maquette, les noms sont volontairement génériques. Remplacer par vos références réelles si besoin.</p>
+            <h2>Réalisations (exemples anonymisés)</h2>
+            <p class="sub">Maquette : remplace ces contenus par des cas réels si besoin. Parfait pour illustrer un “site prospect”.</p>
           </div>
         </div>
 
-        <div class="panel">
-          <div class="logos" aria-label="Grille de logos clients (fictifs)">
-            <div class="logo-box">Groupe Industrie</div>
-            <div class="logo-box">Site Production</div>
-            <div class="logo-box">Équipementier</div>
-            <div class="logo-box">Agro / Process</div>
-            <div class="logo-box">Logistique</div>
-            <div class="logo-box">Énergie</div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="grid-2">
-            <div>
-              <h3>Cas 1 — Rétrofit & sécurisation</h3>
-              <p class="muted" style="margin-top:8px;">
-                Modernisation d’un système existant, réduction des pannes, documentation & transfert.
-              </p>
-              <ul class="list">
-                <li><span class="check" aria-hidden="true"></span><div><b>Audit</b><span>État des lieux, risques, priorités.</span></div></li>
-                <li><span class="check" aria-hidden="true"></span><div><b>Migration</b><span>Standardisation, validation, recette.</span></div></li>
-                <li><span class="check" aria-hidden="true"></span><div><b>Support</b><span>Assistance à la mise en production.</span></div></li>
-              </ul>
+        <div class="grid3">
+          <article class="card">
+            <div class="img">
+              <img alt="Atelier armoire" src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=70">
             </div>
-
-            <div>
-              <h3>Cas 2 — Supervision & traçabilité</h3>
-              <p class="muted" style="margin-top:8px;">
-                Mise en place d’interfaces opérateur claires, alarmes, tableaux de bord et suivi.
-              </p>
-              <ul class="list">
-                <li><span class="check" aria-hidden="true"></span><div><b>HMI / SCADA</b><span>Écrans opérateurs, navigation, ergonomie.</span></div></li>
-                <li><span class="check" aria-hidden="true"></span><div><b>Alarmes</b><span>Criticité, historisation, procédures.</span></div></li>
-                <li><span class="check" aria-hidden="true"></span><div><b>Reporting</b><span>Indicateurs simples pour décision rapide.</span></div></li>
-              </ul>
+            <div class="body">
+              <span class="tag">RÉTROFIT</span>
+              <h3>Modernisation d’une ligne</h3>
+              <p>Standardisation, sécurisation, tests et passation pour maintenance.</p>
             </div>
-          </div>
+          </article>
+
+          <article class="card">
+            <div class="img">
+              <img alt="Supervision" src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=70">
+            </div>
+            <div class="body">
+              <span class="tag">SUPERVISION</span>
+              <h3>Tableaux de bord & alarmes</h3>
+              <p>Lisibilité opérateur, historisation, indicateurs simples.</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="img">
+              <img alt="Intervention sur site" src="https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=1200&q=70">
+            </div>
+            <div class="body">
+              <span class="tag">SUPPORT</span>
+              <h3>Assistance & dépannage</h3>
+              <p>Réactivité, diagnostic, actions correctives et suivi.</p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
+    <!-- MÉTHODE -->
     <section id="method">
       <div class="wrap">
         <div class="section-head">
           <div>
             <h2>Notre méthode</h2>
-            <p class="sub">Une approche structurée, orientée résultats, avec des livrables clairs à chaque étape.</p>
+            <p class="sub">Un déroulé simple, que vous puissiez suivre même si c’est votre première fois.</p>
           </div>
         </div>
 
-        <div class="steps" aria-label="Étapes de projet">
-          <div class="step">
-            <div class="n">01</div>
-            <b>Cadrage</b>
-            <p>Objectifs, contraintes, planning, risques, livrables.</p>
-          </div>
-          <div class="step">
-            <div class="n">02</div>
-            <b>Étude & conception</b>
-            <p>Spécifications, architecture, choix techniques, tests.</p>
-          </div>
-          <div class="step">
-            <div class="n">03</div>
-            <b>Réalisation</b>
-            <p>Développement, intégration, FAT/SAT, mise en service.</p>
-          </div>
-          <div class="step">
-            <div class="n">04</div>
-            <b>Support</b>
-            <p>Documentation, passation, maintenance, évolutions.</p>
-          </div>
+        <div class="steps">
+          <div class="step"><div class="n">01</div><b>Cadrage</b><p>Objectifs, contraintes, planning, livrables.</p></div>
+          <div class="step"><div class="n">02</div><b>Conception</b><p>Architecture, schémas, plan de tests.</p></div>
+          <div class="step"><div class="n">03</div><b>Réalisation</b><p>Atelier, installation, mise en service.</p></div>
+          <div class="step"><div class="n">04</div><b>Suivi</b><p>Documentation, passation, support.</p></div>
         </div>
       </div>
     </section>
 
-    <section id="recrutement">
+    <!-- ACTUS -->
+    <section id="actus" class="proof">
       <div class="wrap">
         <div class="section-head">
           <div>
-            <h2>Recrutement</h2>
-            <p class="sub">Rejoignez une équipe terrain, proche des sites industriels, orientée qualité et transmission.</p>
+            <h2>Actualités</h2>
+            <p class="sub">Le bloc “news” classique des sites PME (utile en scroll).</p>
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="panel">
-            <h3>Postes (exemples)</h3>
-            <ul class="list">
-              <li><span class="check" aria-hidden="true"></span><div><b>Automaticien / Ingénieur automatisme</b><span>Programmation, mise en service, tests.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Technicien SAV / Maintenance</b><span>Interventions, diagnostic, amélioration continue.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Chef de projet</b><span>Pilotage, coordination, jalons, livrables.</span></div></li>
-            </ul>
-          </div>
+        <div class="grid3">
+          <article class="card">
+            <div class="img">
+              <img alt="Équipe" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=70">
+            </div>
+            <div class="body">
+              <span class="tag">ENTREPRISE</span>
+              <h3>Nouvelle agence (exemple)</h3>
+              <p>Ouverture d’un point d’intervention pour être plus proche des sites clients.</p>
+            </div>
+          </article>
 
-          <div class="panel">
-            <h3>Pourquoi nous</h3>
-            <p class="muted" style="margin-top:8px;">
-              Un environnement où la qualité des livrables, la documentation et l’entraide comptent autant que la technique.
-            </p>
-            <div class="note">
-              <b>Note (maquette)</b><br/>
-              Remplacer ce bloc par des infos réelles : localisation, culture, avantages, process de recrutement.
+          <article class="card">
+            <div class="img">
+              <img alt="Recrutement" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=70">
             </div>
-            <div class="hero-actions" style="margin-top:12px;">
-              <a class="btn primary" href="#contact">Candidater</a>
-              <a class="btn" href="#contact">Poser une question</a>
+            <div class="body">
+              <span class="tag">RECRUTEMENT</span>
+              <h3>Nous recrutons</h3>
+              <p>Automaticien / Technicien maintenance / Chef de projet (exemples).</p>
             </div>
-          </div>
+          </article>
+
+          <article class="card">
+            <div class="img">
+              <img alt="Chantier" src="https://images.unsplash.com/photo-1581091870622-7b1f4c1f8d8f?auto=format&fit=crop&w=1200&q=70">
+            </div>
+            <div class="body">
+              <span class="tag">CHANTIER</span>
+              <h3>Mise en service sur site</h3>
+              <p>Recette, PV, formation des équipes, transfert et documentation.</p>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
+    <!-- CONTACT -->
     <section id="contact">
       <div class="wrap">
         <div class="section-head">
           <div>
             <h2>Contact</h2>
-            <p class="sub">Décrivez votre besoin en quelques lignes. Réponse sous 24–48 h (maquette).</p>
+            <p class="sub">Formulaire “site industriel” standard (maquette). Parfait pour capture.</p>
           </div>
         </div>
 
-        <div class="grid-2">
+        <div class="contact-grid">
           <div class="panel">
-            <h3>Demander un échange</h3>
-            <form onsubmit="return fakeSubmit(event)">
-              <div class="form-row">
+            <h3 style="margin:0;color:var(--navy);font-size:15px;">Demander un échange</h3>
+            <form onsubmit="return fakeSubmit(event)" style="margin-top:10px;">
+              <div class="row2">
                 <div>
                   <label for="name">Nom</label>
-                  <input id="name" name="name" placeholder="Nom / Prénom" required />
+                  <input id="name" placeholder="Nom / Prénom" required>
                 </div>
                 <div>
                   <label for="company">Entreprise</label>
-                  <input id="company" name="company" placeholder="Entreprise" required />
+                  <input id="company" placeholder="Entreprise" required>
                 </div>
               </div>
 
-              <div class="form-row">
+              <div class="row2">
                 <div>
                   <label for="email">Email</label>
-                  <input id="email" type="email" name="email" placeholder="prenom.nom@entreprise.fr" required />
+                  <input id="email" type="email" placeholder="prenom.nom@entreprise.fr" required>
                 </div>
                 <div>
                   <label for="topic">Sujet</label>
-                  <select id="topic" name="topic">
-                    <option>Projet automatisme / intégration</option>
+                  <select id="topic">
+                    <option>Intégration / automatisme</option>
                     <option>Rétrofit / modernisation</option>
                     <option>Support / maintenance</option>
-                    <option>Sécurité / conformité</option>
                     <option>Autre</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label for="msg">Votre message</label>
-                <textarea id="msg" name="msg" placeholder="Contexte, contraintes, délais, site, objectifs…" required></textarea>
+                <label for="msg">Message</label>
+                <textarea id="msg" placeholder="Contexte, contraintes, délais, objectif…" required></textarea>
               </div>
 
               <button class="btn primary" type="submit">Envoyer</button>
-              <p class="muted" style="margin:0;font-size:12px;">(Maquette : le formulaire n’envoie rien.)</p>
+              <p style="margin:8px 0 0; color:var(--muted); font-size:12px;">(Maquette : le formulaire n’envoie rien.)</p>
             </form>
           </div>
 
           <div class="panel">
-            <h3>Coordonnées (maquette)</h3>
-            <p class="muted" style="margin-top:8px;">
-              Téléphone : <span style="font-family:var(--mono);">+33 0 00 00 00 00</span><br/>
-              Email : <span style="font-family:var(--mono);">contact@entreprise.fr</span><br/>
-              Zone : France / Rhône-Alpes / national
+            <h3 style="margin:0;color:var(--navy);font-size:15px;">Coordonnées (maquette)</h3>
+            <p style="margin:8px 0 10px; color:var(--muted); font-size:13px;">
+              Téléphone : <b>+33 0 00 00 00 00</b><br/>
+              Email : <b>contact@entreprise.fr</b><br/>
+              Zone : France / Rhône-Alpes / National
             </p>
-            <div class="hr"></div>
-            <h3>Infos pratiques</h3>
-            <ul class="list">
-              <li><span class="check" aria-hidden="true"></span><div><b>Délais</b><span>Interventions planifiées selon contraintes de production.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Sécurité</b><span>Respect des procédures site & habilitations.</span></div></li>
-              <li><span class="check" aria-hidden="true"></span><div><b>Documentation</b><span>Livrables clairs pour transfert & maintenance.</span></div></li>
-            </ul>
+
+            <div class="note">
+              <b>Astuce capture :</b> garde ce bloc “coordonnées + horaires”,
+              ça fait très “PME industrielle” et ça donne de la matière au scroll.
+            </div>
+
+            <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a class="btn" href="#solutions">Nos solutions</a>
+              <a class="btn red" href="#references">Réalisations</a>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <footer>
-      <div class="wrap">
-        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;">
-          <div>
-            <b style="color:rgba(233,238,244,.9);">Entreprise d’automatisation industrielle</b><br/>
-            <span class="muted">Maquette générique — à utiliser pour capture vidéo.</span>
+      <div class="wrap foot-grid">
+        <div class="foot-box">
+          <b style="display:block;margin-bottom:6px;">Entreprise d’automatisation industrielle</b>
+          <div style="opacity:.9; font-size:12px;">
+            Maquette générique (pour capture vidéo).<br/>
+            Mentions légales • Politique de confidentialité • Cookies
           </div>
-          <div class="muted">Mentions légales • Cookies • Confidentialité</div>
+        </div>
+        <div class="foot-box">
+          <b style="display:block;margin-bottom:6px;">Horaires (exemple)</b>
+          <div style="opacity:.9; font-size:12px;">
+            Lun–Jeu : 8h30–12h30 / 14h–17h30<br/>
+            Ven : 8h30–12h30 / 14h–16h30
+          </div>
         </div>
       </div>
     </footer>
   </main>
 
   <div class="cookie" id="cookie">
-    <p>Ce site utilise des cookies (maquette). Vous pouvez “Accepter” pour fermer ce bandeau.</p>
-    <div class="cookie-actions">
+    <p>Ce site utilise des cookies (maquette). Cliquez sur “Accepter” pour fermer ce bandeau.</p>
+    <div class="actions">
       <button class="mini" onclick="closeCookie()">Paramétrer</button>
       <button class="mini ok" onclick="closeCookie()">Accepter</button>
     </div>
@@ -839,8 +931,12 @@
 
     function fakeSubmit(e){
       e.preventDefault();
-      alert("Maquette : formulaire non envoyé.\n(Parfait pour une capture vidéo.)");
+      alert("Maquette : formulaire non envoyé.\n(Parfait pour capture vidéo.)");
       return false;
+    }
+
+    function fake360(){
+      alert("Maquette : visite 360° (non disponible).\nBouton utile pour donner du “vrai site” au scroll.");
     }
   </script>
 </body>
