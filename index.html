@@ -6,7 +6,18 @@
   <title>Maths — Lycée Saint Augustin | Julien Bérard</title>
   <meta name="description" content="Cours, TD/DM, DS & colles de mathématiques — Terminale (LSA).">
   <link rel="stylesheet" href="assets/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\(', '\)']],
+      displayMath: [['$$', '$$'], ['\[', '\]']],
+      processEscapes: true
+    }
+  };
+</script>
+<script id="MathJax-script" async 
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
 </head>
 <body>
   <header class="site-header">
