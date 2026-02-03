@@ -120,121 +120,53 @@ body{
 code, pre, kbd, samp{
   font-family: "Latin Modern Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-/* Palette liens sur fond sombre */
-:root{
-  --link-color:  #7dd3fc;   /* lien normal (cyan clair lisible) */
-  --link-hover:  #bae6fd;   /* au survol */
-  --link-visited:#93c5fd;   /* visité */
-  --focus-ring:  #bae6fd;   /* focus clavier/accessibilité */
+/* === Liens harmonisés (Visité = Normal) === */
+:root {
+  --link-color:  #7dd3fc;  /* Cyan clair (base et visité) */
+  --link-hover:  #bfe6ff;  /* Plus clair (au survol) */
 }
 
-/* Règles globales */
-a{
-  color: var(--link-color);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-a:hover,
-a:active{ color: var(--link-hover); }
-a:visited{ color: var(--link-visited); }
-a:focus-visible{
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-/* Titres cliquables : garder l’apparence du titre */
-.section-title a,
-.card h3 a{
-  color: inherit;
-  text-decoration: none;
-}
-.card h3 a:hover{ text-decoration: underline; }
-
-/* (Option) n’appliquer la palette qu’aux liens dans les cartes */
-.grid .card a{ color: var(--link-color); }
-.grid .card a:hover{ color: var(--link-hover); }
-.grid .card a:visited{ color: var(--link-visited); }
-
-/* Liens dans les cards (hors titres) */
-.grid .card li > a,
-.grid .card p > a,
-.grid .card .list a,
-.grid .card a[href$=".pdf"],
-.grid .card a[href^="/assets/pdf/"]{
-  color: var(--link-color) !important;
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-.grid .card li > a:hover,
-.grid .card p > a:hover,
-.grid .card .list a:hover,
-.grid .card a[href$=".pdf"]:hover,
-.grid .card a[href^="/assets/pdf/"]:hover{
-  color: var(--link-hover) !important;
-}
-.grid .card li > a:visited,
-.grid .card p > a:visited,
-.grid .card .list a:visited,
-.grid .card a[href$=".pdf"]:visited,
-.grid .card a[href^="/assets/pdf/"]:visited{
-  color: var(--link-visited) !important;
-}
-
-/* Les titres cliquables gardent la couleur du titre */
-.card h3 a{
-  color: inherit;
-  text-decoration: none;
-}
-.card h3 a:hover{ text-decoration: underline; }
-
-/* === Liens harmonisés sur fond sombre (override global) === */
-:root{
-  --link-color:  #7dd3fc;  /* normal */
-  --link-hover:  #bfe6ff;  /* hover/active */
-  --link-visited:#a5b4fc;  /* visited */
-}
-
-/* Tout lien du site (priorité haute) */
+/* 1. État de base ET Visité (Même apparence) */
 a,
+a:visited,
 .site-header nav a,
+.site-header nav a:visited,
 .list a,
-.grid .card a{
+.list a:visited,
+.grid .card a,
+.grid .card a:visited {
   color: var(--link-color) !important;
   text-decoration: none !important;
   text-underline-offset: 0.15em;
+  transition: color 0.2s ease;
 }
 
+/* 2. État Survol et Actif (Passe par-dessus le reste) */
 a:hover,
 a:active,
 .site-header nav a:hover,
 .list a:hover,
-.grid .card a:hover{
+.grid .card a:hover {
   color: var(--link-hover) !important;
-  text-decoration: none !important;
+  text-decoration: underline !important;
 }
 
-a:visited{
-  color: var(--link-visited) !important;
-}
-
-/* Accessibilité clavier */
-a:focus-visible{
+/* Accessibilité (Focus clavier) */
+a:focus-visible {
   outline: 2px solid var(--link-hover);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Titres cliquables (choisis) :
-   - On applique la couleur des liens (var(--link-color)) au lieu d'hériter du blanc
-*/
+/* Titres cliquables : même comportement que les liens texte */
 .card h3 a,
-.section-title a {
+.section-title a,
+.card h3 a:visited,
+.section-title a:visited {
   color: var(--link-color) !important;
   text-decoration: none !important;
 }
 
-/* On ajoute un effet au survol pour que ce soit cohérent avec les listes */
 .card h3 a:hover,
 .section-title a:hover {
   color: var(--link-hover) !important;
