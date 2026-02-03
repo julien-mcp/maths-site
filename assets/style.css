@@ -126,7 +126,7 @@ code, pre, kbd, samp{
   --link-hover:  #bfe6ff;  /* Plus clair (au survol) */
 }
 
-/* 1. État de base ET Visité (Même apparence) */
+/* 1. État de base ET Visité */
 a,
 a:visited,
 .site-header nav a,
@@ -136,19 +136,19 @@ a:visited,
 .grid .card a,
 .grid .card a:visited {
   color: var(--link-color) !important;
-  text-decoration: none !important;
+  text-decoration: none !important; /* Pas de soulignement par défaut */
   text-underline-offset: 0.15em;
   transition: color 0.2s ease;
 }
 
-/* 2. État Survol et Actif (Passe par-dessus le reste) */
+/* 2. État Survol et Actif */
 a:hover,
 a:active,
 .site-header nav a:hover,
 .list a:hover,
 .grid .card a:hover {
   color: var(--link-hover) !important;
-  text-decoration: underline !important;
+  text-decoration: none !important; /* <--- CORRECTION ICI (était underline) */
 }
 
 /* Accessibilité (Focus clavier) */
@@ -158,7 +158,7 @@ a:focus-visible {
   border-radius: 4px;
 }
 
-/* Titres cliquables : même comportement que les liens texte */
+/* Titres cliquables */
 .card h3 a,
 .section-title a,
 .card h3 a:visited,
@@ -170,7 +170,7 @@ a:focus-visible {
 .card h3 a:hover,
 .section-title a:hover {
   color: var(--link-hover) !important;
-  text-decoration: underline !important;
+  text-decoration: none !important; /* <--- CORRECTION ICI AUSSI */
 }
 
 /* Grille 2 colonnes dans la section Colles */
