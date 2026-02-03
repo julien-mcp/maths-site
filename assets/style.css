@@ -226,13 +226,19 @@ a:focus-visible{
 }
 
 /* Titres cliquables (choisis) :
-   - Si tu veux qu’ils gardent la couleur du titre (blanc) : laisse 'inherit'
-   - Si tu veux la même couleur que les autres liens : remplace par var(--link-color)
+   - On applique la couleur des liens (var(--link-color)) au lieu d'hériter du blanc
 */
 .card h3 a,
-.section-title a{
-  color: inherit !important;          /* ou: var(--link-color) */
+.section-title a {
+  color: var(--link-color) !important;
   text-decoration: none !important;
+}
+
+/* On ajoute un effet au survol pour que ce soit cohérent avec les listes */
+.card h3 a:hover,
+.section-title a:hover {
+  color: var(--link-hover) !important;
+  text-decoration: underline !important;
 }
 
 /* Grille 2 colonnes dans la section Colles */
